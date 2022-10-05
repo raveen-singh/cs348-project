@@ -8,7 +8,6 @@ function App() {
 
   useEffect(() => {
     fetch('/api').then(res => res.json()).then(data => {
-      console.log(data);
       setMessage(data.message);
     });
   }, []);
