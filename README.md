@@ -34,6 +34,13 @@ python -m venv venv
 venv\Scripts\activate
 ```
 
+If the above command errors on windows, try the following:
+```
+python -m venv venv
+cd venv/Scripts
+./activate
+```
+
 With the virtual environment activated, you can now install the requried python packages from the `requirements.txt` file. 
 
 Run the command `pip3 install -r requirements.txt`
@@ -42,6 +49,11 @@ To simplify the commands, you can navigate to the /app folder and run the backen
 
 ```
 npm run start-api
+```
+
+If the above errors on windows, then navigate to the /api folder and use the following command.
+```
+flask run
 ```
 
 If you see Hello from the API on `http://localhost:3000/`, then you have set up the backend correctly. 
