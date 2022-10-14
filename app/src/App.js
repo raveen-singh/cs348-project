@@ -6,12 +6,19 @@ function App() {
 
   const [message, setMessage] = useState(0);
 
+  const [dbMessage, setDbMessage] = useState(0);
+
   useEffect(() => {
     fetch('/api').then(res => res.json()).then(data => {
       setMessage(data.message);
     });
   }, []);
 
+  useEffect(() => {
+    fetch('/api/db').then(res => res.json()).then(data => {
+      setDbMessage(data.message);
+    });
+  }, []);
 
   return (
     <div className="App">
@@ -29,6 +36,7 @@ function App() {
           Learn React
         </a>
         <p>{message}</p>
+        <p>{dbMessage}</p>
       </header>
     </div>
   );
