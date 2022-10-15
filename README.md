@@ -1,7 +1,13 @@
 # cs348-project
 
+## Instructions for running the backend and frontend
 
-## Instructions to set up the project
+If using powershell:
+```
+cd app; npm install; npm start; cd ../api; venv/Scripts/activate; flask run;
+```
+
+## Instructions to set up the project for the first time
 ---
 Make sure you have node installed on your computer before attemping to set u this repo. `node -v` can be used to verify if you have a working version.
 
@@ -76,4 +82,4 @@ For windows, I have no way to test how to start the mySQL instance locally, but 
 
 Then you need to log into the running instance of mySQL by running `mysql -u root -p`. There should be no password required for the root user, so press enter when prompted on the next line.
 
-If you see `mysql>` on the next line, you have sucesfully connected. Run the `setup.sql` script by running `source setup.sql` while connected. If there are no errors, navigate to `http://localhost:3000` (assuming the frontend/backend are running). If you see cs348db conencted below the first message, you have set  up the database correctly. 
+If you see `mysql>` on the next line, you have sucesfully connected. Run the `setup.sql` script by running `source setup.sql` while connected. If there are no errors, navigate to `http://localhost:3000` (assuming the frontend/backend are running). If you see cs348db connected below the first message, you have set up the database correctly. 
