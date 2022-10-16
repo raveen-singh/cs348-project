@@ -78,8 +78,16 @@ brew install mysql
 ```
 Make sure that a mysql instance is running by running the command `brew services start mysql`.
 
-For windows, I have no way to test how to start the mySQL instance locally, but you can start [here](https://github.com/PyMySQL/mysqlclient#install) and update this README when you test the install yourself. Two things I've seen mentioned are XAMPP or PHPMyAdmin to start the mySQL db from.
+If you are using windows, make sure to install mysql from this link. Make sure to setup a root without a password. This will make the db setup a lot easier. Once installed, add the bin folder from installation as a PATH variable C:\Program Files\MySQL\MySQL Server 8.0\bin.
 
 Then you need to log into the running instance of mySQL by running `mysql -u root -p`. There should be no password required for the root user, so press enter when prompted on the next line.
+
+If you already had MySQL setup from before and added a password, you can easily change the password from the MySQL terminal as follows:
+```SQL
+mysql -u root -p
+ALTER USER 'root'@'localhost' IDENTIFIED BY '';
+FLUSH PRIVILEGES;
+```
+You can change 'root'@'localhost' if your user is named differently.
 
 If you see `mysql>` on the next line, you have sucesfully connected. Run the `setup.sql` script by running `source setup.sql` while connected. If there are no errors, navigate to `http://localhost:3000` (assuming the frontend/backend are running). If you see cs348db connected below the first message, you have set up the database correctly. 
