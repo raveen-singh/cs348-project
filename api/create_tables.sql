@@ -2,7 +2,7 @@ CREATE DATABASE IF NOT EXISTS cs348db;
 USE cs348db;
 
 CREATE TABLE IF NOT EXISTS UnitListerAccount(
-    pm_id int NOT NULL,  
+    pm_id int NOT NULL AUTO_INCREMENT,  
     name VARCHAR(255) NOT NULL,
     phone_num VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL,
@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS UnitListerAccount(
     );
 
 CREATE TABLE IF NOT EXISTS Building(
-    building_id int NOT NULL,
+    building_id int NOT NULL AUTO_INCREMENT,
     address VARCHAR(255) NOT NULL,
     pet_friendly TINYINT(1) NOT NULL, -- TINYINT functions as a boolean
     laundry_availability VARCHAR(255) NOT NULL, -- Do we want a yes or no, or ensuite vs in building
@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS Building(
 );
 
 CREATE TABLE IF NOT EXISTS AvailableUnit(
-    unit_id int NOT NULL,
+    unit_id int NOT NULL AUTO_INCREMENT,
     building_id int,
     pm_id int,
     room_num int NOT NULL,
@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS AvailableUnit(
 
 
 CREATE TABLE IF NOT EXISTS Review(
-    review_id int NOT NULL,
+    review_id int NOT NULL AUTO_INCREMENT,
     building_id int,
     admin_helpfulness_rating int NOT NULL,
     cleanliness_rating int NOT NULL,
