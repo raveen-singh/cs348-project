@@ -28,6 +28,7 @@ CREATE TABLE IF NOT EXISTS AvailableUnit(
     lease_term int NOT NULL, -- measured in months or years?
     num_beds int NOT NULL,
     floor_num int NOT NULL,
+    image_path VARCHAR(100) NOT NULL,
     num_washrooms int NOT NULL,
     rent_price int NOT NULL,
     PRIMARY KEY (unit_id),
