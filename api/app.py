@@ -1,6 +1,7 @@
 import time
 from flask import Flask, jsonify
 from flask_mysqldb import MySQL
+from flask import request
 
 app = Flask(__name__)
 
@@ -25,3 +26,12 @@ def get_data():
     rv = cur.fetchone()
     cur.close()
     return {'message':rv}
+
+@app.route('/register_lister', methods = ["POST"])
+def register_lister():
+    json_data = request.get_json()
+    print(json_data)
+    if json_data["username"] == "test":
+        return True
+    return False
+    # "INSERT INTO lister_accounts () values ()"
