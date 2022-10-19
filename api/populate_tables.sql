@@ -1,5 +1,5 @@
 INSERT INTO UnitListerAccount
-VALUES (NULL,'John Doe','8443212200','admin@iconstudents.ca','https://www.iconstudents.com/');
+VALUES (NULL, 'johndoe45', 'password123', 'John Doe', 8443212200, 'admin@iconstudents.ca','https://www.iconstudents.com/');
 
 INSERT INTO Building
 VALUES (NULL,'330 Phillip St',1,'ensuite','apartment',0.7);
