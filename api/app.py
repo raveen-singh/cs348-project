@@ -40,7 +40,7 @@ def register_lister():
     email = json_data["email"]
     website = json_data["website"]
     
-    cur.execute("SELECT * FROM UnitListerAccount where username = %s and phone_num = %s and email = %s", (username, phone_num, email))
+    cur.execute("SELECT * FROM UnitListerAccount where username = %s", username)
     rv = cur.fetchone()
     if not rv: # user dne, insert
         try:
@@ -51,4 +51,4 @@ def register_lister():
         except Exception as e:
             return {"status": False, "message": "Error with inserting: {e}"} 
     else: # user already exists
-        return {"status": False, "message": "This user already exists!"}
+        return {"status": False, "message": "This username is taken!"}
