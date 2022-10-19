@@ -33,16 +33,19 @@ def register_lister():
     cur = conn.cursor()
 
     json_data = request.get_json()
+    username = json_data["username"]
+    password = json_data["password"]
     name = json_data["name"]
     phone_num = json_data["phone_num"]
     email = json_data["email"]
     website = json_data["website"]
     
-    cur.execute("SELECT * FROM UnitListerAccount where name = %s and phone_num = %s and email = %s", (name, phone_num, email))
+    cur.execute("SELECT * FROM UnitListerAccount where username = %s and phone_num = %s and email = %s", (username, phone_num, email))
     rv = cur.fetchone()
     if not rv: # user dne, insert
         try:
-            cur.execute("INSERT INTO UnitListerAccount VALUES (NULL, %s, %s, %s, %s)", (name, phone_num, email, website if website != "" else None))
+            cur.execute("INSERT INTO UnitListerAccount VALUES (NULL, %s, %s, %s, %s, %s, %s)", 
+                        (username, password, name, phone_num, email, website if website != "" else None))
             conn.commit()
             return {"status": True}
         except Exception as e:
