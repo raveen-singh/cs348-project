@@ -31,7 +31,7 @@ const Register = () => {
     if (res.data.status) {
       navigate("/");
     } else {
-      setMessage("Incorrect credentials");
+      setMessage(res.data.message);
     }
   };
 

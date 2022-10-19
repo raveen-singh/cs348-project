@@ -29,8 +29,23 @@ def get_data():
 
 @app.route('/register_lister', methods = ["POST"])
 def register_lister():
+    conn = mysql.connection
+    cur = conn.cursor()
+
     json_data = request.get_json()
-    if json_data['name'] == "test":
-        return {'status': True}
-    return {'status': False}
-    # "INSERT INTO lister_accounts () values ()"
+    name = json_data["name"]
+    phone_num = json_data["phone_num"]
+    email = json_data["email"]
+    website = json_data["website"]
+    
+    cur.execute("SELECT * FROM UnitListerAccount where name = %s and phone_num = %s and email = %s", (name, phone_num, email))
+    rv = cur.fetchone()
+    if not rv: # user dne, insert
+        try:
+            cur.execute("INSERT INTO UnitListerAccount VALUES (NULL, %s, %s, %s, %s)", (name, phone_num, email, website if website != "" else None))
+            conn.commit()
+            return {"status": True}
+        except Exception as e:
+            return {"status": False, "message": "Error with inserting: {e}"} 
+    else: # user already exists
+        return {"status": False, "message": "This user already exists!"}

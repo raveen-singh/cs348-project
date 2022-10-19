@@ -4,7 +4,7 @@
 
 If using powershell:
 ```
-cd app; npm install; npm start; cd ../api; venv/Scripts/activate; flask run;
+cd app; npm install; npm start; cd ../api; venv/Scripts/activate; ./mysql.exe -uroot -p (run setup files); flask run;
 ```
 
 ## Instructions to set up the project for the first time
@@ -90,4 +90,10 @@ FLUSH PRIVILEGES;
 ```
 You can change 'root'@'localhost' if your user is named differently.
 
-If you see `mysql>` on the next line, you have sucesfully connected. Run the `setup.sql` script by running `source setup.sql` while connected. If there are no errors, navigate to `http://localhost:3000` (assuming the frontend/backend are running). If you see cs348db connected below the first message, you have set up the database correctly. 
+If you see `mysql>` on the next line, you have successfully connected. While connected, run the following setup scripts in /api:
+```
+source cleanup_tables.sql
+source create_tables.sql
+source populate_tables.sql
+```
+If there are no errors, navigate to `http://localhost:3000` (assuming the frontend/backend are running). If you see cs348db connected below the first message, you have set up the database correctly. 
