@@ -2,7 +2,6 @@ import time
 from flask import Flask, jsonify
 from flask_mysqldb import MySQL
 from flask import request
-import sys
 
 app = Flask(__name__)
 
