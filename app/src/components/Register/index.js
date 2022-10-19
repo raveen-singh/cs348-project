@@ -5,6 +5,8 @@ import "./index.css";
 
 const Register = () => {
   const [formValues, setFormValues] = useState({
+    username: "",
+    password: "",
     name: "",
     phone_num: "",
     email: "",
@@ -24,7 +26,14 @@ const Register = () => {
     const res = await axios.post("/register_lister", {
       ...formValues,
     });
-    setFormValues({ name: "", phone_num: "", email: "", website: "" });
+    setFormValues({
+      username: "",
+      password: "",
+      name: "",
+      phone_num: "",
+      email: "",
+      website: "",
+    });
 
     console.log(res);
 
@@ -47,8 +56,23 @@ const Register = () => {
       <h1 className="title">Sign Up</h1>
       <form onSubmit={handleSubmit}>
         <input
-          id="name"
+          id="username"
           ref={userRef}
+          value={formValues.username}
+          onChange={handleChange}
+          placeholder="username"
+          required
+        />
+        <input
+          id="password"
+          type="password"
+          value={formValues.password}
+          onChange={handleChange}
+          placeholder="password"
+          required
+        />
+        <input
+          id="name"
           value={formValues.name}
           onChange={handleChange}
           placeholder="name"
@@ -71,7 +95,6 @@ const Register = () => {
         />
         <input
           id="website"
-          type="url"
           value={formValues.url}
           onChange={handleChange}
           placeholder="website (optional)"
