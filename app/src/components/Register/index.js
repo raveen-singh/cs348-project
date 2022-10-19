@@ -1,0 +1,88 @@
+import React, { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import "./index.css";
+
+const Register = () => {
+  const [formValues, setFormValues] = useState({
+    name: "",
+    phone_num: "",
+    email: "",
+    website: "",
+  });
+  const [message, setMessage] = useState("");
+  const userRef = useRef();
+
+  useEffect(() => {
+    userRef.current.focus();
+  }, []);
+
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const res = await axios.post("/register_lister", {
+      ...formValues,
+    });
+    setFormValues({ name: "", phone_num: "", email: "", website: "" });
+
+    console.log(res);
+
+    if (res.data.status) {
+      navigate("/");
+    } else {
+      setMessage("Incorrect credentials");
+    }
+  };
+
+  const handleChange = (e) => {
+    setFormValues({ ...formValues, [e.target.id]: e.target.value });
+    if (message) {
+      setMessage("");
+    }
+  };
+
+  return (
+    <div className="container">
+      <h1 className="title">Sign Up</h1>
+      <form onSubmit={handleSubmit}>
+        <input
+          id="name"
+          ref={userRef}
+          value={formValues.name}
+          onChange={handleChange}
+          placeholder="name"
+          required
+        />
+        <input
+          id="phone_num"
+          value={formValues.phone_num}
+          onChange={handleChange}
+          placeholder="phone number"
+          required
+        />
+        <input
+          id="email"
+          type="email"
+          value={formValues.email}
+          onChange={handleChange}
+          placeholder="email"
+          required
+        />
+        <input
+          id="website"
+          type="url"
+          value={formValues.url}
+          onChange={handleChange}
+          placeholder="website (optional)"
+        />
+        <button className="submit-form" type="submit">
+          Create Account
+        </button>
+      </form>
+      {message && <p className="err-message">{message}</p>}
+    </div>
+  );
+};
+
+export default Register;
