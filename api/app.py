@@ -1,6 +1,7 @@
 import time
 from flask import Flask, jsonify
 from flask_mysqldb import MySQL
+from flask import request
 
 app = Flask(__name__)
 
@@ -25,3 +26,32 @@ def get_data():
     rv = cur.fetchone()
     cur.close()
     return {'message':rv}
+
+@app.route('/register_lister', methods = ["POST"])
+def register_lister():
+    conn = mysql.connection
+    cur = conn.cursor()
+
+    json_data = request.get_json()
+    username = json_data["username"]
+    password = json_data["password"]
+    name = json_data["name"]
+    phone_num = json_data["phone_num"]
+    email = json_data["email"]
+    website = json_data["website"]
+    
+    # This check might be redundant now since we added UNIQUE to username,
+    # so the trycatch block would return a duplicate user error
+    cur.execute("SELECT * FROM UnitListerAccount WHERE username = %s", [username])
+    rv = cur.fetchone()
+    if not rv: # user dne, insert
+        try:
+            cur.execute("INSERT INTO UnitListerAccount VALUES (NULL, %s, %s, %s, %s, %s, %s)", 
+                        (username, password, name, phone_num, email, website if website != "" else None))
+            cur.close()
+            conn.commit()
+            return {"status": True}
+        except Exception as e:
+            return {"status": False, "message": f"Error with inserting: {e}"} 
+    else: # user already exists
+        return {"status": False, "message": "This username is taken!"}
