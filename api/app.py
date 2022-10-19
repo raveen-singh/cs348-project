@@ -52,6 +52,6 @@ def register_lister():
             conn.commit()
             return {"status": True}
         except Exception as e:
-            return {"status": False, "message": "Error with inserting: {e}"} 
+            return {"status": False, "message": f"Error with inserting: {e}"} 
     else: # user already exists
         return {"status": False, "message": "This username is taken!"}
