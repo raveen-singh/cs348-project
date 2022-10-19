@@ -9,7 +9,8 @@ CREATE TABLE IF NOT EXISTS UnitListerAccount(
     phone_num VARCHAR(10) NOT NULL,
     email VARCHAR(255) NOT NULL,
     website VARCHAR(255),
-    PRIMARY KEY (pm_id)
+    PRIMARY KEY (pm_id),
+    UNIQUE(username)
     );
 
 CREATE TABLE IF NOT EXISTS Building(
@@ -19,7 +20,8 @@ CREATE TABLE IF NOT EXISTS Building(
     laundry_availability ENUM('building', 'ensuite', 'none') NOT NULL,
     type_of_unit ENUM('apartment','house') NOT NULL,
     distance_from_waterloo DECIMAL(3,1) NOT NULL,
-    PRIMARY KEY (building_id)
+    PRIMARY KEY (building_id),
+    UNIQUE(address)
 );
 
 CREATE TABLE IF NOT EXISTS AvailableUnit(
