@@ -40,12 +40,15 @@ def register_lister():
     email = json_data["email"]
     website = json_data["website"]
     
-    cur.execute("SELECT * FROM UnitListerAccount where username = %s and phone_num = %s and email = %s", (username, phone_num, email))
+    # This check might be redundant now since we added UNIQUE to username,
+    # so the trycatch block would return a duplicate user error
+    cur.execute("SELECT * FROM UnitListerAccount WHERE username = %s", [username])
     rv = cur.fetchone()
     if not rv: # user dne, insert
         try:
             cur.execute("INSERT INTO UnitListerAccount VALUES (NULL, %s, %s, %s, %s, %s, %s)", 
                         (username, password, name, phone_num, email, website if website != "" else None))
+            cur.close()
             conn.commit()
             return {"status": True}
         except Exception as e:

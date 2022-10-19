@@ -35,8 +35,6 @@ const Register = () => {
       website: "",
     });
 
-    console.log(res);
-
     if (res.data.status) {
       navigate("/");
     } else {
