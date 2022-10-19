@@ -54,4 +54,4 @@ def register_lister():
         except Exception as e:
             return {"status": False, "message": "Error with inserting: {e}"} 
     else: # user already exists
-        return {"status": False, "message": "This user already exists!"}
+        return {"status": False, "message": "This username is taken!"}
