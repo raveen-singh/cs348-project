@@ -55,3 +55,35 @@ def register_lister():
             return {"status": False, "message": f"Error with inserting: {e}"} 
     else: # user already exists
         return {"status": False, "message": "This username is taken!"}
+
+@app.route('/list_unit', methods = ["POST"])
+def list_unit():
+    conn = mysql.connection
+    cur = conn.cursor()
+
+    json_data = request.get_json()
+    # address is used in future to find building_id
+    address = json_data["address"]
+    room = json_data["room"]
+    lease_term = json_data["leaseDuration"]
+    beds = json_data["numBeds"]
+    floor = json_data["floor"]
+    image = json_data["selectedImage"]
+    washrooms = json_data["numWashrooms"]
+    rent = json_data["price"]
+
+    # these are hardcoded values for the foreign keys
+    # for the future, change these to dynamic SQL queries
+    building_id = 1
+    pm_id = 1
+
+    try:
+        cur.execute("INSERT INTO AvailableUnit VALUES (NULL, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+                [building_id, pm_id, room if room else None, 
+                lease_term, beds, floor if floor else None, 
+                image, washrooms, rent])
+        cur.close()
+        conn.commit()
+        return {"success": True}
+    except Exception as e:
+        return {"success": False, "message": f"Error creating listing: {e}"}
