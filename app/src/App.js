@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import { Button, Modal } from "@mui/material";
 import Postform from "./components/createPost/postform";
-import Post from "./components/post/post";
-import "./App.css";
+
 
 function App() {
   const [open, setOpen] = useState(false);
