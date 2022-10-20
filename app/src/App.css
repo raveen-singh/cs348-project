@@ -24,6 +24,12 @@
   color: white;
 }
 
+.Form-button {
+  margin: 10;
+  width: '10%';
+  height: '5%';
+}
+
 .App-link {
   color: #61dafb;
 }

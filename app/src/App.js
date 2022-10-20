@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import logo from './logo.svg';
 import { Button, Modal } from '@mui/material';
-import Postform from './createPost/postform';
+import Postform from './components/createPost/postform';
+import Post from './components/post/post';
 import './App.css';
 
 
@@ -45,7 +46,7 @@ function App() {
         >
           Learn React
         </a>
-        <Button color='primary' variant='h4' align='right' onClick={handleOpen}>{'Create A Post'}</Button>
+        <Button className="Form-button" variant="contained" color="primary" size="large" type="submit" onClick={handleOpen}>Create A Post</Button>
         <Modal open={open} onClose={handleClose} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description" >
           <Postform handleClose={handleClose} />
         </Modal>
