@@ -21,13 +21,13 @@ const UnitForm = ({ handleClose }) => {
   ];
 
   const defaultUnitValues = {
-    address: "",
-    room: "",
-    price: "",
-    numBeds: "",
-    numWashrooms: "",
-    leaseDuration: "",
-    floor: "",
+    address: "301 Phillip St",
+    room: 3,
+    price: 500,
+    numBeds: 5,
+    numWashrooms: 5,
+    leaseDuration: 4,
+    floor: 3,
     selectedImage: "",
   };
 
