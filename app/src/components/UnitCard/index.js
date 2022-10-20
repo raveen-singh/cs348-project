@@ -1,8 +1,16 @@
-import React from 'react';
-import { Card, CardActions, CardContent, CardMedia, Button, Typography, CardActionArea } from '@mui/material';
-import useStyles from './poststyle';
+import React from "react";
+import {
+  Card,
+  CardActions,
+  CardContent,
+  CardMedia,
+  Button,
+  Typography,
+  CardActionArea,
+} from "@mui/material";
+import useStyles from "./styles";
 
-const Post = ({ post }) => {
+const UnitCard = ({ unit }) => {
   const classes = useStyles();
 
   return (
@@ -30,4 +38,4 @@ const Post = ({ post }) => {
   );
 };
 
-export default Post;
+export default UnitCard;
