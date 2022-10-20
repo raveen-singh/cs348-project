@@ -3,13 +3,13 @@
 -- feature 1: register user
 INSERT INTO UnitListerAccount
 VALUES (
-    NULL, 'johndoe45', 'password123', 'John Doe', '8443212200', 
-    'admin@iconstudents.ca', 'www.iconstudents.com'
+    NULL, 'johndoe30', 'password123', 'John Doe', '8443212200', 
+    'johndoe@gmail.ca', 'www.johndoe.com'
 )
 
 -- query to show the newly inserted row
 SELECT * FROM UnitListerAccount
-WHERE username = 'johndoe45';
+WHERE username = 'johndoe30';
 
 -- feature 4: view available units with filter and sort functionality
 -- sample query 1
