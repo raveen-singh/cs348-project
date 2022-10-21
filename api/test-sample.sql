@@ -4,12 +4,15 @@
 INSERT INTO UnitListerAccount
 VALUES (
     NULL, 'johndoe30', 'password123', 'John Doe', '8443212200', 
-    'johndoe@gmail.ca', 'www.johndoe.com'
-)
+    'johndoe@gmail.ca', 'www.johndoe.com');
 
--- query to show the newly inserted row
-SELECT * FROM UnitListerAccount
-WHERE username = 'johndoe30';
+-- feature 2: Posting a Unit
+INSERT INTO AvailableUnit
+VALUES (NULL, 1, 1, 202, 8, 4, 2, 'path/to/image', 2, 1000);
+
+-- feature 3: Review a Building
+INSERT INTO Review
+VALUES (NULL, 1, 5, 5, 'I enjoyed my time here. The apartment was clean and organized!', 4);
 
 -- feature 4: view available units with filter and sort functionality
 -- sample query 1
