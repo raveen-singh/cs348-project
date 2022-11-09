@@ -23,7 +23,7 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const res = await axios.post("/register_lister", {
+    const res = await axios.post("/api/lister/create", {
       ...formValues,
     });
     setFormValues({
