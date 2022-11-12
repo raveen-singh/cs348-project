@@ -1,16 +1,9 @@
-import React, { useState } from "react";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-import { Button, Modal } from "@mui/material";
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 // Components
 import Register from "./components/Register";
-import Postform from "./components/createPost/postform";
-
-// Just a dummy component to make navigating to the
-// sign up form easier for the feature
-const Home = () => {
-  return <Link to="/register">Sign Up</Link>;
-};
+import Home from "./components/Home";
 
 const App = () => {
   const [open, setOpen] = useState(false);
@@ -27,24 +20,6 @@ const App = () => {
           <Route path="/register" element={<Register />}></Route>
         </Routes>
       </Router>
-      <Button
-        className="Form-button"
-        variant="contained"
-        color="primary"
-        size="large"
-        type="submit"
-        onClick={handleOpen}
-      >
-        Create A Post
-      </Button>
-      <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Postform handleClose={handleClose} />
-      </Modal>
     </div>
   );
 };
