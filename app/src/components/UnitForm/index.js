@@ -12,8 +12,9 @@ import CloseIcon from "@mui/icons-material/Close";
 import FileBase from "react-file-base64";
 import axios from "axios";
 
-const UnitForm = ({ handleClose }) => {
+const UnitForm = ({ handleClose, unitId, setUnitId, unitArr, addressArr }) => {
   const classes = useStyles();
+  const [newAddress, setNewAddress] = useState("");
   const leaseOptions = [
     { value: 4, label: "4 months" },
     { value: 8, label: "8 months" },
@@ -21,6 +22,7 @@ const UnitForm = ({ handleClose }) => {
   ];
 
   const defaultUnitValues = {
+    unitId: null,
     address: "301 Phillip St",
     room: 3,
     price: 500,
@@ -31,12 +33,21 @@ const UnitForm = ({ handleClose }) => {
     selectedImage: "",
   };
 
-  const [postData, setPostData] = useState(defaultUnitValues);
+  const currentUnit = unitId ? unitArr.find(unit => unit.unitId === unitId) : null;
+
+  const [postData, setPostData] = useState(currentUnit ? currentUnit : defaultUnitValues);
 
   const handleNum = (e) => {
     let value = parseInt(e.target.value, 10);
     if (value < 0) value = 0;
-    handleChange(e);
+    setPostData({
+      ...postData,
+      [e.target.name]: value
+    });
+  };
+
+  const handleAddress = (e) => {
+    setNewAddress(e.target.value);
   };
 
   const handleChange = (e) => {
@@ -45,13 +56,25 @@ const UnitForm = ({ handleClose }) => {
       [e.target.name]: e.target.value,
     });
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const res = await axios.post("/api/unit/create", {
-      ...postData,
-    });
-    console.log(res);
+    if (unitId) {
+      //update request instead of create
+    }
+    else {
+      if (postData.address === "Other") {
+        setPostData({
+          ...postData,
+          address: newAddress,
+        });
+      }
+      const res = await axios.post("/api/unit/create", {
+        ...postData,
+      });
+    }
     setPostData(defaultUnitValues);
+    setUnitId(null);
 
     handleClose();
   };
@@ -73,10 +96,27 @@ const UnitForm = ({ handleClose }) => {
           variant="outlined"
           label="Address"
           fullWidth
+          select
           required
           value={postData.address}
           onChange={handleChange}
-        />
+        >
+          {addressArr.map((option) => (
+              <MenuItem value={option}>
+                {option}
+              </MenuItem>
+          ))}
+        </TextField>
+        { postData.address === "Other" &&
+          <TextField
+          name="newaddress"
+          variant="outlined"
+          label="New Address"
+          fullWidth
+          value={newAddress}
+          onChange={handleAddress}
+          />
+        }
         <TextField
           name="room"
           variant="outlined"
@@ -85,7 +125,7 @@ const UnitForm = ({ handleClose }) => {
           fullWidth
           value={postData.room}
           className={classes.numbers}
-          onChange={handleChange}
+          onChange={handleNum}
         />
         <TextField
           name="price"

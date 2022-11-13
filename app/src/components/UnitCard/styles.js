@@ -2,13 +2,16 @@ import { makeStyles } from '@mui/styles';
 
 export default makeStyles({
   media: {
-    display: 'block',
+    height: 0,
+    paddingTop: '56.25%',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundBlendMode: 'darken',
+  },
+  border: {
+    border: 'solid',
+  },
+  fullHeightCard: {
     height: '100%',
-    width: '100%',
-    maxWidth: '50%',
-    maxHeight: '50%',
-    margin: 'auto',
-    backgroundSize: 'contain'
   },
   card: {
     display: 'flex',
@@ -17,37 +20,33 @@ export default makeStyles({
     borderRadius: '15px',
     height: '100%',
     position: 'relative',
-    backgroundColor: '#fff'
   },
   overlay: {
     position: 'absolute',
-    top: '30px',
+    top: '20px',
     left: '20px',
-    color: 'black',
+    color: 'white',
+  },
+  overlay2: {
+    position: 'absolute',
+    top: '20px',
+    right: '20px',
+    color: 'white',
+  },
+  grid: {
+    display: 'flex',
   },
   details: {
-    display: 'flex',
+    display: 'block',
     justifyContent: 'space-between',
-    margin: '20px',
-    padding: '30px auto',
-    color: 'black',
-    textAlign: 'justify',
-    maxHeight: '100%',  
-    overflowY: 'scroll',
-    scrollbarWidth: "none",
-    '&::-webkit-scrollbar':{
-        display: 'none'
-    }
+    margin: '15px',
   },
   title: {
     padding: '0 16px',
-    'text-align': 'center',
-    margin: '15px auto'
   },
   cardActions: {
-    padding: '30px auto',
+    padding: '0 16px 8px 16px',
     display: 'flex',
     justifyContent: 'space-between',
-    margin: '20px'
   },
 });
