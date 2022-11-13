@@ -47,7 +47,7 @@ const UnitForm = ({ handleClose }) => {
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const res = await axios.post("/list_unit", {
+    const res = await axios.post("/api/unit/create", {
       ...postData,
     });
     console.log(res);
