@@ -1,13 +1,71 @@
 import React, { useState } from "react";
-import UnitForm from "../UnitForm";
-import { Button, Modal } from "@mui/material";
+import { Button, Modal, CircularProgress, Grid, Grow, Container } from "@mui/material";
 import { Link } from "react-router-dom";
 
+import UnitForm from "../UnitForm";
+import UnitCard from "../UnitCard";
+import useStyles from "./styles";
+
 const Home = () => {
+  const classes = useStyles();
   const [open, setOpen] = useState(false);
+  const [unitId, setUnitId] = useState(null);
+
+
+  const availableUnits = [
+    {
+      unitId: 1,
+      address: "256 Phillip St",
+      room: 2,
+      price: 1000,
+      numBeds: 3,
+      numWashrooms: 2,
+      leaseDuration: 4,
+      floor: 3,
+      selectedImage: "",
+    },
+    {
+      unitId: 2,
+      address: "301 Phillip St",
+      room: 3,
+      price: 1500,
+      numBeds: 5,
+      numWashrooms: 3,
+      leaseDuration: 8,
+      floor: 4,
+      selectedImage: "",
+    },
+    {
+      unitId: 3,
+      address: "301 Phillip St",
+      room: 3,
+      price: 1500,
+      numBeds: 5,
+      numWashrooms: 3,
+      leaseDuration: 8,
+      floor: 4,
+      selectedImage: "",
+    },
+    {
+      unitId: 4,
+      address: "500 Phillip St",
+      room: 3,
+      price: 1500,
+      numBeds: 5,
+      numWashrooms: 3,
+      leaseDuration: 8,
+      floor: 4,
+      selectedImage: "",
+    }
+  ];
+  const addresses = ["500 Phillip St", "256 Phillip St", "301 Phillip St", "Other"];
+
 
   const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const handleClose = () => {
+    setOpen(false);
+    setUnitId(null);
+  }
   return (
     <div>
       <Link to="/register">Sign Up</Link>
@@ -29,8 +87,25 @@ const Home = () => {
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <UnitForm handleClose={handleClose} />
+        <UnitForm handleClose={handleClose} unitId={unitId} setUnitId={setUnitId} unitArr={availableUnits} addressArr={addresses} />
       </Modal>
+      <Grow in>
+          <Container>
+                <Grid container justify="space-between" alignItems="stretch" spacing={3}>
+                    <Grid item xs={12} sm={6}>
+                    {!availableUnits.length ? <CircularProgress /> : (
+                      <Grid className={classes.container} container alignItems="stretch" spacing={3}>
+                        {availableUnits.map((unit) => (
+                            <Grid item xs={12} sm={6}>
+                                <UnitCard unit={unit} setOpen = {setOpen} setUnitId={setUnitId} unitArr={availableUnits}/>
+                            </Grid>
+                        ))}
+                      </Grid>
+                    )}
+                    </Grid>
+                </Grid>
+          </Container>
+        </Grow>
     </div>
   );
 };

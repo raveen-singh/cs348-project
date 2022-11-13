@@ -4,10 +4,10 @@ export default makeStyles({
   paper: {
     padding: "2%",
     position: "absolute",
-    top: "25%",
+    top: "20%",
     left: "30%",
     width: "40%",
-    height: "50%",
+    height: "60%",
     display: "flex",
     justifyContent: "center",
   },
