@@ -14,34 +14,32 @@ const Navbar = () => {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   return (
-    <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="absolute">
-        <Toolbar>
-          <Button
-            variant="filled"
-            component={RouterLink}
-            sx={{ display: "inline", width: "auto" }}
-            to="/"
-          >
-            Home
-          </Button>
-          <Button variant="filled" component={RouterLink} to="/register">
-            Sign Up
-          </Button>
-          <Button variant="filled" onClick={handleOpen}>
-            Create A Post
-          </Button>
-          <Modal
-            open={open}
-            onClose={handleClose}
-            aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description"
-          >
-            <UnitForm handleClose={handleClose} />
-          </Modal>
-        </Toolbar>
-      </AppBar>
-    </Box>
+    <AppBar position="sticky">
+      <Toolbar>
+        <Button
+          variant="filled"
+          component={RouterLink}
+          sx={{ display: "inline", width: "auto" }}
+          to="/"
+        >
+          Home
+        </Button>
+        <Button variant="filled" component={RouterLink} to="/register">
+          Sign Up
+        </Button>
+        <Button variant="filled" onClick={handleOpen}>
+          Create A Post
+        </Button>
+        <Modal
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <UnitForm handleClose={handleClose} />
+        </Modal>
+      </Toolbar>
+    </AppBar>
   );
 };
 
