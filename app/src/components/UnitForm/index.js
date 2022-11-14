@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import useStyles from "./styles";
 import {
   TextField,
   Button,
@@ -7,13 +6,13 @@ import {
   Paper,
   MenuItem,
   IconButton,
+  Box,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import FileBase from "react-file-base64";
 import axios from "axios";
 
 const UnitForm = ({ handleClose }) => {
-  const classes = useStyles();
   const leaseOptions = [
     { value: 4, label: "4 months" },
     { value: 8, label: "8 months" },
@@ -57,11 +56,26 @@ const UnitForm = ({ handleClose }) => {
   };
 
   return (
-    <Paper className={classes.paper}>
-      <form
+    <Paper
+      sx={{
+        padding: "2%",
+        position: "absolute",
+        top: "25%",
+        left: "30%",
+        width: "40%",
+        display: "flex",
+        justifyContent: "center",
+      }}
+    >
+      <Box
+        component="form"
         autoComplete="off"
         noValidate
-        className={classes.form}
+        sx={{
+          display: "flex",
+          flexWrap: "wrap",
+          justifyContent: "space-between",
+        }}
         onSubmit={handleSubmit}
       >
         <Typography variant="h5">Unit Information</Typography>
@@ -84,7 +98,6 @@ const UnitForm = ({ handleClose }) => {
           type="number"
           fullWidth
           value={postData.room}
-          className={classes.numbers}
           onChange={handleChange}
         />
         <TextField
@@ -92,7 +105,7 @@ const UnitForm = ({ handleClose }) => {
           variant="outlined"
           label="Price"
           type="number"
-          className={classes.numbers}
+          sx={{ width: "33%" }}
           required
           value={postData.price}
           onChange={handleNum}
@@ -102,7 +115,7 @@ const UnitForm = ({ handleClose }) => {
           variant="outlined"
           label="Bedrooms"
           type="number"
-          className={classes.numbers}
+          sx={{ width: "33%" }}
           required
           value={postData.numBeds}
           onChange={handleNum}
@@ -112,7 +125,7 @@ const UnitForm = ({ handleClose }) => {
           variant="outlined"
           label="Washrooms"
           type="number"
-          className={classes.numbers}
+          sx={{ width: "33%" }}
           required
           value={postData.numWashrooms}
           onChange={handleNum}
@@ -122,7 +135,7 @@ const UnitForm = ({ handleClose }) => {
           variant="outlined"
           label="Floor"
           type="number"
-          className={classes.numbers}
+          sx={{ width: "33%" }}
           value={postData.floor}
           onChange={handleNum}
         />
@@ -159,7 +172,6 @@ const UnitForm = ({ handleClose }) => {
           //   !postData.numWashrooms ||
           //   !postData.leaseDuration
           // }
-          className={classes.buttonSubmit}
           variant="contained"
           color="primary"
           size="large"
@@ -168,7 +180,7 @@ const UnitForm = ({ handleClose }) => {
         >
           Submit
         </Button>
-      </form>
+      </Box>
     </Paper>
   );
 };
