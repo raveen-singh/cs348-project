@@ -2,13 +2,13 @@ INSERT INTO UnitListerAccount
 VALUES (NULL, 'johndoe45', 'password123', 'John Doe', '8443212200', 'admin@iconstudents.ca','https://www.iconstudents.com/');
 
 INSERT INTO Building
-VALUES (NULL,'330 Phillip St',0,'ensuite','apartment',0.7);
+VALUES (NULL,'330 Phillip St',0,'ensuite','Apartment',0.7);
 
 INSERT INTO Building
-VALUES (NULL,'256 Phillip St',1,'building','apartment',0.6);
+VALUES (NULL,'256 Phillip St',1,'Building','Apartment',0.6);
 
 INSERT INTO Building
-VALUES (NULL,'254 Phillip St',1,'ensuite','apartment',0.5);
+VALUES (NULL,'254 Phillip St',1,'Ensuite','Apartment',0.5);
 
 
 INSERT INTO AvailableUnit
