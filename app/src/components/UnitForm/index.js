@@ -24,8 +24,8 @@ const UnitForm = ({ handleClose, unitId, setUnitId, unitArr, addressArr }) => {
     { value: 8, label: "8 months" },
     { value: 12, label: "12 months" },
   ];
-  const laundryOptions = ["building", "ensuite", "none"];
-  const typeOptions = ["apartment", "house"];
+  const laundryOptions = ["Building", "Ensuite", "None"];
+  const typeOptions = ["Apartment", "House"];
 
   const defaultUnitValues = {
     unit_id: null,
@@ -43,8 +43,8 @@ const UnitForm = ({ handleClose, unitId, setUnitId, unitArr, addressArr }) => {
   const defaultBuildingValues = {
     address: "",
     pet_friendly: 1,
-    laundry_availability: "building",
-    type_of_unit: "apartment",
+    laundry_availability: "Building",
+    type_of_unit: "Apartment",
     distance_from_waterloo: 0
   };
 
@@ -90,7 +90,7 @@ const UnitForm = ({ handleClose, unitId, setUnitId, unitArr, addressArr }) => {
       //update unit endpoint
     }
     else {
-      const res = await axios.post("/list_unit", {
+      const res = await axios.post("/api/unit/create", {
         ...postData,
       });
     }

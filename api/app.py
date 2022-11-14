@@ -134,21 +134,22 @@ def delete_unit():
 
 
 
-@app.route('/list_unit', methods = ["POST"])
+@app.route('/api/unit/create', methods = ["POST"])
 def list_unit():
     conn = mysql.connection
     cur = conn.cursor()
 
     json_data = request.get_json()
+    print(json_data)
     # address is used in future to find building_id
     address = json_data["address"]
-    room = json_data["room"]
-    lease_term = json_data["leaseDuration"]
-    beds = json_data["numBeds"]
-    floor = json_data["floor"]
-    image = json_data["selectedImage"]
-    washrooms = json_data["numWashrooms"]
-    rent = json_data["price"]
+    room = json_data["room_num"]
+    lease_term = json_data["lease_term"]
+    beds = json_data["num_beds"]
+    floor = json_data["floor_num"]
+    image = json_data["image_path"]
+    washrooms = json_data["num_washrooms"]
+    rent = json_data["rent_price"]
 
     # these are hardcoded values for the foreign keys
     # for the future, change these to dynamic SQL queries
@@ -162,6 +163,6 @@ def list_unit():
                 image, washrooms, rent])
         cur.close()
         conn.commit()
-        return {"success": True}
+        return {"success": True} # RETURN UNIT ID
     except Exception as e:
         return {"success": False, "message": f"Error creating listing: {e}"}
