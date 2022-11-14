@@ -36,7 +36,11 @@ const Login = () => {
       <CssBaseline />
       <Box
         sx={{
+<<<<<<< HEAD
           marginTop: 4,
+=======
+          marginTop: 5,
+>>>>>>> main
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
