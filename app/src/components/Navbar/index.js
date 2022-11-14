@@ -15,7 +15,7 @@ const Navbar = () => {
   const handleClose = () => setOpen(false);
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="absolute">
+      <AppBar position="sticky">
         <Toolbar>
           <Button
             variant="filled"
