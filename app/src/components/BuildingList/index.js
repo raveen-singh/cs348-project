@@ -66,7 +66,10 @@ const BuildingList = ({ buildings }) => {
                       <ManageSearchIcon />
                     </Link>
                   </TableCell>
-                  <TableCell component="th" scope="row">
+                  <TableCell
+                    component={RouterLink}
+                    to={`/buildings/${building_id}`}
+                  >
                     {building.address}
                   </TableCell>
                   <TableCell align="center">
@@ -89,7 +92,7 @@ const BuildingList = ({ buildings }) => {
       </Grid>
       {/* In the future, filter and sort box will go here */}
       <Grid item sm={12} md={4}>
-        Filter and Sort in the future
+        <Box>Filter and Sort in the future</Box>
       </Grid>
     </Grid>
   );
