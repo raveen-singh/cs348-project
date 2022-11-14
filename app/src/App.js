@@ -8,6 +8,7 @@ import Home from "./components/Home";
 import Login from "./components/Login";
 import Navbar from "./components/Navbar";
 import BuildingList from "./components/BuildingList";
+import BuildingPage from "./components/BuildingPage";
 
 const App = () => {
   const [buildings, setBuildings] = useState([]);
@@ -33,6 +34,7 @@ const App = () => {
           path="/buildings"
           element={<BuildingList buildings={buildings} />}
         />
+        <Route path="/buildings/:id" element={<BuildingPage />} />
       </Routes>
     </Router>
   );

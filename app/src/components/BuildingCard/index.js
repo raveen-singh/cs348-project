@@ -23,17 +23,9 @@ const BuildingCard = ({ building }) => {
         </Typography>
         <Chip label={building.type_of_unit} sx={{ mr: 1 }} />
         <Chip label="Pet-friendly" sx={{ mr: 1 }} />
-        <Chip label={`Laundy: ${building.laundry_availability}`} />
+        <Chip label={`Laundry: ${building.laundry_availability}`} />
       </CardContent>
-      <CardActions>
-        <Button
-          component={RouterLink}
-          size="small"
-          to={`/building/${building.id}`}
-        >
-          View More
-        </Button>
-      </CardActions>
+      <CardActions></CardActions>
     </Card>
   );
 };

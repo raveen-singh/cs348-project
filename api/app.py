@@ -42,7 +42,7 @@ def get_buildings():
     # expecting to be called /api/building/get?id={id} (optional id) or just /api/building/get
     # https://stackoverflow.com/questions/24892035/how-can-i-get-the-named-parameters-from-a-url-using-flask
     id = request.args.get("id")
-    review_grouped_by_building_query = "select building_id, avg(admin_helpfulness_rating), avg(cleanliness_rating) from review group by building_id"
+    review_grouped_by_building_query = "SELECT building_id, ROUND(AVG(admin_helpfulness_rating), 1) AS admin_rating, ROUND(AVG(cleanliness_rating), 1) AS cleanliness_rating FROM review group BY building_id"
     cur = mysql.connection.cursor()
 
     if id: # return one building
