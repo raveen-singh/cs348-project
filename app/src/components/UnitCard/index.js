@@ -8,11 +8,8 @@ import {
   Typography,
   CardActionArea,
 } from "@mui/material";
-import useStyles from "./styles";
 
 const UnitCard = ({ unit }) => {
-  const classes = useStyles();
-
   return (
     <Card sx={{ maxWidth: 800 }}>
       <CardActionArea>
