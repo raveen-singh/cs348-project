@@ -10,6 +10,7 @@ app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = ''
 app.config['MYSQL_DB'] = 'cs348db'
+app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 
 mysql = MySQL(app)
 
@@ -27,8 +28,8 @@ def get_data():
     cur.close()
     return {'message':rv}
 
-@app.route('/register_lister', methods = ["POST"])
-def register_lister():
+@app.route('/api/lister/create', methods = ["POST"])
+def create_lister():
     conn = mysql.connection
     cur = conn.cursor()
 
@@ -56,8 +57,8 @@ def register_lister():
     else: # user already exists
         return {"status": False, "message": "This username is taken!"}
 
-@app.route('/list_unit', methods = ["POST"])
-def list_unit():
+@app.route('/api/unit/create', methods = ["POST"])
+def create_unit():
     conn = mysql.connection
     cur = conn.cursor()
 
