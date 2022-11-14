@@ -154,6 +154,8 @@ def list_unit():
     # these are hardcoded values for the foreign keys
     # for the future, change these to dynamic SQL queries
     building_id = 1
+
+    # GET CURRENT PM!
     pm_id = 1
 
     try:
@@ -161,8 +163,13 @@ def list_unit():
                 [building_id, pm_id, room if room else None, 
                 lease_term, beds, floor if floor else None, 
                 image, washrooms, rent])
-        cur.close()
         conn.commit()
-        return {"success": True} # RETURN UNIT ID
+
+        # get id of recently inserted building, assumes no concurrent writes :(
+        cur.execute("SELECT max(unit_id) as unit_id FROM AvailableUnit;")
+        unit_id = cur.fetchone()["unit_id"]
+
+        cur.close()
+        return {"success": True, "unit_id": unit_id} # RETURN UNIT ID
     except Exception as e:
         return {"success": False, "message": f"Error creating listing: {e}"}
