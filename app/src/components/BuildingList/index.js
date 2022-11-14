@@ -15,10 +15,6 @@ import ManageSearchIcon from "@mui/icons-material/ManageSearch";
 import React from "react";
 
 const BuildingList = ({ buildings }) => {
-  const capitalize = (word) => {
-    return word.charAt(0).toUpperCase() + word.slice(1);
-  };
-
   return (
     <Grid
       container
@@ -74,7 +70,7 @@ const BuildingList = ({ buildings }) => {
                     {building.address}
                   </TableCell>
                   <TableCell align="center">
-                    {capitalize(building.laundry_availability)}
+                    {building.laundry_availability}
                   </TableCell>
                   <TableCell align="center">
                     {building.pet_friendly ? "Yes" : "No"}
