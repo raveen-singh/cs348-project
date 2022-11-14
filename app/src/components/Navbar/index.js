@@ -24,11 +24,14 @@ const Navbar = () => {
         >
           Home
         </Button>
-        <Button variant="filled" component={RouterLink} to="/register">
-          Sign Up
-        </Button>
         <Button variant="filled" onClick={handleOpen}>
           Create A Post
+        </Button>
+        <Button variant="filled" component={RouterLink} to="/buildings">
+          View Buildings
+        </Button>
+        <Button variant="filled" component={RouterLink} to="/register">
+          Sign Up
         </Button>
         <Modal
           open={open}

@@ -5,13 +5,12 @@ import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Button from "@mui/material/Button";
 import Chip from "@mui/material/Chip";
-import CheckIcon from "@mui/icons-material/Check";
 import Typography from "@mui/material/Typography";
 import { Link as RouterLink } from "react-router-dom";
 
 const BuildingCard = ({ building }) => {
   return (
-    <Card sx={{ maxWidth: 345 }}>
+    <Card sx={{ maxWidth: 400 }}>
       <CardMedia
         component="img"
         height="180"
@@ -22,14 +21,9 @@ const BuildingCard = ({ building }) => {
         <Typography gutterBottom variant="h5" component="div">
           {building.address}
         </Typography>
-        <div>
-          <Chip
-            icon={<CheckIcon />}
-            label={building.type_of_unit}
-            sx={{ mr: 1 }}
-          />
-          <Chip icon={<CheckIcon />} label="Pet-friendly" />
-        </div>
+        <Chip label={building.type_of_unit} sx={{ mr: 1 }} />
+        <Chip label="Pet-friendly" sx={{ mr: 1 }} />
+        <Chip label={`Laundy: ${building.laundry_availability}`} />
       </CardContent>
       <CardActions>
         <Button
