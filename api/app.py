@@ -88,3 +88,19 @@ def create_unit():
         return {"success": True}
     except Exception as e:
         return {"success": False, "message": f"Error creating listing: {e}"}
+
+
+@app.route('/api/login', methods = ["POST"])
+def login():
+    conn = mysql.connection
+    cur = conn.cursor()
+
+    cur.execute("SELECT * FROM UnitListerAccount WHERE username = %s AND password = %s", (username, password))
+
+    account = cur.fetchone()
+
+    if account:
+        # session["loggedin"] = True
+        # session["id"] = account["id"]
+        # session["username"] = account["username"]
+        return {"sucess": True}
