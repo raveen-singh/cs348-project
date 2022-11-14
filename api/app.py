@@ -57,8 +57,7 @@ def create_lister():
     else: # user already exists
         return {"status": False, "message": "This username is taken!"}
 
-@app.route('/api/building/create', methods = ["POST"])
-def create_building():
+def create_building(building_info):
     # info is a dictionary with keys address, pet_friendly, laundry_availability, type_of_unit, and distance_from_waterloo
     # address VARCHAR(255) NOT NULL,
     # pet_friendly TINYINT(1) NOT NULL,
@@ -66,16 +65,20 @@ def create_building():
     # type_of_unit ENUM('apartment','house') NOT NULL,
     # distance_from_waterloo DECIMAL(3,1) NOT NULL,
 
-    building_info = request.get_json() # {"address": "123 H", "pet_friendly": 0, "laundry_availability": "ensuite", "type_of_unit": "house", "distance_from_waterloo": 0.4}
+    # building_info = {"address": "123 H", "pet_friendly": 0, "laundry_availability": "ensuite", "type_of_unit": "house", "distance_from_waterloo": 0.4}
     conn = mysql.connection
     cur = conn.cursor()
 
     try:
         cur.execute("INSERT INTO Building VALUES (NULL, %s, %s, %s, %s, %s)", 
                     (building_info["address"], building_info["pet_friendly"], building_info["laundry_availability"], building_info["type_of_unit"], building_info["distance_from_waterloo"]))
-        cur.close()
         conn.commit()
-        return {"status": True}
+
+        cur.execute("SELECT max(building_id) as building_id from building;")
+        building_id = cur.fetchone()["building_id"]
+        print(f"new building id is {building_id}")
+        cur.close()
+        return {"status": True, "building_id": building_id}
     except Exception as e:
         return {"status": False, "message": f"Error with inserting: {e}"} 
 
@@ -150,6 +153,16 @@ def list_unit():
     image = json_data["image_path"]
     washrooms = json_data["num_washrooms"]
     rent = json_data["rent_price"]
+
+    if not json_data["building_id"]:
+        print("creating building...")
+        pet_friendly = 0
+        laundry_availability = "Ensuite"
+        type_of_unit = "House"
+        distance_from_waterloo = 0.5
+        building_info = {"address": address, "pet_friendly": pet_friendly, "laundry_availability": laundry_availability, "type_of_unit": type_of_unit, "distance_from_waterloo": distance_from_waterloo}
+        result = create_building(building_info)
+        print(f"creating building result: {result}")
 
     # these are hardcoded values for the foreign keys
     # for the future, change these to dynamic SQL queries
