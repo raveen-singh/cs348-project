@@ -1,5 +1,6 @@
-import React, { useState } from "react";
-import { Button, Modal, CircularProgress, Grid, Grow, Container } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import { Button, Modal, CircularProgress, Grid, Box } from "@mui/material";
+import axios from "axios";
 
 import UnitForm from "../UnitForm";
 import UnitCard from "../UnitCard";
@@ -9,56 +10,36 @@ const Units = () => {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
   const [unitId, setUnitId] = useState(null);
+  const [addresses, setAddresses] = useState([]);
+  const [units, setUnits] = useState([]);
 
 
-  const availableUnits = [
-    {
-      unitId: 1,
-      address: "256 Phillip St",
-      room: 2,
-      price: 1000,
-      numBeds: 3,
-      numWashrooms: 2,
-      leaseDuration: 4,
-      floor: 3,
-      selectedImage: "",
-    },
-    {
-      unitId: 2,
-      address: "301 Phillip St",
-      room: 3,
-      price: 1500,
-      numBeds: 5,
-      numWashrooms: 3,
-      leaseDuration: 8,
-      floor: 4,
-      selectedImage: "",
-    },
-    {
-      unitId: 3,
-      address: "301 Phillip St",
-      room: 3,
-      price: 1500,
-      numBeds: 5,
-      numWashrooms: 3,
-      leaseDuration: 8,
-      floor: 4,
-      selectedImage: "",
-    },
-    {
-      unitId: 4,
-      address: "500 Phillip St",
-      room: 3,
-      price: 1500,
-      numBeds: 5,
-      numWashrooms: 3,
-      leaseDuration: 8,
-      floor: 4,
-      selectedImage: "",
+  const getUnits = async () => {
+    try {
+      const result = await axios.get('/api/unit/get');
+      setUnits(result.data.data);
+      console.log(result.data.data)
+    } catch (error) {
+      console.log(error);
     }
-  ];
-  const addresses = ["500 Phillip St", "256 Phillip St", "301 Phillip St", "Other"];
+  };
 
+  const getAddresses = async () => {
+    try {
+      const result = await axios.get('/api/building/get_addresses');
+      const options = Object.entries(result.data);
+      options.push(["Other", 0]);
+      setAddresses(options);
+      
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  
+  useEffect(() => {
+    getAddresses();
+    getUnits();
+  }, [])
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
@@ -67,42 +48,27 @@ const Units = () => {
   }
   return (
     <div>
-      <Button
-        sx={{ marginTop: "1rem" }}
-        className="Form-button"
-        variant="contained"
-        color="primary"
-        size="large"
-        type="submit"
-        onClick={handleOpen}
-      >
-        Create A Post
-      </Button>
       <Modal
         open={open}
         onClose={handleClose}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <UnitForm handleClose={handleClose} unitId={unitId} setUnitId={setUnitId} unitArr={availableUnits} addressArr={addresses} />
+        <UnitForm handleClose={handleClose} unitId={unitId} setUnitId={setUnitId} unitArr={units} addressArr={addresses} />
       </Modal>
-      <Grow in>
-          <Container>
-                <Grid container justify="space-between" alignItems="stretch" spacing={3}>
-                    <Grid item xs={12} sm={6}>
-                    {!availableUnits.length ? <CircularProgress /> : (
-                      <Grid className={classes.container} container alignItems="stretch" spacing={3}>
-                        {availableUnits.map((unit) => (
-                            <Grid item xs={12} sm={6}>
-                                <UnitCard unit={unit} setOpen = {setOpen} setUnitId={setUnitId} unitArr={availableUnits}/>
-                            </Grid>
-                        ))}
-                      </Grid>
-                    )}
-                    </Grid>
-                </Grid>
-          </Container>
-        </Grow>
+      <Box sx={{ width: "90%", margin: '100px 5%' }}>
+        <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 4 }}>
+          {!units.length ? <CircularProgress /> : (
+            <>
+              {units.map((unit) => (
+                  <Grid item xs={12} sm={6} md={4}>
+                      <UnitCard unit={unit} setOpen = {setOpen} setUnitId={setUnitId} unitArr={units} addressArr={addresses} />
+                  </Grid>
+              ))}
+            </>
+          )}
+        </Grid>
+      </Box>
     </div>
   );
 };

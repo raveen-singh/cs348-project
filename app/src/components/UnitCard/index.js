@@ -1,4 +1,5 @@
 import React from "react";
+import axios from "axios";
 import {
   Card,
   CardActions,
@@ -14,16 +15,18 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import InfoIcon from '@mui/icons-material/Info';
 import useStyles from "./styles";
 
-const UnitCard = ({ unit, setOpen, setUnitId, unitArr }) => {
+const UnitCard = ({ unit, setOpen, setUnitId, unitArr, addressArr }) => {
   const classes = useStyles();
+  const unitAddress = addressArr.find(building => building[1] === unit.building_id);
 
   const handleUpdate = (e) => {
     setOpen(true);
-    setUnitId(unit.unitId);
+    setUnitId(unit.unit_id);
   }
 
-  const handleDelete = (e) => {
-    unitArr = unitArr.filter((item) => item.unitId !== unit.unitId);
+  const handleDelete = async (e) => {
+    const res = await axios.delete(`/api/unit/delete?id={${unit.unit_id}}`);
+    console.log(res);
   }
   // Check if current user created the post to show the button
   return (
@@ -40,14 +43,16 @@ const UnitCard = ({ unit, setOpen, setUnitId, unitArr }) => {
                 </Button>
             </div>
             <div className={classes.details}>
-                <Typography variant="body2" color="textSecondary">Number of Beds: {unit.numBeds}</Typography>
-                <Typography variant="body2" color="textSecondary">Number of Washrooms: {unit.numWashrooms}</Typography>
-                <Typography variant="body2" color="textSecondary">Floor Number: {unit.floor}</Typography>
+                <Typography variant="body2" color="textSecondary">Number of Beds: {unit.num_beds}</Typography>
+                <Typography variant="body2" color="textSecondary">Number of Washrooms: {unit.num_washrooms}</Typography>
+                <Typography variant="body2" color="textSecondary">Room Number: {unit.room_num}</Typography>
+                <Typography variant="body2" color="textSecondary">Floor Number: {unit.floor_num}</Typography>
+                
             </div>
-            <Typography className={classes.title} variant="h5" >{unit.address}</Typography> 
+            <Typography className={classes.title} variant="h5" >{unitAddress[0]}</Typography> 
             <CardContent>
-                <Typography variant="h6" component="h6" >${unit.price}/month</Typography> 
-                <Typography variant="h6" component="h6" >Lease Duration: {unit.leaseDuration} months</Typography> 
+                <Typography variant="h6" component="h6" >${unit.rent_price}/month</Typography> 
+                <Typography variant="h6" component="h6" >Lease Duration: {unit.lease_term} months</Typography> 
             </CardContent>
             <CardActions className={classes.cardActions}> 
                 <Button size="small" color="primary" onClick={() => {}}>

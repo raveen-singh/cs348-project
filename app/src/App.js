@@ -1,4 +1,4 @@
-import {useState, React} from "react";
+import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 // Components
@@ -9,12 +9,6 @@ import Navbar from "./components/Navbar";
 import Units from "./components/Units";
 
 const App = () => {
-  const [open, setOpen] = useState(false);
-
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => {
-    setOpen(false);
-  };
   return (
     <div className="App">
       <Router>
