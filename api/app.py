@@ -10,6 +10,7 @@ app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = ''
 app.config['MYSQL_DB'] = 'cs348db'
+app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 
 mysql = MySQL(app)
 
@@ -55,6 +56,83 @@ def register_lister():
             return {"status": False, "message": f"Error with inserting: {e}"} 
     else: # user already exists
         return {"status": False, "message": "This username is taken!"}
+
+@app.route('/api/building/create', methods = ["POST"])
+def create_building():
+    # info is a dictionary with keys address, pet_friendly, laundry_availability, type_of_unit, and distance_from_waterloo
+    # address VARCHAR(255) NOT NULL,
+    # pet_friendly TINYINT(1) NOT NULL,
+    # laundry_availability ENUM('building', 'ensuite', 'none') NOT NULL,
+    # type_of_unit ENUM('apartment','house') NOT NULL,
+    # distance_from_waterloo DECIMAL(3,1) NOT NULL,
+
+    building_info = request.get_json() # {"address": "123 H", "pet_friendly": 0, "laundry_availability": "ensuite", "type_of_unit": "house", "distance_from_waterloo": 0.4}
+    conn = mysql.connection
+    cur = conn.cursor()
+
+    try:
+        cur.execute("INSERT INTO Building VALUES (NULL, %s, %s, %s, %s, %s)", 
+                    (building_info["address"], building_info["pet_friendly"], building_info["laundry_availability"], building_info["type_of_unit"], building_info["distance_from_waterloo"]))
+        cur.close()
+        conn.commit()
+        return {"status": True}
+    except Exception as e:
+        return {"status": False, "message": f"Error with inserting: {e}"} 
+
+# to be used for address dropdown for building info auto-populate (join)
+@app.route('/api/building/get_addresses', methods = ["GET"])
+def get_building_addresses():
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT DISTINCT building_id, address FROM building;")
+    rv = cur.fetchall()
+    addresses = {pair["address"]: pair["building_id"] for pair in rv}
+    cur.close()
+    return addresses
+
+@app.route('/api/unit/get', methods = ["GET"])
+def get_units():
+    # expecting to be called /api/unit/get?id={id} (optional id) or just /api/unit/get
+    id = request.args.get("id")
+    cur = mysql.connection.cursor()
+
+    if id: # return one unit
+        cur.execute("SELECT * FROM AvailableUnit WHERE unit_id = %s;", [id])
+        rv = cur.fetchone()
+    else: # return all units
+        cur.execute(f"SELECT * FROM AvailableUnit;")
+        rv = cur.fetchall()
+
+    cur.close()
+    return {"data": rv} # rv is a dictionary if provided id, otherwise a list of dictionaries
+
+@app.route('/api/unit/delete', methods = ["DELETE"])
+def delete_unit():
+    # expecting to be called /api/unit/get?id={id} 
+    id = request.args.get("id")
+    conn = mysql.connection
+    cur = conn.cursor()
+    
+    success = True
+    message = ""
+
+    cur.execute("SELECT * FROM AvailableUnit WHERE unit_id = %s", [id])
+    rv = cur.fetchone()
+    if not rv:
+        success = False
+        message = f"unit_id {id} doesn't exist so it cannot be deleted!"
+    else:
+        try:
+            cur.execute("DELETE FROM AvailableUnit WHERE unit_id = %s;", [id])
+        except Exception as e:
+            success = False
+            message = f"Error with deleting unit id {id}: {e}"
+            print(message)
+    
+    cur.close()
+    conn.commit()
+    return {"status": success, "message": message}
+
+
 
 @app.route('/list_unit', methods = ["POST"])
 def list_unit():
