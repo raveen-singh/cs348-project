@@ -1,7 +1,10 @@
 from flask import Flask, jsonify, request
 from flask_mysqldb import MySQL
-from werkzeug.utils import secure_filename
 import os
+import cv2
+import base64
+import numpy as np
+import uuid
 
 app = Flask(__name__)
 
@@ -12,10 +15,15 @@ app.config['MYSQL_PASSWORD'] = ''
 app.config['MYSQL_DB'] = 'cs348db'
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 
+STATUS_BAD_REQUEST = 400
+
 mysql = MySQL(app)
 
+# make directory to store images
 basedir = os.path.abspath(os.path.dirname(__file__))
-images_path = os.path.join(basedir, 'images')
+images_path = os.path.join(basedir, 'images/')
+os.makedirs(images_path, exist_ok=True)
+
 
 
 @app.route('/api')
@@ -71,24 +79,31 @@ def create_unit():
     lease_term = json_data["leaseDuration"]
     beds = json_data["numBeds"]
     floor = json_data["floor"]
-    image = json_data["selectedImage"]
+    image = json_data["selectedFile"]
     washrooms = json_data["numWashrooms"]
     rent = json_data["price"]
-
+    image_name = json_data["fileName"]
     # these are hardcoded values for the foreign keys
     # for the future, change these to dynamic SQL queries
     building_id = 1
     account_id = 1
+ 
+    data = image.split(',')
+    filename = images_path + f'{str(uuid.uuid4())}{image_name}'
 
-    # save image to os before uploading to db
-    f = request.files['file']
-    f.save(os.path.join(images_path, secure_filename(image)))
+    try:
+        jpg_original = base64.b64decode(data[1])
+        jpg_as_np = np.frombuffer(jpg_original, dtype=np.uint8)
+        img = cv2.imdecode(jpg_as_np, flags=1)
+        cv2.imwrite(filename, img)
+    except Exception as e:
+        return {"success": False, "message":" could not save image"}, STATUS_BAD_REQUEST
 
     try:
         cur.execute("INSERT INTO AvailableUnit VALUES (NULL, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
                 [building_id, account_id, room if room else None, 
                 lease_term, beds, floor if floor else None, 
-                image, washrooms, rent])
+                filename, washrooms, rent])
         cur.close()
         conn.commit()
         return {"success": True}
