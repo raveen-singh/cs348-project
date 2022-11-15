@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from 'react-router-dom'
 import useStyles from "./styles";
 import {
   TextField,
@@ -35,7 +36,7 @@ const UnitForm = ({ handleClose, unitId, setUnitId, unitArr, addressDict }) => {
     unit_id: null,
     building_id: null,
     pm_id: null,
-    address: "301 Phillip St",
+    address: "330 Phillip St",
     room_num: 3,
     rent_price: 500,
     num_beds: 5,
@@ -118,11 +119,15 @@ const UnitForm = ({ handleClose, unitId, setUnitId, unitArr, addressDict }) => {
       //update unit endpoint
     }
     else {
-      const res = await axios.post("/api/unit/create", {
-        ...postData,
-      });
+      try {
+        const res = await axios.post("/api/unit/create", {
+          ...postData,
+        });
+        
+      } catch (error) {
+        console.log(error);
+      }
     }
-    console.log(newbuilding);
     setPostData(defaultUnitValues);
     setUnitId(null);
 
@@ -315,7 +320,9 @@ const UnitForm = ({ handleClose, unitId, setUnitId, unitArr, addressDict }) => {
           fullWidth
           onClick={handleSubmit}
         >
-          Submit
+          <Link to={`/units/${unitArr.length+1}`}>   
+            Submit        
+          </Link>
         </Button>
       </form>
     </Paper>

@@ -18,6 +18,7 @@ const App = () => {
           <Route path="/register" element={<Register />}></Route>
           <Route path="/login" element={<Login />}></Route>
           <Route path="/units" element={<Units />}></Route>
+          <Route exact path="/units/:unitId" element={<Home />}></Route>
         </Routes>
       </Router>
     </div>

@@ -150,10 +150,7 @@ def list_unit():
     image = json_data["image_path"]
     washrooms = json_data["num_washrooms"]
     rent = json_data["rent_price"]
-
-    # these are hardcoded values for the foreign keys
-    # for the future, change these to dynamic SQL queries
-    building_id = 1
+    building_id = json_data["building_id"]
 
     # GET CURRENT PM!
     pm_id = 1
