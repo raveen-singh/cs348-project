@@ -1,7 +1,7 @@
-import time
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_mysqldb import MySQL
-from flask import request
+from werkzeug.utils import secure_filename
+import os
 
 app = Flask(__name__)
 
@@ -14,6 +14,8 @@ app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 
 mysql = MySQL(app)
 
+basedir = os.path.abspath(os.path.dirname(__file__))
+images_path = os.path.join(basedir, 'images')
 
 
 @app.route('/api')
@@ -77,6 +79,10 @@ def create_unit():
     # for the future, change these to dynamic SQL queries
     building_id = 1
     account_id = 1
+
+    # save image to os before uploading to db
+    f = request.files['file']
+    f.save(os.path.join(images_path, secure_filename(image)))
 
     try:
         cur.execute("INSERT INTO AvailableUnit VALUES (NULL, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
