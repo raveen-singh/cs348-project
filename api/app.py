@@ -58,7 +58,7 @@ def create_lister():
         except Exception as e:
             return {"status": False, "message": f"Error with inserting: {e}"} 
     else: # user already exists
-        return {"status": False, "message": "This username is taken!"}
+        return {"status": False, "message": "This username is taken!"}, 403
 
 @app.route('/api/unit/create', methods = ["POST"])
 def create_unit():
@@ -90,4 +90,4 @@ def create_unit():
         conn.commit()
         return {"success": True}
     except Exception as e:
-        return {"success": False, "message": f"Error creating listing: {e}"}
+        return {"success": False, "message": f"Error creating listing: {e}"}, 500
