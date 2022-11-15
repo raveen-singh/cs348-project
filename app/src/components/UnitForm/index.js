@@ -7,17 +7,21 @@ import {
   Paper,
   MenuItem,
   IconButton,
+  FormControlLabel,
+  Checkbox,
+  InputAdornment
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import FileBase from "react-file-base64";
 import axios from "axios";
 
-const UnitForm = ({ handleClose, unitId, setUnitId, unitArr, addressArr }) => {
+const UnitForm = ({ handleClose, unitId, setUnitId, unitArr, addressDict }) => {
   const classes = useStyles();
   const currentUnit = unitId ? unitArr.find(unit => unit.unit_id === unitId) : null;
+  const currentAddresses = Object.keys(addressDict);
   if (currentUnit) {
-    const addrPair = addressArr.find(addr => addr[1] === currentUnit.building_id);
-    currentUnit.address = addrPair[0];
+    const curAddress = currentAddresses.find(addr => addressDict[addr] === currentUnit.building_id);
+    currentUnit.address = curAddress;
   }
   const leaseOptions = [
     { value: 4, label: "4 months" },
@@ -42,15 +46,15 @@ const UnitForm = ({ handleClose, unitId, setUnitId, unitArr, addressArr }) => {
   };
   const defaultBuildingValues = {
     address: "",
-    pet_friendly: 1,
+    pet_friendly: 0,
     laundry_availability: "building",
     type_of_unit: "apartment",
-    distance_from_waterloo: 0
+    distance_from_waterloo: "0.0"
   };
 
   const [postData, setPostData] = useState(currentUnit ? currentUnit : defaultUnitValues);
   const [newbuilding, setNewBuilding] = useState(defaultBuildingValues);
-  console.log(postData);
+  const [checked, setChecked] = useState(false);
 
   const handleNum = (e) => {
     let value = parseInt(e.target.value, 10);
@@ -59,6 +63,17 @@ const UnitForm = ({ handleClose, unitId, setUnitId, unitArr, addressArr }) => {
       ...postData,
       [e.target.name]: value
     });
+    console.log(postData)
+  };
+
+  const handleAddress= (e) => {
+    const addrId = addressDict[e.target.value];
+    setPostData({
+      ...postData,
+      [e.target.name]: e.target.value,
+      building_id: addrId
+    });
+    console.log(postData)
   };
 
   const handleBuilding = (e) => {
@@ -66,7 +81,16 @@ const UnitForm = ({ handleClose, unitId, setUnitId, unitArr, addressArr }) => {
       ...newbuilding,
       [e.target.name]: e.target.value,
     });
-  }
+  };
+
+  const handleCheck = (e) => {
+    setChecked(e.target.checked);
+    const val = checked ? 0 : 1;
+    setNewBuilding({
+      ...newbuilding,
+      [e.target.name]: val,
+    });
+  };
 
   const handleChange = (e) => {
     setPostData({
@@ -80,8 +104,12 @@ const UnitForm = ({ handleClose, unitId, setUnitId, unitArr, addressArr }) => {
     if (postData.address === "Other") {
       setPostData({
         ...postData,
-        address: newbuilding.address,
+        address: newbuilding.address
       });
+      setNewBuilding({
+        ...newbuilding,
+        distance_from_waterloo: parseFloat(newbuilding.distance_from_waterloo)
+      })
       const res = await axios.post("/api/building/create", {
         ...newbuilding,
       });
@@ -94,6 +122,7 @@ const UnitForm = ({ handleClose, unitId, setUnitId, unitArr, addressArr }) => {
         ...postData,
       });
     }
+    console.log(newbuilding);
     setPostData(defaultUnitValues);
     setUnitId(null);
 
@@ -120,11 +149,11 @@ const UnitForm = ({ handleClose, unitId, setUnitId, unitArr, addressArr }) => {
           select
           required
           value={postData.address}
-          onChange={handleChange}
+          onChange={handleAddress}
         >
-          {addressArr.map((option) => (
-              <MenuItem value={option[0]}>
-                {option[0]}
+          {currentAddresses.map((option) => (
+              <MenuItem key={option} value={option}>
+                {option}
               </MenuItem>
           ))}
         </TextField>
@@ -139,15 +168,15 @@ const UnitForm = ({ handleClose, unitId, setUnitId, unitArr, addressArr }) => {
             value={newbuilding.address}
             onChange={handleBuilding}
           />
-          <TextField
-            name="pet_friendly"
-            variant="outlined"
-            label="Pet Friendly"
-            type="number"
-            className={classes.buildings}
-            required
-            value={newbuilding.pet_friendly}
-            onChange={handleBuilding}
+          <FormControlLabel  
+            control={
+            <Checkbox 
+            name="pet_friendly" 
+            checked={checked}
+            onChange={handleCheck}
+            />
+            } 
+            label="Pet Friendly" 
           />
           <TextField
             name="laundry_availability"
@@ -185,18 +214,20 @@ const UnitForm = ({ handleClose, unitId, setUnitId, unitArr, addressArr }) => {
             name="distance_from_waterloo"
             variant="outlined"
             label="Distance From Waterloo"
-            type="number"
             className={classes.buildings}
             required
             value={newbuilding.distance_from_waterloo}
             onChange={handleBuilding}
+            InputProps={{
+              endAdornment: <InputAdornment position="end">km</InputAdornment>
+            }}
           />
         </>
         }
         <TextField
           name="room_num"
           variant="outlined"
-          label="Room"
+          label="Room Number"
           type="number"
           required
           value={postData.room_num}
@@ -207,7 +238,6 @@ const UnitForm = ({ handleClose, unitId, setUnitId, unitArr, addressArr }) => {
           name="rent_price"
           variant="outlined"
           label="Price"
-          type="number"
           className={classes.numbers}
           required
           value={postData.rent_price}
@@ -259,6 +289,7 @@ const UnitForm = ({ handleClose, unitId, setUnitId, unitArr, addressArr }) => {
           ))}
         </TextField>
         <div>
+          <Typography variant="body2" color="textSecondary">Upload Image: 
           <FileBase
             type="file"
             multiple={false}
@@ -266,6 +297,7 @@ const UnitForm = ({ handleClose, unitId, setUnitId, unitArr, addressArr }) => {
               setPostData({ ...postData, image_path: base64 })
             }
           />
+          </Typography>
         </div>
         <Button
           // disabled={

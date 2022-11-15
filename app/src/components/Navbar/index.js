@@ -33,8 +33,8 @@ const Navbar = () => {
   const getAddresses = async () => {
     try {
       const result = await axios.get('/api/building/get_addresses');
-      const options = Object.entries(result.data);
-      options.push(["Other", 0]);
+      const options = result.data;
+      options["Other"] = 0;
       setAddresses(options);
       
     } catch (error) {
@@ -74,7 +74,7 @@ const Navbar = () => {
             aria-labelledby="modal-modal-title"
             aria-describedby="modal-modal-description"
           >
-            <UnitForm handleClose={handleClose} unitId={unitId} setUnitId={setUnitId} unitArr={units} addressArr={addresses} />
+            <UnitForm handleClose={handleClose} unitId={unitId} setUnitId={setUnitId} unitArr={units} addressDict={addresses} />
           </Modal>
         </Toolbar>
       </AppBar>

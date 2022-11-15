@@ -10,7 +10,7 @@ const Units = () => {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
   const [unitId, setUnitId] = useState(null);
-  const [addresses, setAddresses] = useState([]);
+  const [addresses, setAddresses] = useState({});
   const [units, setUnits] = useState([]);
 
 
@@ -18,7 +18,6 @@ const Units = () => {
     try {
       const result = await axios.get('/api/unit/get');
       setUnits(result.data.data);
-      console.log(result.data.data)
     } catch (error) {
       console.log(error);
     }
@@ -27,8 +26,9 @@ const Units = () => {
   const getAddresses = async () => {
     try {
       const result = await axios.get('/api/building/get_addresses');
-      const options = Object.entries(result.data);
-      options.push(["Other", 0]);
+      const options = result.data;
+      options["Other"] = 0;
+      console.log(options);
       setAddresses(options);
       
     } catch (error) {
@@ -54,7 +54,7 @@ const Units = () => {
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <UnitForm handleClose={handleClose} unitId={unitId} setUnitId={setUnitId} unitArr={units} addressArr={addresses} />
+        <UnitForm handleClose={handleClose} unitId={unitId} setUnitId={setUnitId} unitArr={units} addressDict={addresses} />
       </Modal>
       <Box sx={{ width: "90%", margin: '100px 5%' }}>
         <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 4 }}>
@@ -62,7 +62,7 @@ const Units = () => {
             <>
               {units.map((unit) => (
                   <Grid item xs={12} sm={6} md={4}>
-                      <UnitCard unit={unit} setOpen = {setOpen} setUnitId={setUnitId} unitArr={units} addressArr={addresses} />
+                      <UnitCard unit={unit} setOpen = {setOpen} setUnitId={setUnitId} unitArr={units} addressDict={addresses} />
                   </Grid>
               ))}
             </>

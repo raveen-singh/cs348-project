@@ -15,9 +15,10 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import InfoIcon from '@mui/icons-material/Info';
 import useStyles from "./styles";
 
-const UnitCard = ({ unit, setOpen, setUnitId, unitArr, addressArr }) => {
+const UnitCard = ({ unit, setOpen, setUnitId, unitArr, addressDict }) => {
   const classes = useStyles();
-  const unitAddress = addressArr.find(building => building[1] === unit.building_id);
+  const addressArr = Object.keys(addressDict);
+  const unitAddress = addressArr.find(building => addressDict[building] === unit.building_id);
 
   const handleUpdate = (e) => {
     setOpen(true);
@@ -49,7 +50,7 @@ const UnitCard = ({ unit, setOpen, setUnitId, unitArr, addressArr }) => {
                 <Typography variant="body2" color="textSecondary">Floor Number: {unit.floor_num}</Typography>
                 
             </div>
-            <Typography className={classes.title} variant="h5" >{unitAddress[0]}</Typography> 
+            <Typography className={classes.title} variant="h5" >{unitAddress}</Typography> 
             <CardContent>
                 <Typography variant="h6" component="h6" >${unit.rent_price}/month</Typography> 
                 <Typography variant="h6" component="h6" >Lease Duration: {unit.lease_term} months</Typography> 

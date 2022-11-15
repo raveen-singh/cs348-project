@@ -142,13 +142,13 @@ def list_unit():
     json_data = request.get_json()
     # address is used in future to find building_id
     address = json_data["address"]
-    room = json_data["room"]
-    lease_term = json_data["leaseDuration"]
-    beds = json_data["numBeds"]
-    floor = json_data["floor"]
-    image = json_data["selectedImage"]
-    washrooms = json_data["numWashrooms"]
-    rent = json_data["price"]
+    room = json_data["room_num"]
+    lease_term = json_data["lease_term"]
+    beds = json_data["num_beds"]
+    floor = json_data["floor_num"]
+    image = json_data["image_path"]
+    washrooms = json_data["num_washrooms"]
+    rent = json_data["rent_price"]
 
     # these are hardcoded values for the foreign keys
     # for the future, change these to dynamic SQL queries
