@@ -36,13 +36,13 @@ const UnitForm = ({ handleClose, unitId, setUnitId, unitArr, addressDict }) => {
     unit_id: null,
     building_id: null,
     pm_id: null,
-    address: "330 Phillip St",
-    room_num: "101",
+    address: "",
+    room_num: "",
     rent_price: 500,
     num_beds: 5,
     num_washrooms: 5,
     lease_term: 4,
-    floor_num: 3,
+    floor_num: "",
     image_path: "",
     new_address: "",
     pet_friendly: 0,
@@ -54,7 +54,7 @@ const UnitForm = ({ handleClose, unitId, setUnitId, unitArr, addressDict }) => {
     new_address: "",
     pet_friendly: 0,
     laundry_availability: "building",
-    type_of_unit: "apartment",
+    type_of_unit: "",
     distance_from_waterloo: "0.0"
   };
 
@@ -89,7 +89,7 @@ const UnitForm = ({ handleClose, unitId, setUnitId, unitArr, addressDict }) => {
 
   const handleCheck = (e) => {
     setChecked(e.target.checked);
-    const val = checked ? 0 : 1;
+    const val = checked ? 1 : 0;
     setNewBuilding({
       ...newbuilding,
       [e.target.name]: val,
