@@ -29,7 +29,7 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const res = await axios.post("/api/lister/create", {
+    const { data } = await axios.post("/api/lister/create", {
       ...formValues,
     });
     setFormValues({
@@ -41,13 +41,11 @@ const Register = () => {
       website: "",
     });
 
-    console.log(res);
-
-    if (res.data.success) {
+    if (data.success) {
       navigate("/login");
       toast.success("Sign up successful, please login to continue.");
     } else {
-      setMessage(res.data.message);
+      setMessage(data.message);
     }
   };
 
