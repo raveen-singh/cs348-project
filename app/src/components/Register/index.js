@@ -41,8 +41,11 @@ const Register = () => {
       website: "",
     });
 
+    console.log(res);
+
     if (res.data.status) {
-      navigate("/");
+      navigate("/login");
+      toast.success("Sign up successful, please login to continue.");
     } else {
       setMessage(res.data.message);
     }
