@@ -18,8 +18,6 @@ export const AuthContextProvider = ({ children }) => {
     user: localStorage.getItem("user"),
   });
 
-  console.log("AuthContext state: ", state);
-
   return (
     <AuthContext.Provider value={{ ...state, dispatch }}>
       {children}
