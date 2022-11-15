@@ -25,8 +25,6 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 images_path = os.path.join(basedir, 'images/')
 os.makedirs(images_path, exist_ok=True)
 
-
-mysql = MySQL(app)
     
 @app.route('/api/building/get', methods = ["GET"]) # add ability to filter by current user's property
 def get_buildings():
@@ -44,6 +42,7 @@ def get_buildings():
 
     cur.close()
     return {"data": rv} # rv is a dictionary if provided id, otherwise a list of dictionaries. dictionary includes averaged reviews.
+
 
 @app.route('/api/lister/create', methods = ["POST"])
 def create_lister():
@@ -73,6 +72,7 @@ def create_lister():
             return {"status": False, "message": f"Error with inserting: {e}"}, STATUS_BAD_REQUEST
     else: # user already exists
         return {"status": False, "message": "This username is taken!"}, STATUS_ALREADY_EXISTS
+
 
 @app.route('/api/unit/create', methods = ["POST"])
 def create_unit():
