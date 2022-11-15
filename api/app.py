@@ -14,7 +14,7 @@ app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 
 mysql = MySQL(app)
     
-@app.route('/api/building/get', methods = ["GET"])
+@app.route('/api/building/get', methods = ["GET"]) # add ability to filter by current user's property
 def get_buildings():
     # expecting to be called /api/building/get?id={id} (optional id) or just /api/building/get
     id = request.args.get("id")
