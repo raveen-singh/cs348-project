@@ -96,12 +96,14 @@ def create_unit():
     account_id = 1
  
     data = image.split(',')
+    relative_image_path = '/images/' + f'{str(uuid.uuid4())[:8]}{image_name}'
     filename = images_path + f'{str(uuid.uuid4())[:8]}{image_name}'
 
     try:
         jpg_original = base64.b64decode(data[1])
         jpg_as_np = np.frombuffer(jpg_original, dtype=np.uint8)
         img = cv2.imdecode(jpg_as_np, flags=1)
+        # we write to os filepath in development (this might have to change in prod)
         cv2.imwrite(filename, img)
     except Exception as e:
         return {"success": False, "message":" could not save image"}, STATUS_BAD_REQUEST
@@ -110,7 +112,7 @@ def create_unit():
         cur.execute("INSERT INTO AvailableUnit VALUES (NULL, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
                 [building_id, account_id, room if room else None, 
                 lease_term, beds, floor if floor else None, 
-                filename, washrooms, rent])
+                relative_image_path, washrooms, rent])
         cur.close()
         conn.commit()
         return {"success": True}
