@@ -59,6 +59,10 @@ def create_lister():
 
 @app.route('/api/unit/create', methods = ["POST"])
 def create_unit():
+    # check if user is logged in
+    if "loggedin" not in session:
+        return {"sucess": False}, 401
+
     conn = mysql.connection
     cur = conn.cursor()
 
