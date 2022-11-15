@@ -97,20 +97,20 @@ def login():
     username = json_data["username"]
     password = json_data["password"]
 
-    conn = mysql.connection
-    cur = conn.cursor()
+    cur = mysql.connection.cursor()
 
     cur.execute("SELECT * FROM UnitListerAccount WHERE username = %s AND password = %s", (username, password))
 
     account = cur.fetchone()
+    cur.close()
 
     if account:
         session["loggedin"] = True
         session["id"] = account["account_id"]
         session["username"] = account["username"]
-        return {"sucess": True}
+        return {"success": True, "session": session}
     else:
-        return {"success": False, "message": "user not found"}
+        return {"success": False, "message": "Invalid credentials"}
 
 
 @app.route('/api/logout', methods = ["POST"])

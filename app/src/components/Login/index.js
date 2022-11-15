@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -9,7 +9,10 @@ import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
-import { Link as RouterLink } from "react-router-dom";
+import toast, { Toaster } from "react-hot-toast";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
+import useAuth from "../../hooks/useAuth";
+import axios from "axios";
 
 const Login = () => {
   const [formValues, setFormValues] = useState({
@@ -18,6 +21,8 @@ const Login = () => {
   });
 
   const [message, setMessage] = useState("");
+  const navigate = useNavigate();
+  const { dispatch } = useAuth();
 
   const handleChange = (e) => {
     setFormValues({ ...formValues, [e.target.id]: e.target.value });
@@ -26,13 +31,34 @@ const Login = () => {
     }
   };
 
-  const handleSubmit = (e) => {
-    console.log(formValues);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     setFormValues({ username: "", password: "" });
+    try {
+      const { data } = await axios.post("/api/login", {
+        ...formValues,
+      });
+      if (!data.success) {
+        setMessage(data.message);
+      } else {
+        dispatch({ type: "LOGIN", payload: data.session.username });
+        localStorage.setItem("user", data.session.username);
+        navigate("/");
+      }
+    } catch (error) {
+      setMessage(error.message);
+    }
   };
+
+  const makeToast = () => message && toast.error(message);
+
+  useEffect(() => {
+    makeToast();
+  }, [message]);
 
   return (
     <Container component="main" maxWidth="xs">
+      <Toaster />
       <CssBaseline />
       <Box
         sx={{

@@ -4,15 +4,19 @@ import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import Button from "@mui/material/Button";
 import { Link as RouterLink } from "react-router-dom";
+import useAuth from "../../hooks/useAuth";
 
 import Modal from "@mui/material/Modal";
 import UnitForm from "../UnitForm";
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
+  const { user } = useAuth();
+  console.log(user);
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+
   return (
     <AppBar position="sticky">
       <Toolbar>
@@ -24,12 +28,22 @@ const Navbar = () => {
         >
           Home
         </Button>
-        <Button variant="filled" component={RouterLink} to="/register">
-          Sign Up
-        </Button>
-        <Button variant="filled" onClick={handleOpen}>
-          Create A Post
-        </Button>
+        {user ? (
+          <Button variant="filled" onClick={() => alert("logged out")}>
+            Logout
+          </Button>
+        ) : (
+          <Button variant="filled" component={RouterLink} to="/register">
+            Sign Up
+          </Button>
+        )}
+
+        {user && (
+          <Button variant="filled" onClick={handleOpen}>
+            Create A Post
+          </Button>
+        )}
+
         <Modal
           open={open}
           onClose={handleClose}
