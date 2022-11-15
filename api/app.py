@@ -168,6 +168,7 @@ def list_unit():
             building_id = result["building_id"]
         else:
             print(result["message"])
+            building_id = -1 # bad, handle
 
 
     pm_id = 1     # GET CURRENT PM!
