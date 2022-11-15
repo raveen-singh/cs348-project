@@ -2,9 +2,11 @@ import React, { useState } from "react";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import Button from "@mui/material/Button";
+import Box from "@mui/material/Box";
 import { Link as RouterLink } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import toast, { Toaster } from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 import Modal from "@mui/material/Modal";
 import UnitForm from "../UnitForm";
@@ -13,6 +15,7 @@ import axios from "axios";
 const Navbar = () => {
   const [open, setOpen] = useState(false);
   const { user, dispatch } = useAuth();
+  const navigate = useNavigate();
 
   const logout = async () => {
     const { data } = await axios.post("/api/logout", {
@@ -21,6 +24,7 @@ const Navbar = () => {
     if (data.success) {
       localStorage.removeItem("user");
       dispatch({ type: "LOGOUT" });
+      navigate("/");
       toast.success("Logged out successfully.");
     }
   };
@@ -40,6 +44,14 @@ const Navbar = () => {
             to="/"
           >
             Home
+          </Button>
+          <Button
+            variant="filled"
+            component={RouterLink}
+            sx={{ display: "inline", width: "auto" }}
+            to="/buildings"
+          >
+            View Buildings
           </Button>
           {user && (
             <Button variant="filled" onClick={handleOpen}>
