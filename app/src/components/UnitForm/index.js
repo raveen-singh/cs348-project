@@ -236,15 +236,6 @@ const UnitForm = ({ handleClose, unitId, setUnitId, unitArr, addressDict }) => {
         </>
         }
         <TextField
-          name="room_num"
-          variant="outlined"
-          label="Room Number"
-          required
-          value={postData.room_num}
-          className={classes.numbers}
-          onChange={handleChange}
-        />
-        <TextField
           name="rent_price"
           variant="outlined"
           label="Price"
@@ -281,6 +272,14 @@ const UnitForm = ({ handleClose, unitId, setUnitId, unitArr, addressDict }) => {
           className={classes.numbers}
           value={postData.floor_num}
           onChange={handleNum}
+        />
+        <TextField
+          name="room_num"
+          variant="outlined"
+          label="Room Number"
+          value={postData.room_num}
+          className={classes.numbers}
+          onChange={handleChange}
         />
         <TextField
           name="lease_term"
