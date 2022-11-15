@@ -15,10 +15,6 @@ import ManageSearchIcon from "@mui/icons-material/ManageSearch";
 import React from "react";
 
 const BuildingList = ({ buildings }) => {
-  const capitalize = (word) => {
-    return word.charAt(0).toUpperCase() + word.slice(1);
-  };
-
   return (
     <Grid
       container
@@ -70,11 +66,14 @@ const BuildingList = ({ buildings }) => {
                       <ManageSearchIcon />
                     </Link>
                   </TableCell>
-                  <TableCell component="th" scope="row">
+                  <TableCell
+                    component={RouterLink}
+                    to={`/buildings/${building_id}`}
+                  >
                     {building.address}
                   </TableCell>
                   <TableCell align="center">
-                    {capitalize(building.laundry_availability)}
+                    {building.laundry_availability}
                   </TableCell>
                   <TableCell align="center">
                     {building.pet_friendly ? "Yes" : "No"}
@@ -93,7 +92,7 @@ const BuildingList = ({ buildings }) => {
       </Grid>
       {/* In the future, filter and sort box will go here */}
       <Grid item sm={12} md={4}>
-        Filter and Sort in the future
+        <Box>Filter and Sort in the future</Box>
       </Grid>
     </Grid>
   );
