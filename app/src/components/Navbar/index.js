@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 import Modal from "@mui/material/Modal";
 import UnitForm from "../UnitForm";
 import axios from "axios";
+import { Typography } from "@mui/material";
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
@@ -60,9 +61,12 @@ const Navbar = () => {
           )}
         </Box>
         {user ? (
-          <Button variant="filled" onClick={logout}>
-            Logout
-          </Button>
+          <Box display="flex" alignItems="center">
+            <Typography sx={{ mr: 3 }}>Logged in as {user}</Typography>
+            <Button variant="filled" onClick={logout}>
+              Logout
+            </Button>
+          </Box>
         ) : (
           <Box>
             <Button
