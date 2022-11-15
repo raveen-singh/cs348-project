@@ -58,17 +58,17 @@ def create_lister():
                         (username, password, name, phone_num, email, website if website != "" else None))
             cur.close()
             conn.commit()
-            return {"status": True}
+            return {"success": True}
         except Exception as e:
-            return {"status": False, "message": f"Error with inserting: {e}"}, STATUS_BAD_REQUEST
+            return {"success": False, "message": f"Error with inserting: {e}"}, STATUS_BAD_REQUEST
     else: # user already exists
-        return {"status": False, "message": "This username is taken!"}, STATUS_ALREADY_EXISTS
+        return {"success": False, "message": "This username is taken!"}, STATUS_ALREADY_EXISTS
 
 @app.route('/api/unit/create', methods = ["POST"])
 def create_unit():
     # check if user is logged in
     if "loggedin" not in session:
-        return {"sucess": False}, 401
+        return {"success": False}, 401
 
     conn = mysql.connection
     cur = conn.cursor()

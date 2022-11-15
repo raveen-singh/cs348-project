@@ -43,7 +43,7 @@ const Register = () => {
 
     console.log(res);
 
-    if (res.data.status) {
+    if (res.data.success) {
       navigate("/login");
       toast.success("Sign up successful, please login to continue.");
     } else {
