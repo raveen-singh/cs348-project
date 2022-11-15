@@ -21,12 +21,6 @@ const BuildingCard = ({ building }) => {
     <Grid container mt={5}>
       <Grid item sm={12} md={6}>
         <Card sx={{ maxWidth: 450 }}>
-          <CardMedia
-            component="img"
-            height="200"
-            image="https://user-images.githubusercontent.com/194400/49531010-48dad180-f8b1-11e8-8d89-1e61320e1d82.png"
-            alt={`${building.address}`}
-          />
           <CardContent>
             <Typography
               gutterBottom
@@ -115,6 +109,7 @@ const BuildingCard = ({ building }) => {
           </CardContent>
           <CardActions></CardActions>
         </Card>
+        <Box mt={3}>Review Form in the future</Box>
       </Grid>
       <Grid item sm={12} md={6} pt={3}>
         <Typography variant="h5">
