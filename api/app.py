@@ -12,6 +12,10 @@ app.config['MYSQL_PASSWORD'] = ''
 app.config['MYSQL_DB'] = 'cs348db'
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 
+# STATUS CODES
+STATUS_BAD_REQUEST = 400
+STATUS_ALREADY_EXISTS = 403
+
 mysql = MySQL(app)
     
 @app.route('/api/building/get', methods = ["GET"]) # add ability to filter by current user's property
@@ -56,9 +60,9 @@ def create_lister():
             conn.commit()
             return {"status": True}
         except Exception as e:
-            return {"status": False, "message": f"Error with inserting: {e}"} 
+            return {"status": False, "message": f"Error with inserting: {e}"}, STATUS_BAD_REQUEST
     else: # user already exists
-        return {"status": False, "message": "This username is taken!"}, 403
+        return {"status": False, "message": "This username is taken!"}, STATUS_ALREADY_EXISTS
 
 @app.route('/api/unit/create', methods = ["POST"])
 def create_unit():
@@ -90,4 +94,4 @@ def create_unit():
         conn.commit()
         return {"success": True}
     except Exception as e:
-        return {"success": False, "message": f"Error creating listing: {e}"}, 500
+        return {"success": False, "message": f"Error creating listing: {e}"}, STATUS_BAD_REQUEST
