@@ -12,21 +12,28 @@ app.config['MYSQL_PASSWORD'] = ''
 app.config['MYSQL_DB'] = 'cs348db'
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 
+# STATUS CODES
+STATUS_BAD_REQUEST = 400
+STATUS_ALREADY_EXISTS = 403
+
 mysql = MySQL(app)
-
-
-
-@app.route('/api')
-def get_message():
-    return {'message': 'Hello from the API'}
-
-@app.route('/api/db')
-def get_data():
+    
+@app.route('/api/building/get', methods = ["GET"]) # add ability to filter by current user's property
+def get_buildings():
+    # expecting to be called /api/building/get?id={id} (optional id) or just /api/building/get
+    id = request.args.get("id")
+    review_grouped_by_building_query = "SELECT building_id, ROUND(AVG(admin_helpfulness_rating), 1) AS admin_rating, ROUND(AVG(cleanliness_rating), 1) AS cleanliness_rating FROM review group BY building_id"
     cur = mysql.connection.cursor()
-    cur.execute("""SELECT * FROM users""")
-    rv = cur.fetchone()
+
+    if id: # return one building
+        cur.execute(f"SELECT * FROM building b LEFT JOIN ({review_grouped_by_building_query}) r ON b.building_id = r.building_id WHERE b.building_id = %s;", [id])
+        rv = cur.fetchone()
+    else: # return all buildings
+        cur.execute(f"SELECT * FROM building b LEFT JOIN ({review_grouped_by_building_query}) r ON b.building_id = r.building_id;")
+        rv = cur.fetchall()
+
     cur.close()
-    return {'message':rv}
+    return {"data": rv} # rv is a dictionary if provided id, otherwise a list of dictionaries. dictionary includes averaged reviews.
 
 @app.route('/api/lister/create', methods = ["POST"])
 def create_lister():
@@ -53,9 +60,9 @@ def create_lister():
             conn.commit()
             return {"status": True}
         except Exception as e:
-            return {"status": False, "message": f"Error with inserting: {e}"} 
+            return {"status": False, "message": f"Error with inserting: {e}"}, STATUS_BAD_REQUEST
     else: # user already exists
-        return {"status": False, "message": "This username is taken!"}
+        return {"status": False, "message": "This username is taken!"}, STATUS_ALREADY_EXISTS
 
 @app.route('/api/unit/create', methods = ["POST"])
 def create_unit():
@@ -87,4 +94,4 @@ def create_unit():
         conn.commit()
         return {"success": True}
     except Exception as e:
-        return {"success": False, "message": f"Error creating listing: {e}"}
+        return {"success": False, "message": f"Error creating listing: {e}"}, STATUS_BAD_REQUEST
