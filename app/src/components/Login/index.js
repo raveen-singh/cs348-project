@@ -44,6 +44,7 @@ const Login = () => {
         dispatch({ type: "LOGIN", payload: data.session.username });
         localStorage.setItem("user", data.session.username);
         navigate("/");
+        toast.success("Logged in successfully.");
       }
     } catch (error) {
       setMessage(error.message);
