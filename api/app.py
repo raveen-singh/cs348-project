@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, session
 from flask_mysqldb import MySQL
 import os
 import cv2
@@ -7,7 +7,7 @@ import numpy as np
 import uuid
 
 app = Flask(__name__)
-
+app.secret_key = 'a secret key'
 # env vars for the db
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
@@ -67,15 +67,19 @@ def create_lister():
                         (username, password, name, phone_num, email, website if website != "" else None))
             cur.close()
             conn.commit()
-            return {"status": True}
+            return {"success": True}
         except Exception as e:
-            return {"status": False, "message": f"Error with inserting: {e}"}, STATUS_BAD_REQUEST
+            return {"success": False, "message": f"Error with inserting: {e}"}, STATUS_BAD_REQUEST
     else: # user already exists
-        return {"status": False, "message": "This username is taken!"}, STATUS_ALREADY_EXISTS
+        return {"success": False, "message": "This username is taken!"}, STATUS_ALREADY_EXISTS
 
 
 @app.route('/api/unit/create', methods = ["POST"])
 def create_unit():
+    # check if user is logged in
+    if "loggedin" not in session:
+        return {"success": False}, 401
+
     conn = mysql.connection
     cur = conn.cursor()
 
@@ -118,3 +122,36 @@ def create_unit():
         return {"success": True}
     except Exception as e:
         return {"success": False, "message": f"Error creating listing: {e}"}, STATUS_BAD_REQUEST
+
+
+@app.route('/api/login', methods = ["POST"])
+def login():
+
+    json_data = request.get_json()
+    username = json_data["username"]
+    password = json_data["password"]
+
+    cur = mysql.connection.cursor()
+
+    cur.execute("SELECT * FROM UnitListerAccount WHERE username = %s AND password = %s", (username, password))
+
+    account = cur.fetchone()
+    cur.close()
+
+    if account:
+        session["loggedin"] = True
+        session["id"] = account["account_id"]
+        session["username"] = account["username"]
+        return {"success": True, "session": session}
+    else:
+        return {"success": False, "message": "Invalid credentials"}
+
+
+@app.route('/api/logout', methods = ["POST"])
+def logout():
+
+    session.pop("loggedin", None)
+    session.pop("id", None)
+    session.pop("username", None)
+
+    return {"success": True}
