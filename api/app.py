@@ -96,7 +96,7 @@ def create_unit():
     account_id = 1
  
     data = image.split(',')
-    filename = images_path + f'{str(uuid.uuid4())}{image_name}'
+    filename = images_path + f'{str(uuid.uuid4())[:8]}{image_name}'
 
     try:
         jpg_original = base64.b64decode(data[1])
