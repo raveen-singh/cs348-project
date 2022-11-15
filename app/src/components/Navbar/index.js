@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import AppBar from "@mui/material/AppBar";
-import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import Button from "@mui/material/Button";
 import { Link as RouterLink } from "react-router-dom";
@@ -24,11 +23,14 @@ const Navbar = () => {
         >
           Home
         </Button>
-        <Button variant="filled" component={RouterLink} to="/register">
-          Sign Up
-        </Button>
         <Button variant="filled" onClick={handleOpen}>
           Create A Post
+        </Button>
+        <Button variant="filled" component={RouterLink} to="/buildings">
+          View Buildings
+        </Button>
+        <Button variant="filled" component={RouterLink} to="/register">
+          Sign Up
         </Button>
         <Modal
           open={open}
