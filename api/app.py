@@ -13,34 +13,10 @@ app.config['MYSQL_DB'] = 'cs348db'
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 
 mysql = MySQL(app)
-
-@app.route('/api/building/create', methods = ["POST"])
-def create_building():
-    # info is a dictionary with keys address, pet_friendly, laundry_availability, type_of_unit, and distance_from_waterloo
-    # address VARCHAR(255) NOT NULL,
-    # pet_friendly TINYINT(1) NOT NULL,
-    # laundry_availability ENUM('building', 'ensuite', 'none') NOT NULL,
-    # type_of_unit ENUM('apartment','house') NOT NULL,
-    # distance_from_waterloo DECIMAL(3,1) NOT NULL,
-
-    building_info = request.get_json() # {"address": "123 H", "pet_friendly": 0, "laundry_availability": "ensuite", "type_of_unit": "house", "distance_from_waterloo": 0.4}
-    conn = mysql.connection
-    cur = conn.cursor()
-
-    try:
-        cur.execute("INSERT INTO Building VALUES (NULL, %s, %s, %s, %s, %s)", 
-                    (building_info["address"], building_info["pet_friendly"], building_info["laundry_availability"], building_info["type_of_unit"], building_info["distance_from_waterloo"]))
-        cur.close()
-        conn.commit()
-        return {"status": True}
-    except Exception as e:
-        return {"status": False, "message": f"Error with inserting: {e}"} 
-
     
 @app.route('/api/building/get', methods = ["GET"])
 def get_buildings():
     # expecting to be called /api/building/get?id={id} (optional id) or just /api/building/get
-    # https://stackoverflow.com/questions/24892035/how-can-i-get-the-named-parameters-from-a-url-using-flask
     id = request.args.get("id")
     review_grouped_by_building_query = "SELECT building_id, ROUND(AVG(admin_helpfulness_rating), 1) AS admin_rating, ROUND(AVG(cleanliness_rating), 1) AS cleanliness_rating FROM review group BY building_id"
     cur = mysql.connection.cursor()
@@ -54,28 +30,6 @@ def get_buildings():
 
     cur.close()
     return {"data": rv} # rv is a dictionary if provided id, otherwise a list of dictionaries. dictionary includes averaged reviews.
-
-# to be used for address dropdown for building info auto-populate (join)
-@app.route('/api/building/get_addresses', methods = ["GET"])
-def get_building_addresses():
-    cur = mysql.connection.cursor()
-    cur.execute("SELECT DISTINCT building_id, address FROM building;")
-    rv = cur.fetchall()
-    addresses = {pair["address"]: pair["building_id"] for pair in rv}
-    cur.close()
-    return addresses
-
-# @app.route('/api')
-# def get_message():
-#     return {'message': 'Hello from the API'}
-
-# @app.route('/api/db')
-# def get_data():
-#     cur = mysql.connection.cursor()
-#     cur.execute("""SELECT * FROM users""")
-#     rv = cur.fetchone()
-#     cur.close()
-#     return {'message':rv}
 
 @app.route('/api/lister/create', methods = ["POST"])
 def create_lister():
