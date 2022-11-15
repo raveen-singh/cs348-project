@@ -1,10 +1,10 @@
 import time
-from flask import Flask, jsonify
+from flask import Flask, jsonify, session
 from flask_mysqldb import MySQL
 from flask import request
 
 app = Flask(__name__)
-
+app.secret_key = 'a secret key'
 # env vars for the db
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
@@ -92,6 +92,11 @@ def create_unit():
 
 @app.route('/api/login', methods = ["POST"])
 def login():
+
+    json_data = request.get_json()
+    username = json_data["username"]
+    password = json_data["password"]
+
     conn = mysql.connection
     cur = conn.cursor()
 
@@ -100,7 +105,19 @@ def login():
     account = cur.fetchone()
 
     if account:
-        # session["loggedin"] = True
-        # session["id"] = account["id"]
-        # session["username"] = account["username"]
+        session["loggedin"] = True
+        session["id"] = account["account_id"]
+        session["username"] = account["username"]
         return {"sucess": True}
+    else:
+        return {"success": False, "message": "user not found"}
+
+
+@app.route('/api/logout', methods = ["POST"])
+def logout():
+
+    session.pop("loggedin", None)
+    session.pop("id", None)
+    session.pop("username", None)
+
+    return {"success": True}
