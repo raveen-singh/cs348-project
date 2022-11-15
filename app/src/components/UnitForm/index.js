@@ -37,16 +37,21 @@ const UnitForm = ({ handleClose, unitId, setUnitId, unitArr, addressDict }) => {
     building_id: null,
     pm_id: null,
     address: "330 Phillip St",
-    room_num: 3,
+    room_num: "101",
     rent_price: 500,
     num_beds: 5,
     num_washrooms: 5,
     lease_term: 4,
     floor_num: 3,
     image_path: "",
+    new_address: "",
+    pet_friendly: 0,
+    laundry_availability: "building",
+    type_of_unit: "apartment",
+    distance_from_waterloo: "0.0"
   };
   const defaultBuildingValues = {
-    address: "",
+    new_address: "",
     pet_friendly: 0,
     laundry_availability: "building",
     type_of_unit: "apartment",
@@ -64,7 +69,6 @@ const UnitForm = ({ handleClose, unitId, setUnitId, unitArr, addressDict }) => {
       ...postData,
       [e.target.name]: value
     });
-    console.log(postData)
   };
 
   const handleAddress= (e) => {
@@ -74,7 +78,6 @@ const UnitForm = ({ handleClose, unitId, setUnitId, unitArr, addressDict }) => {
       [e.target.name]: e.target.value,
       building_id: addrId
     });
-    console.log(postData)
   };
 
   const handleBuilding = (e) => {
@@ -105,24 +108,27 @@ const UnitForm = ({ handleClose, unitId, setUnitId, unitArr, addressDict }) => {
     if (postData.address === "Other") {
       setPostData({
         ...postData,
-        address: newbuilding.address
+        address: newbuilding.new_address,
+        room_num: parseInt(postData.room_num, 10)
       });
       setNewBuilding({
         ...newbuilding,
         distance_from_waterloo: parseFloat(newbuilding.distance_from_waterloo)
       })
-      const res = await axios.post("/api/building/create", {
-        ...newbuilding,
-      });
+      Object.keys(newbuilding).forEach((key) => {
+        postData[key] = newbuilding[key]
+      })
     }
     if (unitId) {
       //update unit endpoint
     }
     else {
       try {
+        console.log(postData);
         const res = await axios.post("/api/unit/create", {
           ...postData,
         });
+        console.log(res);
         
       } catch (error) {
         console.log(error);
@@ -165,12 +171,12 @@ const UnitForm = ({ handleClose, unitId, setUnitId, unitArr, addressDict }) => {
         { postData.address === "Other" &&
         <>
           <TextField
-            name="address"
+            name="new_address"
             variant="outlined"
             label="New Address"
             fullWidth
             required
-            value={newbuilding.address}
+            value={newbuilding.new_address}
             onChange={handleBuilding}
           />
           <FormControlLabel  
@@ -233,11 +239,10 @@ const UnitForm = ({ handleClose, unitId, setUnitId, unitArr, addressDict }) => {
           name="room_num"
           variant="outlined"
           label="Room Number"
-          type="number"
           required
           value={postData.room_num}
           className={classes.numbers}
-          onChange={handleNum}
+          onChange={handleChange}
         />
         <TextField
           name="rent_price"

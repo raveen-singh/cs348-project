@@ -27,7 +27,7 @@ const Units = () => {
     try {
       const result = await axios.get('/api/building/get_addresses');
       const options = result.data;
-      options["Other"] = 0;
+      options["Other"] = null;
       setAddresses(options);
       
     } catch (error) {

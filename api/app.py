@@ -145,6 +145,7 @@ def list_unit():
     json_data = request.get_json()
     print(json_data)
     # address is used in future to find building_id
+    building_id = json_data["building_id"]
     address = json_data["address"]
     room = json_data["room_num"]
     lease_term = json_data["lease_term"]
@@ -153,18 +154,19 @@ def list_unit():
     image = json_data["image_path"]
     washrooms = json_data["num_washrooms"]
     rent = json_data["rent_price"]
-    building_id = json_data["building_id"]
-
-    if not json_data["building_id"]:
+    
+    if not json_data["building_id"] :
         print("creating building...")
-        pet_friendly = 0
-        laundry_availability = "Ensuite"
-        type_of_unit = "House"
-        distance_from_waterloo = 0.5
-        building_info = {"address": address, "pet_friendly": pet_friendly, "laundry_availability": laundry_availability, "type_of_unit": type_of_unit, "distance_from_waterloo": distance_from_waterloo}
+        new_address = json_data["new_address"]
+        pet_friendly = json_data["pet_friendly"]
+        laundry_availability = json_data["laundry_availability"]
+        type_of_unit = json_data["type_of_unit"]
+        distance_from_waterloo = json_data["distance_from_waterloo"]
+        building_info = {"address": new_address, "pet_friendly": pet_friendly, "laundry_availability": laundry_availability, "type_of_unit": type_of_unit, "distance_from_waterloo": distance_from_waterloo}
         result = create_building(building_info)
         print(f"creating building result: {result}")
-        
+
+
     # GET CURRENT PM!
     pm_id = 1
 
