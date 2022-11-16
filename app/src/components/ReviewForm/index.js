@@ -8,12 +8,14 @@ import Button from "@mui/material/Button";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 const ReviewForm = ({ user, building_id }) => {
   const [cleanliness, setCleanliness] = useState(0);
   const [adminHelpfulness, setAdminHelpfulness] = useState(0);
   const [comment, setComment] = useState("");
   const [err, setErr] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (err) {
@@ -36,6 +38,7 @@ const ReviewForm = ({ user, building_id }) => {
     setComment("");
 
     if (res.data.success) {
+      navigate(0);
       toast.success("Added Review!");
     } else {
       setErr(res.data.message);

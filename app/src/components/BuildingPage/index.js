@@ -38,7 +38,7 @@ const BuildingPage = () => {
 
   //
   return (
-    <Container sx={{ mt: 6 }}>
+    <Container sx={{ py: 6 }}>
       <Grid container spacing={6}>
         <Grid item sm={12} md={6}>
           <Stack spacing={3}>
