@@ -98,8 +98,7 @@ def create_unit():
 
 @app.route('/api/review/create', methods = ["POST"])
 def post_review():
-    conn = mysql.connection
-    cur = conn.cursor()
+    cur = mysql.connection.cursor()
 
     json_data = request.get_json()
     admin_helpfulness = json_data["adminHelpfulness"]
@@ -107,8 +106,6 @@ def post_review():
     cleanliness = json_data["cleanliness"]
     comment = json_data["comment"]
     review_helpfulness = json_data["reviewHelpfulness"]
-
-    # review_id = 1
 
     try:
         cur.execute("INSERT INTO Review VALUES (NULL, %s, %s, %s, %s, %s)", 
