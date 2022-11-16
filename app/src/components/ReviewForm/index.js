@@ -7,7 +7,6 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
 
 const ReviewForm = ({ user, building_id }) => {
@@ -15,7 +14,6 @@ const ReviewForm = ({ user, building_id }) => {
   const [adminHelpfulness, setAdminHelpfulness] = useState(0);
   const [comment, setComment] = useState("");
   const [err, setErr] = useState("");
-  const navigate = useNavigate();
 
   useEffect(() => {
     if (err) {
