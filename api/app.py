@@ -122,6 +122,16 @@ def post_review():
     except Exception as e:
         return {"success": False, "message": f"Error posting comment: {e}"}, STATUS_BAD_REQUEST
 
+@app.route('/api/reviews/get', methods = ["GET"])
+def get_review():
+    id = request.args.get("id")
+    all_reviews = "SELECT admin_helpfulness_rating, cleanliness_rating, comment FROM review r LEFT JOIN building b ON r.building_id = b.building_id WHERE b.building_id = %s;" 
+    cur = mysql.connection.cursor()
+    cur.execute(all_reviews, [id])
+    reviews = cur.fetchall()
+    return{"success": True, "reviews": reviews}
+
+
 @app.route('/api/login', methods = ["POST"])
 def login():
 
