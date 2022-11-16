@@ -147,15 +147,15 @@ def list_unit():
     # address is used in future to find building_id
     building_id = json_data["building_id"]
     address = json_data["address"]
-    room = json_data["room_num"]
+    room = json_data["room_num"] if json_data["room_num"] != "" else None
     lease_term = json_data["lease_term"]
     beds = json_data["num_beds"]
-    floor = json_data["floor_num"]
+    floor = json_data["floor_num"] if json_data["floor_num"] != "" else None
     image = json_data["image_path"]
     washrooms = json_data["num_washrooms"]
     rent = json_data["rent_price"]
     
-    if not json_data["building_id"] :
+    if not json_data["building_id"]:
         print("creating building...")
         new_address = json_data["new_address"]
         pet_friendly = json_data["pet_friendly"]
@@ -164,17 +164,21 @@ def list_unit():
         distance_from_waterloo = json_data["distance_from_waterloo"]
         building_info = {"address": new_address, "pet_friendly": pet_friendly, "laundry_availability": laundry_availability, "type_of_unit": type_of_unit, "distance_from_waterloo": distance_from_waterloo}
         result = create_building(building_info)
-        print(f"creating building result: {result}")
+        if result["status"]:
+            building_id = result["building_id"]
+        else:
+            print(result["message"])
+            building_id = -1 # bad, handle
 
 
-    # GET CURRENT PM!
-    pm_id = 1
+    pm_id = 1     # GET CURRENT PM!
 
     try:
         cur.execute("INSERT INTO AvailableUnit VALUES (NULL, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
                 [building_id, pm_id, room if room else None, 
                 lease_term, beds, floor if floor else None, 
                 image, washrooms, rent])
+        print(f"inserting {[building_id, pm_id, room if room else None, lease_term, beds, floor if floor else None, image, washrooms, rent]}")
         conn.commit()
 
         # get id of recently inserted building, assumes no concurrent writes :(
