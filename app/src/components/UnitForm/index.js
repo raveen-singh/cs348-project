@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import useStyles from "./styles";
 import {
   TextField,
@@ -18,7 +18,9 @@ import axios from "axios";
 
 const UnitForm = ({ handleClose, unitId, setUnitId, unitArr, addressDict }) => {
   const classes = useStyles();
+  const navigate = useNavigate();
   const currentUnit = unitId ? unitArr.find(unit => unit.unit_id === unitId) : null;
+  console.log(addressDict);
   const currentAddresses = Object.keys(addressDict);
   if (currentUnit) {
     const curAddress = currentAddresses.find(addr => addressDict[addr] === currentUnit.building_id);
@@ -124,11 +126,10 @@ const UnitForm = ({ handleClose, unitId, setUnitId, unitArr, addressDict }) => {
     }
     else {
       try {
-        console.log(postData);
         const res = await axios.post("/api/unit/create", {
           ...postData,
         });
-        console.log(res);
+        navigate(`/units/${res.data.unit_id}`);
         
       } catch (error) {
         console.log(error);
@@ -138,6 +139,7 @@ const UnitForm = ({ handleClose, unitId, setUnitId, unitArr, addressDict }) => {
     setUnitId(null);
 
     handleClose();
+    
   };
 
   return (
@@ -324,9 +326,7 @@ const UnitForm = ({ handleClose, unitId, setUnitId, unitArr, addressDict }) => {
           fullWidth
           onClick={handleSubmit}
         >
-          <Link to={`/units/${unitArr.length+1}`}>   
-            Submit        
-          </Link>
+          submit
         </Button>
       </form>
     </Paper>

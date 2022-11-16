@@ -25,11 +25,11 @@ const Units = () => {
 
   const getAddresses = async () => {
     try {
-      const result = await axios.get('/api/building/get_addresses');
-      const options = result.data;
+      const res = await axios.get('/api/building/get_addresses');
+
+      const options = res.data;
       options["Other"] = null;
       setAddresses(options);
-      
     } catch (error) {
       console.log(error);
     }
@@ -45,6 +45,7 @@ const Units = () => {
     setOpen(false);
     setUnitId(null);
   }
+
   return (
     <div>
       <Modal
