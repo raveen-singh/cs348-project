@@ -10,14 +10,14 @@ const ReviewList = ({ reviews, address }) => {
       <Typography variant="h5" mb={2}>
         What do students have to say about {address}?
       </Typography>
-      {reviews ? (
+      {reviews.length > 0 ? (
         <Stack spacing={3}>
           {reviews.map((review) => (
             <ReviewCard key={review.review_id} review={review} />
           ))}
         </Stack>
       ) : (
-        <Typography>No reviews yet.</Typography>
+        <Typography>No reviews yet. Be the first!</Typography>
       )}
     </Box>
   );
