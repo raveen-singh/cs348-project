@@ -11,6 +11,7 @@ import {
   FormControlLabel,
   Checkbox,
   InputAdornment,
+  Box
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import FileBase from "react-file-base64";
@@ -115,12 +116,15 @@ const UnitForm = ({ handleClose, addressDict }) => {
         postData[key] = newbuilding[key];
       });
     }
+    console.log(postData);
     try {
       const { data } = await axios.post("/api/unit/create", {
         ...postData,
       });
+      console.log(data);
       if (data.success) {
         navigate(`/units/${data.unit_id}`);
+        navigate(0);
       }
     } catch (error) {
       console.log(error);
@@ -128,8 +132,6 @@ const UnitForm = ({ handleClose, addressDict }) => {
 
     setPostData(defaultUnitValues);
     handleClose();
-    navigate("/units");
-    navigate(0);
   };
 
   return (
@@ -137,9 +139,10 @@ const UnitForm = ({ handleClose, addressDict }) => {
       sx={{
         padding: "2%",
         position: "absolute",
-        top: "25%",
+        top: "15%",
         left: "30%",
         width: "40%",
+        height: "70%",
         display: "flex",
         justifyContent: "center",
       }}

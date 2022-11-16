@@ -153,7 +153,7 @@ def delete_unit():
 
 
 @app.route('/api/unit/create', methods = ["POST"])
-def create_unit():
+def list_unit():
     # check if user is logged in
     if "loggedin" not in session:
         return {"success": False}, 401
@@ -162,7 +162,7 @@ def create_unit():
     cur = conn.cursor()
 
     json_data = request.get_json()
-
+    building_id = json_data["building_id"]
     room = json_data["room_num"] if json_data["room_num"] != "" else None
     lease_term = json_data["lease_term"]
     beds = json_data["num_beds"]
@@ -170,8 +170,9 @@ def create_unit():
     image = json_data["image_path"]
     washrooms = json_data["num_washrooms"]
     rent = json_data["rent_price"]
+    image_name = json_data["fileName"]
     
-    if not json_data["building_id"]:
+    if not building_id:
         building_info = {"address": json_data["new_address"], 
                         "pet_friendly": json_data["pet_friendly"], 
                         "laundry_availability": json_data["laundry_availability"], 
@@ -183,13 +184,11 @@ def create_unit():
         else:
             return {"success": False, "message": result["message"]}, 400
 
-
-    pm_id = 1     # GET CURRENT PM!
+    account_id = 1     # GET CURRENT PM!
  
     data = image.split(',')
     relative_image_path = '/images/' + f'{str(uuid.uuid4())[:8]}{image_name}'
     filename = images_path + f'{str(uuid.uuid4())[:8]}{image_name}'
-
 
     try:
         save_image(filename, data[1])
@@ -201,7 +200,6 @@ def create_unit():
                 [building_id, account_id, room if room else None, 
                 lease_term, beds, floor if floor else None, 
                 relative_image_path, washrooms, rent])
-        cur.close()
         conn.commit()
 
         # get id of recently inserted unit, assumes no concurrent writes :(

@@ -12,16 +12,17 @@ import InfoIcon from "@mui/icons-material/Info";
 
 const UnitCard = ({ unit, addressDict }) => {
   const addressArr = Object.keys(addressDict);
+  let decodedPath = "";
   const unitAddress = addressArr.find(
     (building) => addressDict[building] === unit.building_id
   );
-
+  console.log(unit.image_path);
   return (
     <Card>
       <CardMedia
         component="img"
         height="200"
-        image="https://user-images.githubusercontent.com/194400/49531010-48dad180-f8b1-11e8-8d89-1e61320e1d82.png"
+        image= {unit.image_path || "https://user-images.githubusercontent.com/194400/49531010-48dad180-f8b1-11e8-8d89-1e61320e1d82.png"}
       />
 
       <Box p={2}>
