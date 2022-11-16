@@ -10,34 +10,27 @@ import {
   IconButton,
   FormControlLabel,
   Checkbox,
-  InputAdornment
+  InputAdornment,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import FileBase from "react-file-base64";
 import axios from "axios";
 
-const UnitForm = ({ handleClose, unitId, setUnitId, unitArr, addressDict }) => {
+const UnitForm = ({ handleClose, addressDict }) => {
   const classes = useStyles();
-  const navigate = useNavigate();
-  const currentUnit = unitId ? unitArr.find(unit => unit.unit_id === unitId) : null;
-  console.log(addressDict);
   const currentAddresses = Object.keys(addressDict);
-  if (currentUnit) {
-    const curAddress = currentAddresses.find(addr => addressDict[addr] === currentUnit.building_id);
-    currentUnit.address = curAddress;
-  }
+  const navigate = useNavigate();
+
   const leaseOptions = [
     { value: 4, label: "4 months" },
     { value: 8, label: "8 months" },
     { value: 12, label: "12 months" },
   ];
+
   const laundryOptions = ["Building", "Ensuite", "None"];
   const typeOptions = ["Apartment", "House"];
 
   const defaultUnitValues = {
-    unit_id: null,
-    building_id: null,
-    pm_id: null,
     address: "",
     room_num: "",
     rent_price: 500,
@@ -50,17 +43,18 @@ const UnitForm = ({ handleClose, unitId, setUnitId, unitArr, addressDict }) => {
     pet_friendly: 0,
     laundry_availability: "Building",
     type_of_unit: "Apartment",
-    distance_from_waterloo: "0.0"
+    distance_from_waterloo: "0.0",
   };
+
   const defaultBuildingValues = {
     new_address: "",
     pet_friendly: 0,
     laundry_availability: "Building",
     type_of_unit: "Apartment",
-    distance_from_waterloo: "0.0"
+    distance_from_waterloo: "0.0",
   };
 
-  const [postData, setPostData] = useState(currentUnit ? currentUnit : defaultUnitValues);
+  const [postData, setPostData] = useState(defaultUnitValues);
   const [newbuilding, setNewBuilding] = useState(defaultBuildingValues);
   const [checked, setChecked] = useState(false);
 
@@ -69,16 +63,16 @@ const UnitForm = ({ handleClose, unitId, setUnitId, unitArr, addressDict }) => {
     if (value < 0) value = 0;
     setPostData({
       ...postData,
-      [e.target.name]: value
+      [e.target.name]: value,
     });
   };
 
-  const handleAddress= (e) => {
+  const handleAddress = (e) => {
     const addrId = addressDict[e.target.value];
     setPostData({
       ...postData,
       [e.target.name]: e.target.value,
-      building_id: addrId
+      building_id: addrId,
     });
   };
 
@@ -111,35 +105,30 @@ const UnitForm = ({ handleClose, unitId, setUnitId, unitArr, addressDict }) => {
       setPostData({
         ...postData,
         address: newbuilding.new_address,
-        room_num: parseInt(postData.room_num, 10)
+        room_num: parseInt(postData.room_num, 10),
       });
       setNewBuilding({
         ...newbuilding,
-        distance_from_waterloo: parseFloat(newbuilding.distance_from_waterloo)
-      })
+        distance_from_waterloo: parseFloat(newbuilding.distance_from_waterloo),
+      });
       Object.keys(newbuilding).forEach((key) => {
-        postData[key] = newbuilding[key]
-      })
+        postData[key] = newbuilding[key];
+      });
     }
-    if (unitId) {
-      //update unit endpoint
-    }
-    else {
-      try {
-        const res = await axios.post("/api/unit/create", {
-          ...postData,
-        });
+    try {
+      const { data } = await axios.post("/api/unit/create", {
+        ...postData,
+      });
+      if (data.success) {
         navigate(`/units/${res.data.unit_id}`);
-        
-      } catch (error) {
-        console.log(error);
       }
+    } catch (error) {
+      console.log(error);
     }
-    setPostData(defaultUnitValues);
-    setUnitId(null);
 
+    setPostData(defaultUnitValues);
     handleClose();
-    
+    navigate(0);
   };
 
   return (
@@ -165,78 +154,76 @@ const UnitForm = ({ handleClose, unitId, setUnitId, unitArr, addressDict }) => {
           onChange={handleAddress}
         >
           {currentAddresses.map((option) => (
-              <MenuItem key={option} value={option}>
-                {option}
-              </MenuItem>
+            <MenuItem key={option} value={option}>
+              {option}
+            </MenuItem>
           ))}
         </TextField>
-        { postData.address === "Other" &&
-        <>
-          <TextField
-            name="new_address"
-            variant="outlined"
-            label="New Address"
-            fullWidth
-            required
-            value={newbuilding.new_address}
-            onChange={handleBuilding}
-          />
-          <FormControlLabel  
-            control={
-            <Checkbox 
-            name="pet_friendly" 
-            checked={checked}
-            onChange={handleCheck}
+        {postData.address === "Other" && (
+          <>
+            <TextField
+              name="new_address"
+              variant="outlined"
+              label="New Address"
+              fullWidth
+              required
+              value={newbuilding.new_address}
+              onChange={handleBuilding}
             />
-            } 
-            label="Pet Friendly" 
-          />
-          <TextField
-            name="laundry_availability"
-            variant="outlined"
-            label="Laundry Availability"
-            className={classes.buildings}
-            select
-            required
-            value={newbuilding.laundry_availability}
-            onChange={handleBuilding}
-          >
-            {laundryOptions.map((option) => (
-                <MenuItem value={option}>
-                  {option}
-                </MenuItem>
-            ))}
-          </TextField>
-          <TextField
-            name="type_of_unit"
-            variant="outlined"
-            label="Type of Unit"
-            className={classes.buildings}
-            select
-            required
-            value={newbuilding.type_of_unit}
-            onChange={handleBuilding}
-          >
-            {typeOptions.map((option) => (
-                <MenuItem value={option}>
-                  {option}
-                </MenuItem>
-            ))}
-          </TextField>
-          <TextField
-            name="distance_from_waterloo"
-            variant="outlined"
-            label="Distance From Waterloo"
-            className={classes.buildings}
-            required
-            value={newbuilding.distance_from_waterloo}
-            onChange={handleBuilding}
-            InputProps={{
-              endAdornment: <InputAdornment position="end">km</InputAdornment>
-            }}
-          />
-        </>
-        }
+            <FormControlLabel
+              control={
+                <Checkbox
+                  name="pet_friendly"
+                  checked={checked}
+                  onChange={handleCheck}
+                />
+              }
+              label="Pet Friendly"
+            />
+            <TextField
+              name="laundry_availability"
+              variant="outlined"
+              label="Laundry Availability"
+              className={classes.buildings}
+              select
+              required
+              value={newbuilding.laundry_availability}
+              onChange={handleBuilding}
+            >
+              {laundryOptions.map((option) => (
+                <MenuItem value={option}>{option}</MenuItem>
+              ))}
+            </TextField>
+            <TextField
+              name="type_of_unit"
+              variant="outlined"
+              label="Type of Unit"
+              className={classes.buildings}
+              select
+              required
+              value={newbuilding.type_of_unit}
+              onChange={handleBuilding}
+            >
+              {typeOptions.map((option) => (
+                <MenuItem value={option}>{option}</MenuItem>
+              ))}
+            </TextField>
+            <TextField
+              name="distance_from_waterloo"
+              variant="outlined"
+              label="Distance From Waterloo"
+              className={classes.buildings}
+              required
+              value={newbuilding.distance_from_waterloo}
+              onChange={handleBuilding}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">km</InputAdornment>
+                ),
+              }}
+            />
+          </>
+        )}
         <TextField
           name="rent_price"
           variant="outlined"
@@ -300,24 +287,18 @@ const UnitForm = ({ handleClose, unitId, setUnitId, unitArr, addressDict }) => {
           ))}
         </TextField>
         <div>
-          <Typography variant="body2" color="textSecondary">Upload Image: 
-          <FileBase
-            type="file"
-            multiple={false}
-            onDone={({ base64 }) =>
-              setPostData({ ...postData, image_path: base64 })
-            }
-          />
+          <Typography variant="body2" color="textSecondary">
+            Upload Image:
+            <FileBase
+              type="file"
+              multiple={false}
+              onDone={({ base64 }) =>
+                setPostData({ ...postData, image_path: base64 })
+              }
+            />
           </Typography>
         </div>
         <Button
-          // disabled={
-          //   !postData.username ||
-          //   !postData.price ||
-          //   !postData.numBeds ||
-          //   !postData.numWashrooms ||
-          //   !postData.leaseDuration
-          // }
           className={classes.buttonSubmit}
           variant="contained"
           color="primary"
@@ -326,7 +307,7 @@ const UnitForm = ({ handleClose, unitId, setUnitId, unitArr, addressDict }) => {
           fullWidth
           onClick={handleSubmit}
         >
-          submit
+          Submit
         </Button>
       </form>
     </Paper>
