@@ -32,7 +32,6 @@ const ReviewForm = ({ user, building_id }) => {
       building_id,
       reviewHelpfulness: 0,
     });
-    console.log(res);
     setAdminHelpfulness(0);
     setCleanliness(0);
     setComment("");
