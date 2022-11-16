@@ -26,7 +26,11 @@ const ReviewCard = ({ review }) => {
         </Box>
         <Box display="flex" alignContent="center">
           <Typography mr={1}>Admin Helpfulness</Typography>
-          <Rating size="small" readOnly value={review.admin_helpfulness} />
+          <Rating
+            size="small"
+            readOnly
+            value={review.admin_helpfulness_rating}
+          />
         </Box>
       </Stack>
       <Typography>"{review.comment}"</Typography>
