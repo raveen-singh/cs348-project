@@ -153,7 +153,7 @@ def post_review():
 def get_review():
     id = request.args.get("id")
 
-    all_reviews_query = "SELECT review_id, admin_helpfulness_rating, cleanliness_rating, comment FROM review r LEFT JOIN building b ON r.building_id = b.building_id WHERE b.building_id = %s;" 
+    all_reviews_query = "SELECT review_id, admin_helpfulness_rating, cleanliness_rating, review_helpfulness, comment FROM review r LEFT JOIN building b ON r.building_id = b.building_id WHERE b.building_id = %s;" 
     cur = mysql.connection.cursor()
     cur.execute(all_reviews_query, [id])
     reviews = cur.fetchall()
