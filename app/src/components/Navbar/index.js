@@ -2,36 +2,87 @@ import React, { useState } from "react";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import Button from "@mui/material/Button";
+import Box from "@mui/material/Box";
 import { Link as RouterLink } from "react-router-dom";
+import useAuth from "../../hooks/useAuth";
+import toast, { Toaster } from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 import Modal from "@mui/material/Modal";
 import UnitForm from "../UnitForm";
+import axios from "axios";
+import { Typography } from "@mui/material";
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
+  const { user, dispatch } = useAuth();
+  const navigate = useNavigate();
+
+  const logout = async () => {
+    const { data } = await axios.post("/api/logout", {
+      ...user,
+    });
+    if (data.success) {
+      localStorage.removeItem("user");
+      dispatch({ type: "LOGOUT" });
+      navigate("/");
+      toast.success("Logged out successfully.");
+    }
+  };
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+
   return (
     <AppBar position="sticky">
-      <Toolbar>
-        <Button
-          variant="filled"
-          component={RouterLink}
-          sx={{ display: "inline", width: "auto" }}
-          to="/"
-        >
-          Home
-        </Button>
-        <Button variant="filled" onClick={handleOpen}>
-          Create A Post
-        </Button>
-        <Button variant="filled" component={RouterLink} to="/buildings">
-          View Buildings
-        </Button>
-        <Button variant="filled" component={RouterLink} to="/register">
-          Sign Up
-        </Button>
+      <Toaster />
+      <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
+        <Box>
+          <Button
+            variant="filled"
+            component={RouterLink}
+            sx={{ display: "inline", width: "auto" }}
+            to="/"
+          >
+            Home
+          </Button>
+          <Button
+            variant="filled"
+            component={RouterLink}
+            sx={{ display: "inline", width: "auto" }}
+            to="/buildings"
+          >
+            View Buildings
+          </Button>
+          {user && (
+            <Button variant="filled" onClick={handleOpen}>
+              Create A Post
+            </Button>
+          )}
+        </Box>
+        {user ? (
+          <Box display="flex" alignItems="center">
+            <Typography sx={{ mr: 3 }}>Logged in as {user}</Typography>
+            <Button variant="filled" onClick={logout}>
+              Logout
+            </Button>
+          </Box>
+        ) : (
+          <Box>
+            <Button
+              variant="filled"
+              component={RouterLink}
+              to="/register"
+              sx={{ mr: 1 }}
+            >
+              Sign Up
+            </Button>
+            <Button variant="filled" component={RouterLink} to="/login">
+              Login
+            </Button>
+          </Box>
+        )}
+
         <Modal
           open={open}
           onClose={handleClose}
