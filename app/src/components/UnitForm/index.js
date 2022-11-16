@@ -46,15 +46,15 @@ const UnitForm = ({ handleClose, unitId, setUnitId, unitArr, addressDict }) => {
     image_path: "",
     new_address: "",
     pet_friendly: 0,
-    laundry_availability: "building",
-    type_of_unit: "apartment",
+    laundry_availability: "Building",
+    type_of_unit: "Apartment",
     distance_from_waterloo: "0.0"
   };
   const defaultBuildingValues = {
     new_address: "",
     pet_friendly: 0,
-    laundry_availability: "building",
-    type_of_unit: "apartment",
+    laundry_availability: "Building",
+    type_of_unit: "Apartment",
     distance_from_waterloo: "0.0"
   };
 
@@ -239,7 +239,6 @@ const UnitForm = ({ handleClose, unitId, setUnitId, unitArr, addressDict }) => {
           name="room_num"
           variant="outlined"
           label="Room Number"
-          required
           value={postData.room_num}
           className={classes.numbers}
           onChange={handleChange}
@@ -276,7 +275,7 @@ const UnitForm = ({ handleClose, unitId, setUnitId, unitArr, addressDict }) => {
         <TextField
           name="floor_num"
           variant="outlined"
-          label="Floor"
+          label="Floor number"
           type="number"
           className={classes.numbers}
           value={postData.floor_num}
