@@ -1,19 +1,37 @@
 import React, { useState, useEffect } from "react";
 import AppBar from "@mui/material/AppBar";
-import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import Button from "@mui/material/Button";
+import Box from "@mui/material/Box";
 import { Link as RouterLink } from "react-router-dom";
-import axios from "axios";
+import useAuth from "../../hooks/useAuth";
+import toast, { Toaster } from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 import Modal from "@mui/material/Modal";
 import UnitForm from "../UnitForm";
+import axios from "axios";
+import { Typography } from "@mui/material";
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
   const [unitId, setUnitId] = useState(null);
   const [addresses, setAddresses] = useState([]);
   const [units, setUnits] = useState([]);
+  const { user, dispatch } = useAuth();
+  const navigate = useNavigate();
+
+  const logout = async () => {
+    const { data } = await axios.post("/api/logout", {
+      ...user,
+    });
+    if (data.success) {
+      localStorage.removeItem("user");
+      dispatch({ type: "LOGOUT" });
+      navigate("/");
+      toast.success("Logged out successfully.");
+    }
+  };
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
@@ -46,11 +64,12 @@ const Navbar = () => {
     getAddresses();
     getUnits();
   }, [])
-  
+
   return (
-    <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="absolute">
-        <Toolbar>
+    <AppBar position="sticky">
+      <Toaster />
+      <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
+        <Box>
           <Button
             variant="filled"
             component={RouterLink}
@@ -59,26 +78,56 @@ const Navbar = () => {
           >
             Home
           </Button>
-          <Button variant="filled" component={RouterLink} to="/register">
-            Sign Up
+          <Button
+            variant="filled"
+            component={RouterLink}
+            sx={{ display: "inline", width: "auto" }}
+            to="/buildings"
+          >
+            View Buildings
           </Button>
           <Button variant="filled" component={RouterLink} to="/units">
             View All Units
           </Button>
-          <Button variant="filled" onClick={handleOpen}>
-            Create A Unit
-          </Button>
-          <Modal
-            open={open}
-            onClose={handleClose}
-            aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description"
-          >
-            <UnitForm handleClose={handleClose} unitId={unitId} setUnitId={setUnitId} unitArr={units} addressDict={addresses} />
-          </Modal>
-        </Toolbar>
-      </AppBar>
-    </Box>
+          {user && (
+            <Button variant="filled" onClick={handleOpen}>
+              Create A Post
+            </Button>
+          )}
+        </Box>
+        {user ? (
+          <Box display="flex" alignItems="center">
+            <Typography sx={{ mr: 3 }}>Logged in as {user}</Typography>
+            <Button variant="filled" onClick={logout}>
+              Logout
+            </Button>
+          </Box>
+        ) : (
+          <Box>
+            <Button
+              variant="filled"
+              component={RouterLink}
+              to="/register"
+              sx={{ mr: 1 }}
+            >
+              Sign Up
+            </Button>
+            <Button variant="filled" component={RouterLink} to="/login">
+              Login
+            </Button>
+          </Box>
+        )}
+
+        <Modal
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <UnitForm handleClose={handleClose} />
+        </Modal>
+      </Toolbar>
+    </AppBar>
   );
 };
 

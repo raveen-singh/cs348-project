@@ -133,11 +133,26 @@ const UnitForm = ({ handleClose, addressDict }) => {
   };
 
   return (
-    <Paper className={classes.paper}>
-      <form
+    <Paper
+      sx={{
+        padding: "2%",
+        position: "absolute",
+        top: "25%",
+        left: "30%",
+        width: "40%",
+        display: "flex",
+        justifyContent: "center",
+      }}
+    >
+      <Box
+        component="form"
         autoComplete="off"
         noValidate
-        className={classes.form}
+        sx={{
+          display: "flex",
+          flexWrap: "wrap",
+          justifyContent: "space-between",
+        }}
         onSubmit={handleSubmit}
       >
         <Typography variant="h5">Unit Information</Typography>
@@ -229,7 +244,8 @@ const UnitForm = ({ handleClose, addressDict }) => {
           name="rent_price"
           variant="outlined"
           label="Price"
-          className={classes.numbers}
+          type="number"
+          sx={{ width: "33%" }}
           required
           value={postData.rent_price}
           onChange={handleNum}
@@ -239,7 +255,7 @@ const UnitForm = ({ handleClose, addressDict }) => {
           variant="outlined"
           label="Bedrooms"
           type="number"
-          className={classes.numbers}
+          sx={{ width: "33%" }}
           required
           value={postData.num_beds}
           onChange={handleNum}
@@ -249,7 +265,7 @@ const UnitForm = ({ handleClose, addressDict }) => {
           variant="outlined"
           label="Washrooms"
           type="number"
-          className={classes.numbers}
+          sx={{ width: "33%" }}
           required
           value={postData.num_washrooms}
           onChange={handleNum}
@@ -259,8 +275,8 @@ const UnitForm = ({ handleClose, addressDict }) => {
           variant="outlined"
           label="Floor number"
           type="number"
-          className={classes.numbers}
           value={postData.floor_num}
+          sx={{ width: "33%" }}
           onChange={handleNum}
         />
         <TextField
@@ -287,20 +303,24 @@ const UnitForm = ({ handleClose, addressDict }) => {
             </MenuItem>
           ))}
         </TextField>
-        <div>
-          <Typography variant="body2" color="textSecondary">
-            Upload Image:
-            <FileBase
-              type="file"
-              multiple={false}
-              onDone={({ base64 }) =>
-                setPostData({ ...postData, image_path: base64 })
-              }
-            />
-          </Typography>
-        </div>
+        <Box sx={{ mt: 1 }}>
+          <FileBase
+            type="file"
+            multiple={false}
+            onDone={({ name, base64 }) =>
+              setPostData({ ...postData, fileName: name, image_path: base64 })
+            }
+          />
+        </Box>
         <Button
-          className={classes.buttonSubmit}
+          // disabled={
+          //   !postData.username ||
+          //   !postData.price ||
+          //   !postData.numBeds ||
+          //   !postData.numWashrooms ||
+          //   !postData.leaseDuration
+          // }
+          sx={{ mt: 2 }}
           variant="contained"
           color="primary"
           size="large"
@@ -310,7 +330,7 @@ const UnitForm = ({ handleClose, addressDict }) => {
         >
           Submit
         </Button>
-      </form>
+      </Box>
     </Paper>
   );
 };

@@ -1,10 +1,13 @@
-import time
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request, session
 from flask_mysqldb import MySQL
-from flask import request
+import os
+import cv2
+import base64
+import numpy as np
+import uuid
 
 app = Flask(__name__)
-
+app.secret_key = 'a secret key'
 # env vars for the db
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
@@ -12,21 +15,41 @@ app.config['MYSQL_PASSWORD'] = ''
 app.config['MYSQL_DB'] = 'cs348db'
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 
+STATUS_BAD_REQUEST = 400
+STATUS_ALREADY_EXISTS = 403
+
 mysql = MySQL(app)
 
+# make directory to store images
+basedir = os.path.abspath(os.path.dirname(__file__))
+images_path = os.path.join(basedir, 'images/')
+os.makedirs(images_path, exist_ok=True)
+
+def save_image(image_name, image_data):
+    jpg_original = base64.b64decode(image_data)
+    jpg_as_np = np.frombuffer(jpg_original, dtype=np.uint8)
+    img = cv2.imdecode(jpg_as_np, flags=1)
+    # we write to os filepath in development (this might have to change in prod)
+    cv2.imwrite(image_name, img)
 
 
-@app.route('/api')
-def get_message():
-    return {'message': 'Hello from the API'}
-
-@app.route('/api/db')
-def get_data():
+@app.route('/api/building/get', methods = ["GET"]) # add ability to filter by current user's property
+def get_buildings():
+    # expecting to be called /api/building/get?id={id} (optional id) or just /api/building/get
+    id = request.args.get("id")
+    review_grouped_by_building_query = "SELECT building_id, ROUND(AVG(admin_helpfulness_rating), 1) AS admin_rating, ROUND(AVG(cleanliness_rating), 1) AS cleanliness_rating FROM review group BY building_id"
     cur = mysql.connection.cursor()
-    cur.execute("""SELECT * FROM users""")
-    rv = cur.fetchone()
+
+    if id: # return one building
+        cur.execute(f"SELECT * FROM building b LEFT JOIN ({review_grouped_by_building_query}) r ON b.building_id = r.building_id WHERE b.building_id = %s;", [id])
+        rv = cur.fetchone()
+    else: # return all buildings
+        cur.execute(f"SELECT * FROM building b LEFT JOIN ({review_grouped_by_building_query}) r ON b.building_id = r.building_id;")
+        rv = cur.fetchall()
+
     cur.close()
-    return {'message':rv}
+    return {"data": rv} # rv is a dictionary if provided id, otherwise a list of dictionaries. dictionary includes averaged reviews.
+
 
 @app.route('/api/lister/create', methods = ["POST"])
 def create_lister():
@@ -51,11 +74,12 @@ def create_lister():
                         (username, password, name, phone_num, email, website if website != "" else None))
             cur.close()
             conn.commit()
-            return {"status": True}
+            return {"success": True}
         except Exception as e:
-            return {"status": False, "message": f"Error with inserting: {e}"} 
+            return {"success": False, "message": f"Error with inserting: {e}"}, STATUS_BAD_REQUEST
     else: # user already exists
-        return {"status": False, "message": "This username is taken!"}
+        return {"success": False, "message": "This username is taken!"}, STATUS_ALREADY_EXISTS
+
 
 def create_building(building_info):
     conn = mysql.connection
@@ -129,14 +153,16 @@ def delete_unit():
 
 
 @app.route('/api/unit/create', methods = ["POST"])
-def list_unit():
+def create_unit():
+    # check if user is logged in
+    if "loggedin" not in session:
+        return {"success": False}, 401
+
     conn = mysql.connection
     cur = conn.cursor()
 
     json_data = request.get_json()
 
-    building_id = json_data["building_id"]
-    address = json_data["address"]
     room = json_data["room_num"] if json_data["room_num"] != "" else None
     lease_term = json_data["lease_term"]
     beds = json_data["num_beds"]
@@ -159,12 +185,23 @@ def list_unit():
 
 
     pm_id = 1     # GET CURRENT PM!
+ 
+    data = image.split(',')
+    relative_image_path = '/images/' + f'{str(uuid.uuid4())[:8]}{image_name}'
+    filename = images_path + f'{str(uuid.uuid4())[:8]}{image_name}'
+
+
+    try:
+        save_image(filename, data[1])
+    except Exception as e:
+        return {"success": False, "message": f"could not save image: {e}"}, STATUS_BAD_REQUEST
 
     try:
         cur.execute("INSERT INTO AvailableUnit VALUES (NULL, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
-                [building_id, pm_id, room if room else None, 
+                [building_id, account_id, room if room else None, 
                 lease_term, beds, floor if floor else None, 
-                image, washrooms, rent])
+                relative_image_path, washrooms, rent])
+        cur.close()
         conn.commit()
 
         # get id of recently inserted unit, assumes no concurrent writes :(
@@ -174,4 +211,35 @@ def list_unit():
         cur.close()
         return {"success": True, "unit_id": unit_id}
     except Exception as e:
-        return {"success": False, "message": f"Error creating listing: {e}"}, 400
+        return {"success": False, "message": f"Error creating listing: {e}"}, STATUS_BAD_REQUEST
+
+
+@app.route('/api/login', methods = ["POST"])
+def login():
+    json_data = request.get_json()
+    username = json_data["username"]
+    password = json_data["password"]
+
+    cur = mysql.connection.cursor()
+
+    cur.execute("SELECT * FROM UnitListerAccount WHERE username = %s AND password = %s", (username, password))
+
+    account = cur.fetchone()
+    cur.close()
+
+    if account:
+        session["loggedin"] = True
+        session["id"] = account["account_id"]
+        session["username"] = account["username"]
+        return {"success": True, "session": session}
+    else:
+        return {"success": False, "message": "Invalid credentials"}
+
+
+@app.route('/api/logout', methods = ["POST"])
+def logout():
+    session.pop("loggedin", None)
+    session.pop("id", None)
+    session.pop("username", None)
+
+    return {"success": True}
