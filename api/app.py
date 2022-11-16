@@ -102,7 +102,8 @@ def create_unit():
 
 @app.route('/api/review/create', methods = ["POST"])
 def post_review():
-    cur = mysql.connection.cursor()
+    conn = mysql.connection
+    cur = conn.cursor()
 
     json_data = request.get_json()
     admin_helpfulness = json_data["adminHelpfulness"]
@@ -116,7 +117,7 @@ def post_review():
         [building_id, admin_helpfulness, cleanliness, 
         comment, review_helpfulness])
         cur.close()
-        cur.commit()
+        conn.commit()
         return {"success": True}
     except Exception as e:
         return {"success": False, "message": f"Error posting comment: {e}"}, STATUS_BAD_REQUEST
