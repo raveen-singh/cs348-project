@@ -127,6 +127,7 @@ const UnitForm = ({ handleClose, addressDict }) => {
 
     setPostData(defaultUnitValues);
     handleClose();
+    navigate("/units");
     navigate(0);
   };
 
