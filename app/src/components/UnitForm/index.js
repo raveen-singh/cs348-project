@@ -120,7 +120,7 @@ const UnitForm = ({ handleClose, addressDict }) => {
         ...postData,
       });
       if (data.success) {
-        navigate(`/units/${res.data.unit_id}`);
+        navigate(`/units/${data.unit_id}`);
       }
     } catch (error) {
       console.log(error);
