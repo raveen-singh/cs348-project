@@ -16,7 +16,6 @@ import { Typography } from "@mui/material";
 const Navbar = () => {
   const [open, setOpen] = useState(false);
   const { user, dispatch } = useAuth();
-  const navigate = useNavigate();
 
   const logout = async () => {
     const { data } = await axios.post("/api/logout", {
@@ -25,7 +24,6 @@ const Navbar = () => {
     if (data.success) {
       localStorage.removeItem("user");
       dispatch({ type: "LOGOUT" });
-      navigate("/");
       toast.success("Logged out successfully.");
     }
   };
