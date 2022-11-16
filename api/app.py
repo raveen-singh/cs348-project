@@ -100,6 +100,27 @@ def create_unit():
     except Exception as e:
         return {"success": False, "message": f"Error creating listing: {e}"}, STATUS_BAD_REQUEST
 
+@app.route('/api/review/create', methods = ["POST"])
+def post_review():
+    conn = mysql.connection
+    cur = conn.cursor()
+
+    json_data = request.get_json()
+    admin_helpfulness = json_data["adminHelpfulness"]
+    building_id = json_data["building_id"]
+    cleanliness = json_data["cleanliness"]
+    comment = json_data["comment"]
+    review_helpfulness = json_data["reviewHelpfulness"]
+
+    try:
+        cur.execute("INSERT INTO Review VALUES (NULL, %s, %s, %s, %s, %s)", 
+        [building_id, admin_helpfulness, cleanliness, 
+        comment, review_helpfulness])
+        cur.close()
+        conn.commit()
+        return {"success": True}
+    except Exception as e:
+        return {"success": False, "message": f"Error posting comment: {e}"}, STATUS_BAD_REQUEST
 
 @app.route('/api/login', methods = ["POST"])
 def login():
