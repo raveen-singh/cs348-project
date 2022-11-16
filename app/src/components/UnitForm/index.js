@@ -49,7 +49,6 @@ const UnitForm = ({ handleClose }) => {
     const res = await axios.post("/api/unit/create", {
       ...postData,
     });
-    console.log(res);
     setPostData(defaultUnitValues);
 
     handleClose();
@@ -160,8 +159,8 @@ const UnitForm = ({ handleClose }) => {
           <FileBase
             type="file"
             multiple={false}
-            onDone={({ base64 }) =>
-              setPostData({ ...postData, selectedFile: base64 })
+            onDone={({ name, base64 }) =>
+              setPostData({ ...postData, fileName: name, selectedFile: base64 })
             }
           />
         </Box>
