@@ -49,7 +49,6 @@ const UnitForm = ({ handleClose }) => {
     const res = await axios.post("/api/unit/create", {
       ...postData,
     });
-    console.log(res);
     setPostData(defaultUnitValues);
 
     handleClose();

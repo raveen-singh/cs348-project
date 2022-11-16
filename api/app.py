@@ -25,7 +25,14 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 images_path = os.path.join(basedir, 'images/')
 os.makedirs(images_path, exist_ok=True)
 
-    
+def save_image(image_name, image_data):
+    jpg_original = base64.b64decode(image_data)
+    jpg_as_np = np.frombuffer(jpg_original, dtype=np.uint8)
+    img = cv2.imdecode(jpg_as_np, flags=1)
+    # we write to os filepath in development (this might have to change in prod)
+    cv2.imwrite(image_name, img)
+
+
 @app.route('/api/building/get', methods = ["GET"]) # add ability to filter by current user's property
 def get_buildings():
     # expecting to be called /api/building/get?id={id} (optional id) or just /api/building/get
@@ -103,14 +110,11 @@ def create_unit():
     relative_image_path = '/images/' + f'{str(uuid.uuid4())[:8]}{image_name}'
     filename = images_path + f'{str(uuid.uuid4())[:8]}{image_name}'
 
+
     try:
-        jpg_original = base64.b64decode(data[1])
-        jpg_as_np = np.frombuffer(jpg_original, dtype=np.uint8)
-        img = cv2.imdecode(jpg_as_np, flags=1)
-        # we write to os filepath in development (this might have to change in prod)
-        cv2.imwrite(filename, img)
+        save_image(filename, data[1])
     except Exception as e:
-        return {"success": False, "message":" could not save image"}, STATUS_BAD_REQUEST
+        return {"success": False, "message": f"could not save image: {e}"}, STATUS_BAD_REQUEST
 
     try:
         cur.execute("INSERT INTO AvailableUnit VALUES (NULL, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
@@ -126,7 +130,6 @@ def create_unit():
 
 @app.route('/api/login', methods = ["POST"])
 def login():
-
     json_data = request.get_json()
     username = json_data["username"]
     password = json_data["password"]
@@ -149,7 +152,6 @@ def login():
 
 @app.route('/api/logout', methods = ["POST"])
 def logout():
-
     session.pop("loggedin", None)
     session.pop("id", None)
     session.pop("username", None)
