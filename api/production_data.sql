@@ -74,19 +74,19 @@ INSERT INTO AvailableUnit
 VALUES(NULL, 5, 3, 12, 8, 3, 1, '/images/unit_6.jpg', 4, 1200);
 
 INSERT INTO AvailableUnit
-VALUES(NULL, 5, 3, 14, 8, 3, 1, 'path/to/image', 4, 1100);
+VALUES(NULL, 5, 3, 14, 8, 3, 1, '/images/unit_7.jpg', 4, 1100);
 
 INSERT INTO AvailableUnit
-VALUES(NULL, 6, 4, 3, 12, 4, 10, 'path/to/image', 3, 950);
+VALUES(NULL, 6, 4, 3, 12, 4, 10, '/images/unit_8.jpg', 3, 950);
 
 INSERT INTO AvailableUnit
-VALUES(NULL, 6, 4, 4, 12, 4, 11, 'path/to/image', 3, 950);
+VALUES(NULL, 6, 4, 4, 12, 4, 11, '/images/unit_9.jpg', 3, 950);
 
 INSERT INTO AvailableUnit
-VALUES(NULL, 6, 4, 5, 12, 3, 14, 'path/to/image', 1, 700);
+VALUES(NULL, 6, 4, 5, 12, 3, 14, '/images/unit_10.jpg', 1, 700);
 
 INSERT INTO AvailableUnit
-VALUES(NULL, 6, 4, 6, 12, 3, 15, 'path/to/image', 1, 700);
+VALUES(NULL, 6, 4, 6, 12, 3, 15, '/images/unit_11.jpg', 1, 700);
 
 
 -- Reviews
