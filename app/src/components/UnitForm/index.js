@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import useStyles from "./styles";
 import {
   TextField,
   Button,
@@ -18,7 +17,6 @@ import FileBase from "react-file-base64";
 import axios from "axios";
 
 const UnitForm = ({ handleClose, addressDict }) => {
-  const classes = useStyles();
   const currentAddresses = Object.keys(addressDict);
   const navigate = useNavigate();
 
@@ -200,7 +198,7 @@ const UnitForm = ({ handleClose, addressDict }) => {
               name="laundry_availability"
               variant="outlined"
               label="Laundry Availability"
-              className={classes.buildings}
+              sx={{ width: "49%" }}
               select
               required
               value={newbuilding.laundry_availability}
@@ -214,7 +212,7 @@ const UnitForm = ({ handleClose, addressDict }) => {
               name="type_of_unit"
               variant="outlined"
               label="Type of Unit"
-              className={classes.buildings}
+              sx={{ width: "49%" }}
               select
               required
               value={newbuilding.type_of_unit}
@@ -228,7 +226,7 @@ const UnitForm = ({ handleClose, addressDict }) => {
               name="distance_from_waterloo"
               variant="outlined"
               label="Distance From Waterloo"
-              className={classes.buildings}
+              sx={{ width: "49%" }}
               required
               value={newbuilding.distance_from_waterloo}
               onChange={handleBuilding}
@@ -284,7 +282,7 @@ const UnitForm = ({ handleClose, addressDict }) => {
           variant="outlined"
           label="Room Number"
           value={postData.room_num}
-          className={classes.numbers}
+          sx={{ width: "33%" }}
           onChange={handleChange}
         />
         <TextField

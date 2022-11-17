@@ -44,7 +44,6 @@ const Navbar = () => {
 
   useEffect(() => {
     getAddresses();
-    getUnits();
   }, []);
 
   return (
