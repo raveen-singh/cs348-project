@@ -7,7 +7,7 @@ import Register from "./components/Register";
 import Home from "./components/Home";
 import Login from "./components/Login";
 import Navbar from "./components/Navbar";
-import Units from "./components/Units";
+import UnitList from "./components/UnitList";
 import UnitPage from "./components/UnitPage";
 import BuildingList from "./components/BuildingList";
 import BuildingPage from "./components/BuildingPage";
@@ -32,7 +32,7 @@ const App = () => {
         <Route path="/" element={<Home />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/units" element={<Units />} />
+        <Route path="/units" element={<UnitList />} />
         <Route exact path="/unit/:id" element={<UnitPage />} />
         <Route
           path="/buildings"

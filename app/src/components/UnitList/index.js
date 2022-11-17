@@ -5,7 +5,7 @@ import axios from "axios";
 import UnitForm from "../UnitForm";
 import UnitCard from "../UnitCard";
 
-const Units = () => {
+const UnitList = () => {
   const [open, setOpen] = useState(false);
   const [addresses, setAddresses] = useState({});
   const [units, setUnits] = useState([]);
@@ -68,4 +68,4 @@ const Units = () => {
   );
 };
 
-export default Units;
+export default UnitList;
