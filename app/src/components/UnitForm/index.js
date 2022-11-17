@@ -12,14 +12,13 @@ import {
   FormControlLabel,
   Checkbox,
   InputAdornment,
-  Box
+  Box,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import FileBase from "react-file-base64";
 import axios from "axios";
 
 const UnitForm = ({ handleClose, addressDict }) => {
-  const classes = useStyles();
   const currentAddresses = Object.keys(addressDict);
   const navigate = useNavigate();
 
@@ -118,12 +117,10 @@ const UnitForm = ({ handleClose, addressDict }) => {
         postData[key] = newbuilding[key];
       });
     }
-
     try {
       const { data } = await axios.post("/api/unit/create", {
         ...postData,
       });
-      console.log(data);
       if (data.success) {
         navigate(`/units/${data.unit_id}`);
         navigate(0);
@@ -349,7 +346,6 @@ const UnitForm = ({ handleClose, addressDict }) => {
         </Box>
       </Paper>
     </>
-    
   );
 };
 
