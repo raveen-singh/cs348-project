@@ -29,18 +29,7 @@ const Navbar = () => {
   };
 
   const handleOpen = () => setOpen(true);
-  const handleClose = () => {
-    setOpen(false);
-  }
-  
-  const getUnits = async () => {
-    try {
-      const result = await axios.get('/api/unit/get');
-      setUnits(result.data.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  const handleClose = () => setOpen(false);
 
   const getAddresses = async () => {
     try {

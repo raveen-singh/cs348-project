@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
-import useStyles from "./styles";
 import {
   TextField,
   Button,
@@ -86,7 +85,7 @@ const UnitForm = ({ handleClose, addressDict }) => {
   };
 
   const handleCheck = (e) => {
-    setChecked(e.target.checked);  
+    setChecked(e.target.checked);
     const val = checked ? 0 : 1;
     setNewBuilding({
       ...newbuilding,
@@ -126,8 +125,7 @@ const UnitForm = ({ handleClose, addressDict }) => {
         navigate(0);
         setPostData(defaultUnitValues);
         handleClose();
-      }
-      else {
+      } else {
         console.log(data.message);
         setMessage(data.message);
       }
@@ -213,7 +211,6 @@ const UnitForm = ({ handleClose, addressDict }) => {
                 name="laundry_availability"
                 variant="outlined"
                 label="Laundry Availability"
-                className={classes.buildings}
                 select
                 required
                 value={newbuilding.laundry_availability}
@@ -227,7 +224,6 @@ const UnitForm = ({ handleClose, addressDict }) => {
                 name="type_of_unit"
                 variant="outlined"
                 label="Type of Unit"
-                className={classes.buildings}
                 select
                 required
                 value={newbuilding.type_of_unit}
@@ -241,7 +237,6 @@ const UnitForm = ({ handleClose, addressDict }) => {
                 name="distance_from_waterloo"
                 variant="outlined"
                 label="Distance From Waterloo"
-                className={classes.buildings}
                 required
                 value={newbuilding.distance_from_waterloo}
                 onChange={handleBuilding}
@@ -297,7 +292,6 @@ const UnitForm = ({ handleClose, addressDict }) => {
             variant="outlined"
             label="Room Number"
             value={postData.room_num}
-            className={classes.numbers}
             onChange={handleChange}
           />
           <TextField
