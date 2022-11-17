@@ -125,7 +125,6 @@ const UnitForm = ({ handleClose, addressDict }) => {
         handleClose();
         navigate(`/unit/${data.unit_id}`);
       } else {
-        console.log(data.message);
         setMessage(data.message);
       }
     } catch (error) {
