@@ -46,6 +46,30 @@ VALUES (NULL, 1, 1, 101, 4, 3, 3, 'path/to/image', 3, 900);
 INSERT INTO AvailableUnit
 VALUES (NULL, 1, 1, 303, 12, 2, 4, 'path/to/image', 1, 800);
 
+INSERT INTO AvailableUnit
+VALUES(NULL, 2, 2, 36, 4, 3, 5, 'path/to/image', 2, 750);
+
+INSERT INTO AvailableUnit
+VALUES(NULL, 2, 2, 37, 4, 5, 5, 'path/to/image', 3, 900);
+
+INSERT INTO AvailableUnit
+VALUES(NULL, 5, 3, 12, 8, 3, 1, 'path/to/image', 4, 1200);
+
+INSERT INTO AvailableUnit
+VALUES(NULL, 5, 3, 14, 8, 3, 1, 'path/to/image', 4, 1100);
+
+INSERT INTO AvailableUnit
+VALUES(NULL, 6, 4, 3, 12, 4, 10, 'path/to/image', 3, 950);
+
+INSERT INTO AvailableUnit
+VALUES(NULL, 6, 4, 4, 12, 4, 11, 'path/to/image', 3, 950);
+
+INSERT INTO AvailableUnit
+VALUES(NULL, 6, 4, 5, 12, 3, 14, 'path/to/image', 1, 700);
+
+INSERT INTO AvailableUnit
+VALUES(NULL, 6, 4, 6, 12, 3, 15, 'path/to/image', 1, 700);
+
 
 -- Reviews
 INSERT INTO Review
