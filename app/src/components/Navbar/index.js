@@ -23,6 +23,7 @@ const Navbar = () => {
     });
     if (data.success) {
       localStorage.removeItem("user");
+      localStorage.removeItem("userId");
       dispatch({ type: "LOGOUT" });
       toast.success("Logged out successfully.");
     }
