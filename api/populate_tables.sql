@@ -12,39 +12,39 @@ VALUES (NULL,'254 Phillip St',1,'Ensuite','Apartment',0.5);
 
 
 INSERT INTO AvailableUnit
-VALUES (NULL, 1, 1, 202, 8, 4, 2, 'path/to/image', 2, 1000);
+VALUES (NULL, 1, 1, 202, 8, 4, 2, '/images/my_bedroom1.jpg', 2, 1000);
 
 INSERT INTO AvailableUnit
-VALUES (NULL, 1, 1, 101, 4, 3, 3, 'path/to/image', 3, 900);
+VALUES (NULL, 1, 1, 101, 4, 3, 3, '/images/my_bedroom1.jpg', 3, 900);
 
 INSERT INTO AvailableUnit
-VALUES (NULL, 1, 1, 303, 12, 2, 4, 'path/to/image', 1, 800);
+VALUES (NULL, 1, 1, 303, 12, 2, 4, '/images/my_bedroom1.jpg', 1, 800);
 
 INSERT INTO Review
-VALUES (NULL, 1, 1, 3, 'This is a comment.', 2);
+VALUES (NULL, 1, 1, 3, 'Icon is so overhyped.', 2);
 
 INSERT INTO Review
 VALUES (NULL, 1, 2, 1, 'This is a comment.', 3);
 
 INSERT INTO Review
-VALUES (NULL, 1, 3, 1, 'This is a comment.', 3);
+VALUES (NULL, 1, 3, 1, 'Avoid at all costs.', 3);
 
 INSERT INTO Review
-VALUES (NULL, 2, 1, 2, 'This is a comment.', 4);
+VALUES (NULL, 2, 1, 2, 'Do NOT live here. I hated it. The admin were NOT helpful.', 4);
 
 INSERT INTO Review
-VALUES (NULL, 2, 5, 3, 'This is a comment.', 5);
+VALUES (NULL, 2, 5, 3, 'Saw some bugs sometimes... otherwise it was fine.', 5);
 
 INSERT INTO Review
-VALUES (NULL, 2, 3, 4, 'This is a comment.', 5);
+VALUES (NULL, 2, 3, 4, 'Already renewed my lease!', 5);
 
 INSERT INTO Review
-VALUES (NULL, 3, 5, 3, 'This is a comment.', 4);
+VALUES (NULL, 3, 5, 3, 'Would live here again :D', 4);
 
 INSERT INTO Review
-VALUES (NULL, 3, 4, 5, 'This is a comment.', 4);
+VALUES (NULL, 3, 4, 5, 'Enjoyed staying here.', 4);
 
 INSERT INTO Review
-VALUES (NULL, 3, 5, 5, 'This is a comment.', 5);
+VALUES (NULL, 3, 5, 5, 'Best place to live ever!', 5);
 
 

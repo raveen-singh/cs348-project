@@ -94,8 +94,14 @@ If you see `mysql>` on the next line, you have successfully connected. While con
 ```
 source cleanup_tables.sql
 source create_tables.sql
-source populate_tables.sql
 ```
+
+Run the following line in mysql to load the sample dataset:
+`source populate_tables.sql`
+
+Run the following line in mysql to load the production dataset:
+`source production_data.sql`
+
 If there are no errors, navigate to `http://localhost:3000` (assuming the frontend/backend are running). If you see cs348db connected below the first message, you have set up the database correctly. 
 
 ### Implemented features
