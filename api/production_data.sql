@@ -44,6 +44,15 @@ VALUES (NULL, '258C Sunview St', 0, 'Ensuite', 'Apartment', 1.7);
 INSERT INTO Building 
 VALUES (NULL, '203 Lester St', 1, 'Building', 'Apartment', 1.0);
 
+INSERT INTO Building 
+VALUES (NULL, '255 Sunview St', 1, 'Building', 'Apartment', 1.2);
+
+INSERT INTO Building 
+VALUES (NULL, '258 Sunview St', 0, 'Building', 'Apartment', 1.1);
+
+INSERT INTO Building 
+VALUES (NULL, '238 Lester St', 1, 'Building', 'Apartment', 0.9);
+
 -- Available Units
 -- TODO: Please find and upload images to images folder that correspond to the building
 INSERT INTO AvailableUnit
@@ -144,3 +153,20 @@ VALUES (NULL, 9, 2, 1, 'Only upside was living by Cocos. Otherwise would not rec
 INSERT INTO Review
 VALUES (NULL, 9, 3, 3, 'The lighting was not that good. I guess I would live here again? Probably better options out there though.', 1);
 
+INSERT INTO Review
+VALUES (NULL, 10, 1, 0, 'Furniture was not great and the apartment had bugs.', 1);
+
+INSERT INTO Review
+VALUES (NULL, 10, 2, 3, 'It was ok. Not the best and not the worst place I have lived in.', 6);
+
+INSERT INTO Review
+VALUES (NULL, 11, 5, 5, 'The apartment was modern and was not far from campus.', 2);
+
+INSERT INTO Review
+VALUES (NULL, 11, 5, 4, 'Building management was responsive when I got locked out of my room.', 3);
+
+INSERT INTO Review
+VALUES (NULL, 12, 2, 2, 'Close to the plaza and campus. The rest of the apartment was meh.', 5);
+
+INSERT INTO Review
+VALUES (NULL, 12, 4, 4, 'I enjoyed my time here, apartment was clean and I did not have any issues.', 4);
