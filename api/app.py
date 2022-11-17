@@ -81,35 +81,119 @@ def create_lister():
         return {"success": False, "message": "This username is taken!"}, STATUS_ALREADY_EXISTS
 
 
+def create_building(building_info):
+    conn = mysql.connection
+    cur = conn.cursor()
+
+    try:
+        cur.execute("INSERT INTO Building VALUES (NULL, %s, %s, %s, %s, %s)", 
+                    (building_info["address"], building_info["pet_friendly"], building_info["laundry_availability"], building_info["type_of_unit"], building_info["distance_from_waterloo"]))
+        conn.commit()
+
+        cur.execute("SELECT last_insert_id() as building_id from building;")
+        building_id = cur.fetchone()["building_id"]
+        cur.close()
+        return {"status": True, "building_id": building_id}
+    except Exception as e:
+        return {"status": False, "message": f"Error with inserting: {e}"}, STATUS_BAD_REQUEST
+
+# to be used for address dropdown for building info auto-populate (join)
+@app.route('/api/building/get_addresses', methods = ["GET"])
+def get_building_addresses():
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT DISTINCT building_id, address FROM building;")
+    rv = cur.fetchall()
+    addresses = {pair["address"]: pair["building_id"] for pair in rv}
+    cur.close()
+    return addresses
+
+@app.route('/api/unit/get', methods = ["GET"])
+def get_units():
+    # expecting to be called /api/unit/get?id={id} (optional id) or just /api/unit/get
+    id = request.args.get("id")
+    cur = mysql.connection.cursor()
+
+    if id: # return one unit
+        cur.execute("SELECT * FROM AvailableUnit WHERE unit_id = %s;", [id])
+        rv = cur.fetchone()
+    else: # return all units
+        cur.execute(f"SELECT * FROM AvailableUnit;")
+        rv = cur.fetchall()
+
+    cur.close()
+    return {"data": rv} # rv is a dictionary if provided id, otherwise a list of dictionaries
+
+@app.route('/api/unit/delete', methods = ["DELETE"])
+def delete_unit():
+    # expecting to be called /api/unit/get?id={id} 
+    id = request.args.get("id")
+    conn = mysql.connection
+    cur = conn.cursor()
+    
+    success = True
+    message = ""
+
+    cur.execute("SELECT * FROM AvailableUnit WHERE unit_id = %s", [id])
+    rv = cur.fetchone()
+    if not rv:
+        success = False
+        message = f"unit_id {id} doesn't exist so it cannot be deleted!"
+    else:
+        try:
+            cur.execute("DELETE FROM AvailableUnit WHERE unit_id = %s;", [id])
+        except Exception as e:
+            success = False
+            message = f"Error with deleting unit id {id}: {e}"
+    
+    cur.close()
+    conn.commit()
+    if not success:
+        return {"status": success, "message": message}, STATUS_BAD_REQUEST
+    else:
+        return {"status": success}
+
+
+
 @app.route('/api/unit/create', methods = ["POST"])
-def create_unit():
+def list_unit():
     # check if user is logged in
     if "loggedin" not in session:
-        return {"success": False}, 401
+        return {"success": False, "message": "Not logged in!"}, STATUS_BAD_REQUEST
 
     conn = mysql.connection
     cur = conn.cursor()
 
     json_data = request.get_json()
-    # address is used in future to find building_id
-    address = json_data["address"]
-    room = json_data["room"]
-    lease_term = json_data["leaseDuration"]
-    beds = json_data["numBeds"]
-    floor = json_data["floor"]
-    image = json_data["selectedFile"]
-    washrooms = json_data["numWashrooms"]
-    rent = json_data["price"]
+
+    building_id = json_data["building_id"]
+    room = json_data["room_num"] if json_data["room_num"] != "" else None
+    lease_term = json_data["lease_term"]
+    beds = json_data["num_beds"]
+    floor = json_data["floor_num"] if json_data["floor_num"] != "" else None
+    image = json_data["image_path"]
+    washrooms = json_data["num_washrooms"]
+    rent = json_data["rent_price"]
+
+    if "fileName" not in json_data:
+        return {"success": False, "message": "Please upload an image!"}, STATUS_BAD_REQUEST
     image_name = json_data["fileName"]
-    # these are hardcoded values for the foreign keys
-    # for the future, change these to dynamic SQL queries
-    building_id = 1
-    account_id = 1
+    account_id = session["id"]
+    
+    if not building_id:
+        building_info = {"address": json_data["new_address"], 
+                        "pet_friendly": json_data["pet_friendly"], 
+                        "laundry_availability": json_data["laundry_availability"], 
+                        "type_of_unit": json_data["type_of_unit"], 
+                        "distance_from_waterloo": json_data["distance_from_waterloo"]}
+        result = create_building(building_info)
+        if result["status"]:
+            building_id = result["building_id"]
+        else:
+            return {"success": False, "message": result["message"]}, STATUS_BAD_REQUEST
  
     data = image.split(',')
     relative_image_path = '/images/' + f'{str(uuid.uuid4())[:8]}{image_name}'
     filename = images_path + f'{str(uuid.uuid4())[:8]}{image_name}'
-
 
     try:
         save_image(filename, data[1])
@@ -121,9 +205,14 @@ def create_unit():
                 [building_id, account_id, room if room else None, 
                 lease_term, beds, floor if floor else None, 
                 relative_image_path, washrooms, rent])
-        cur.close()
         conn.commit()
-        return {"success": True}
+
+        # get id of recently inserted unit, assumes no concurrent writes :(
+        cur.execute("SELECT last_insert_id() as unit_id FROM AvailableUnit;")
+        unit_id = cur.fetchone()["unit_id"]
+
+        cur.close()
+        return {"success": True, "unit_id": unit_id}
     except Exception as e:
         return {"success": False, "message": f"Error creating listing: {e}"}, STATUS_BAD_REQUEST
 
