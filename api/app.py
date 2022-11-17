@@ -171,6 +171,7 @@ def list_unit():
     washrooms = json_data["num_washrooms"]
     rent = json_data["rent_price"]
     image_name = json_data["fileName"]
+    account_id = session["id"]
     
     if not building_id:
         building_info = {"address": json_data["new_address"], 
@@ -183,8 +184,6 @@ def list_unit():
             building_id = result["building_id"]
         else:
             return {"success": False, "message": result["message"]}, 400
-
-    account_id = 1     # GET CURRENT PM!
  
     data = image.split(',')
     relative_image_path = '/images/' + f'{str(uuid.uuid4())[:8]}{image_name}'

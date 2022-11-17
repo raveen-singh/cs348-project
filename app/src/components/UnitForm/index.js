@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom'
+import toast, { Toaster } from "react-hot-toast";
 import useStyles from "./styles";
 import {
   TextField,
@@ -58,6 +59,7 @@ const UnitForm = ({ handleClose, addressDict }) => {
   const [postData, setPostData] = useState(defaultUnitValues);
   const [newbuilding, setNewBuilding] = useState(defaultBuildingValues);
   const [checked, setChecked] = useState(false);
+  const [message, setMessage] = useState("");
 
   const handleNum = (e) => {
     let value = parseInt(e.target.value, 10);
@@ -85,8 +87,8 @@ const UnitForm = ({ handleClose, addressDict }) => {
   };
 
   const handleCheck = (e) => {
-    setChecked(e.target.checked);
-    const val = checked ? 1 : 0;
+    setChecked(e.target.checked);  
+    const val = checked ? 0 : 1;
     setNewBuilding({
       ...newbuilding,
       [e.target.name]: val,
@@ -116,7 +118,7 @@ const UnitForm = ({ handleClose, addressDict }) => {
         postData[key] = newbuilding[key];
       });
     }
-    console.log(postData);
+
     try {
       const { data } = await axios.post("/api/unit/create", {
         ...postData,
@@ -125,216 +127,229 @@ const UnitForm = ({ handleClose, addressDict }) => {
       if (data.success) {
         navigate(`/units/${data.unit_id}`);
         navigate(0);
+        setPostData(defaultUnitValues);
+        handleClose();
+      }
+      else {
+        console.log(data.message);
+        setMessage(data.message);
       }
     } catch (error) {
-      console.log(error);
+      setMessage(error.message);
     }
-
-    setPostData(defaultUnitValues);
-    handleClose();
   };
 
+  const makeToast = () => message && toast.error(message);
+
+  useEffect(() => {
+    makeToast();
+  }, [message]);
+
   return (
-    <Paper
-      sx={{
-        padding: "2%",
-        position: "absolute",
-        top: "15%",
-        left: "30%",
-        width: "40%",
-        height: "70%",
-        display: "flex",
-        justifyContent: "center",
-      }}
-    >
-      <Box
-        component="form"
-        autoComplete="off"
-        noValidate
+    <>
+      <Toaster />
+      <Paper
         sx={{
+          padding: "2%",
+          position: "absolute",
+          top: "15%",
+          left: "30%",
+          width: "40%",
+          height: "70%",
           display: "flex",
-          flexWrap: "wrap",
-          justifyContent: "space-between",
+          justifyContent: "center",
         }}
-        onSubmit={handleSubmit}
       >
-        <Typography variant="h5">Unit Information</Typography>
-        <IconButton edge="end" aria-label="Edit" onClick={handleClose}>
-          <CloseIcon />
-        </IconButton>
-        <TextField
-          name="address"
-          variant="outlined"
-          label="Address"
-          fullWidth
-          select
-          required
-          value={postData.address}
-          onChange={handleAddress}
+        <Box
+          component="form"
+          autoComplete="off"
+          noValidate
+          sx={{
+            display: "flex",
+            flexWrap: "wrap",
+            justifyContent: "space-between",
+          }}
+          onSubmit={handleSubmit}
         >
-          {currentAddresses.map((option) => (
-            <MenuItem key={option} value={option}>
-              {option}
-            </MenuItem>
-          ))}
-        </TextField>
-        {postData.address === "Other" && (
-          <>
-            <TextField
-              name="new_address"
-              variant="outlined"
-              label="New Address"
-              fullWidth
-              required
-              value={newbuilding.new_address}
-              onChange={handleBuilding}
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  name="pet_friendly"
-                  checked={checked}
-                  onChange={handleCheck}
-                />
-              }
-              label="Pet Friendly"
-            />
-            <TextField
-              name="laundry_availability"
-              variant="outlined"
-              label="Laundry Availability"
-              className={classes.buildings}
-              select
-              required
-              value={newbuilding.laundry_availability}
-              onChange={handleBuilding}
-            >
-              {laundryOptions.map((option) => (
-                <MenuItem value={option}>{option}</MenuItem>
-              ))}
-            </TextField>
-            <TextField
-              name="type_of_unit"
-              variant="outlined"
-              label="Type of Unit"
-              className={classes.buildings}
-              select
-              required
-              value={newbuilding.type_of_unit}
-              onChange={handleBuilding}
-            >
-              {typeOptions.map((option) => (
-                <MenuItem value={option}>{option}</MenuItem>
-              ))}
-            </TextField>
-            <TextField
-              name="distance_from_waterloo"
-              variant="outlined"
-              label="Distance From Waterloo"
-              className={classes.buildings}
-              required
-              value={newbuilding.distance_from_waterloo}
-              onChange={handleBuilding}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">km</InputAdornment>
-                ),
-              }}
-            />
-          </>
-        )}
-        <TextField
-          name="rent_price"
-          variant="outlined"
-          label="Price"
-          type="number"
-          sx={{ width: "33%" }}
-          required
-          value={postData.rent_price}
-          onChange={handleNum}
-        />
-        <TextField
-          name="num_beds"
-          variant="outlined"
-          label="Bedrooms"
-          type="number"
-          sx={{ width: "33%" }}
-          required
-          value={postData.num_beds}
-          onChange={handleNum}
-        />
-        <TextField
-          name="num_washrooms"
-          variant="outlined"
-          label="Washrooms"
-          type="number"
-          sx={{ width: "33%" }}
-          required
-          value={postData.num_washrooms}
-          onChange={handleNum}
-        />
-        <TextField
-          name="floor_num"
-          variant="outlined"
-          label="Floor number"
-          type="number"
-          value={postData.floor_num}
-          sx={{ width: "33%" }}
-          onChange={handleNum}
-        />
-        <TextField
-          name="room_num"
-          variant="outlined"
-          label="Room Number"
-          value={postData.room_num}
-          className={classes.numbers}
-          onChange={handleChange}
-        />
-        <TextField
-          name="lease_term"
-          variant="outlined"
-          label="Lease Duration"
-          fullWidth
-          select
-          required
-          value={postData.lease_term}
-          onChange={handleChange}
-        >
-          {leaseOptions.map((option) => (
-            <MenuItem key={option.value} value={option.value}>
-              {option.label}
-            </MenuItem>
-          ))}
-        </TextField>
-        <Box sx={{ mt: 1 }}>
-          <FileBase
-            type="file"
-            multiple={false}
-            onDone={({ name, base64 }) =>
-              setPostData({ ...postData, fileName: name, image_path: base64 })
-            }
+          <Typography variant="h5">Unit Information</Typography>
+          <IconButton edge="end" aria-label="Edit" onClick={handleClose}>
+            <CloseIcon />
+          </IconButton>
+          <TextField
+            name="address"
+            variant="outlined"
+            label="Address"
+            fullWidth
+            select
+            required
+            value={postData.address}
+            onChange={handleAddress}
+          >
+            {currentAddresses.map((option) => (
+              <MenuItem key={option} value={option}>
+                {option}
+              </MenuItem>
+            ))}
+          </TextField>
+          {postData.address === "Other" && (
+            <>
+              <TextField
+                name="new_address"
+                variant="outlined"
+                label="New Address"
+                fullWidth
+                required
+                value={newbuilding.new_address}
+                onChange={handleBuilding}
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    name="pet_friendly"
+                    checked={checked}
+                    onClick={handleCheck}
+                  />
+                }
+                label="Pet Friendly"
+              />
+              <TextField
+                name="laundry_availability"
+                variant="outlined"
+                label="Laundry Availability"
+                className={classes.buildings}
+                select
+                required
+                value={newbuilding.laundry_availability}
+                onChange={handleBuilding}
+              >
+                {laundryOptions.map((option) => (
+                  <MenuItem value={option}>{option}</MenuItem>
+                ))}
+              </TextField>
+              <TextField
+                name="type_of_unit"
+                variant="outlined"
+                label="Type of Unit"
+                className={classes.buildings}
+                select
+                required
+                value={newbuilding.type_of_unit}
+                onChange={handleBuilding}
+              >
+                {typeOptions.map((option) => (
+                  <MenuItem value={option}>{option}</MenuItem>
+                ))}
+              </TextField>
+              <TextField
+                name="distance_from_waterloo"
+                variant="outlined"
+                label="Distance From Waterloo"
+                className={classes.buildings}
+                required
+                value={newbuilding.distance_from_waterloo}
+                onChange={handleBuilding}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">km</InputAdornment>
+                  ),
+                }}
+              />
+            </>
+          )}
+          <TextField
+            name="rent_price"
+            variant="outlined"
+            label="Price"
+            type="number"
+            sx={{ width: "33%" }}
+            required
+            value={postData.rent_price}
+            onChange={handleNum}
           />
+          <TextField
+            name="num_beds"
+            variant="outlined"
+            label="Bedrooms"
+            type="number"
+            sx={{ width: "33%" }}
+            required
+            value={postData.num_beds}
+            onChange={handleNum}
+          />
+          <TextField
+            name="num_washrooms"
+            variant="outlined"
+            label="Washrooms"
+            type="number"
+            sx={{ width: "33%" }}
+            required
+            value={postData.num_washrooms}
+            onChange={handleNum}
+          />
+          <TextField
+            name="floor_num"
+            variant="outlined"
+            label="Floor number"
+            type="number"
+            value={postData.floor_num}
+            sx={{ width: "33%" }}
+            onChange={handleNum}
+          />
+          <TextField
+            name="room_num"
+            variant="outlined"
+            label="Room Number"
+            value={postData.room_num}
+            className={classes.numbers}
+            onChange={handleChange}
+          />
+          <TextField
+            name="lease_term"
+            variant="outlined"
+            label="Lease Duration"
+            fullWidth
+            select
+            required
+            value={postData.lease_term}
+            onChange={handleChange}
+          >
+            {leaseOptions.map((option) => (
+              <MenuItem key={option.value} value={option.value}>
+                {option.label}
+              </MenuItem>
+            ))}
+          </TextField>
+          <Box sx={{ mt: 1 }}>
+            <FileBase
+              type="file"
+              multiple={false}
+              onDone={({ name, base64 }) =>
+                setPostData({ ...postData, fileName: name, image_path: base64 })
+              }
+            />
+          </Box>
+          <Button
+            // disabled={
+            //   !postData.username ||
+            //   !postData.price ||
+            //   !postData.numBeds ||
+            //   !postData.numWashrooms ||
+            //   !postData.leaseDuration
+            // }
+            sx={{ mt: 2 }}
+            variant="contained"
+            color="primary"
+            size="large"
+            type="submit"
+            fullWidth
+            onClick={handleSubmit}
+          >
+            Submit
+          </Button>
         </Box>
-        <Button
-          // disabled={
-          //   !postData.username ||
-          //   !postData.price ||
-          //   !postData.numBeds ||
-          //   !postData.numWashrooms ||
-          //   !postData.leaseDuration
-          // }
-          sx={{ mt: 2 }}
-          variant="contained"
-          color="primary"
-          size="large"
-          type="submit"
-          fullWidth
-          onClick={handleSubmit}
-        >
-          Submit
-        </Button>
-      </Box>
-    </Paper>
+      </Paper>
+    </>
+    
   );
 };
 

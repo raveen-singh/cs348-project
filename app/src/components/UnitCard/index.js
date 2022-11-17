@@ -13,11 +13,10 @@ import InfoIcon from "@mui/icons-material/Info";
 
 const UnitCard = ({ unit, addressDict }) => {
   const addressArr = Object.keys(addressDict);
-  let decodedPath = "";
   const unitAddress = addressArr.find(
     (building) => addressDict[building] === unit.building_id
   );
-  console.log(unit.image_path);
+
   return (
     <Card>
       <CardMedia

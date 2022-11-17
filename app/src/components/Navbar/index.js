@@ -15,7 +15,6 @@ import { Typography } from "@mui/material";
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
-  const [unitId, setUnitId] = useState(null);
   const [addresses, setAddresses] = useState([]);
   const [units, setUnits] = useState([]);
   const { user, dispatch } = useAuth();
@@ -34,7 +33,6 @@ const Navbar = () => {
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
     setOpen(false);
-    setUnitId(null);
   }
   
   const getUnits = async () => {
