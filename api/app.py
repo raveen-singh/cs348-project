@@ -90,12 +90,12 @@ def create_building(building_info):
                     (building_info["address"], building_info["pet_friendly"], building_info["laundry_availability"], building_info["type_of_unit"], building_info["distance_from_waterloo"]))
         conn.commit()
 
-        cur.execute("SELECT max(building_id) as building_id from building;")
+        cur.execute("SELECT last_insert_id() as building_id from building;")
         building_id = cur.fetchone()["building_id"]
         cur.close()
         return {"status": True, "building_id": building_id}
     except Exception as e:
-        return {"status": False, "message": f"Error with inserting: {e}"} 
+        return {"status": False, "message": f"Error with inserting: {e}"}, STATUS_BAD_REQUEST
 
 # to be used for address dropdown for building info auto-populate (join)
 @app.route('/api/building/get_addresses', methods = ["GET"])
@@ -144,11 +144,13 @@ def delete_unit():
         except Exception as e:
             success = False
             message = f"Error with deleting unit id {id}: {e}"
-            print(message)
     
     cur.close()
     conn.commit()
-    return {"status": success, "message": message}
+    if not success:
+        return {"status": success, "message": message}, STATUS_BAD_REQUEST
+    else:
+        return {"status": success}
 
 
 
@@ -156,7 +158,7 @@ def delete_unit():
 def list_unit():
     # check if user is logged in
     if "loggedin" not in session:
-        return {"success": False, "message": "Not logged in!"}, 401
+        return {"success": False, "message": "Not logged in!"}, STATUS_BAD_REQUEST
 
     conn = mysql.connection
     cur = conn.cursor()
@@ -178,7 +180,6 @@ def list_unit():
     account_id = session["id"]
     
     if not building_id:
-        print("pet friendly", json_data["pet_friendly"])
         building_info = {"address": json_data["new_address"], 
                         "pet_friendly": json_data["pet_friendly"], 
                         "laundry_availability": json_data["laundry_availability"], 
@@ -188,7 +189,7 @@ def list_unit():
         if result["status"]:
             building_id = result["building_id"]
         else:
-            return {"success": False, "message": result["message"]}, 400
+            return {"success": False, "message": result["message"]}, STATUS_BAD_REQUEST
  
     data = image.split(',')
     relative_image_path = '/images/' + f'{str(uuid.uuid4())[:8]}{image_name}'
@@ -207,7 +208,7 @@ def list_unit():
         conn.commit()
 
         # get id of recently inserted unit, assumes no concurrent writes :(
-        cur.execute("SELECT max(unit_id) as unit_id FROM AvailableUnit;")
+        cur.execute("SELECT last_insert_id() as unit_id FROM AvailableUnit;")
         unit_id = cur.fetchone()["unit_id"]
 
         cur.close()
