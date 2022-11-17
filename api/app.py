@@ -156,12 +156,13 @@ def delete_unit():
 def list_unit():
     # check if user is logged in
     if "loggedin" not in session:
-        return {"success": False}, 401
+        return {"success": False, "message": "Not logged in!"}, 401
 
     conn = mysql.connection
     cur = conn.cursor()
 
     json_data = request.get_json()
+
     building_id = json_data["building_id"]
     room = json_data["room_num"] if json_data["room_num"] != "" else None
     lease_term = json_data["lease_term"]
@@ -170,9 +171,13 @@ def list_unit():
     image = json_data["image_path"]
     washrooms = json_data["num_washrooms"]
     rent = json_data["rent_price"]
+
+    if "fileName" not in json_data:
+        return {"success": False, "message": "Please upload an image!"}, STATUS_BAD_REQUEST
     image_name = json_data["fileName"]
     
     if not building_id:
+        print("pet friendly", json_data["pet_friendly"])
         building_info = {"address": json_data["new_address"], 
                         "pet_friendly": json_data["pet_friendly"], 
                         "laundry_availability": json_data["laundry_availability"], 
