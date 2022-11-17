@@ -13,6 +13,15 @@ VALUES (NULL,'256 Phillip St',1,'Building','Apartment',0.6);
 INSERT INTO Building
 VALUES (NULL,'254 Phillip St',1,'Ensuite','Apartment',0.5);
 
+INSERT INTO Building
+VALUES (NULL,'110 University Ave W',1,'None','House',1.7);
+
+INSERT INTO Building
+VALUES (NULL,'315 King St N',0,'Ensuite','Apartment',2.7);
+
+INSERT INTO Building
+VALUES (NULL,'339 King St N',1,'Ensuite','Apartment',2.8);
+
 -- Available Units
 -- TODO: Please find and upload images to images folder that correspond to the building
 INSERT INTO AvailableUnit
@@ -52,3 +61,23 @@ VALUES (NULL, 3, 4, 5, 'Had a good time a 254 Phillip. Would stay here again nex
 
 INSERT INTO Review
 VALUES (NULL, 3, 5, 5, 'I had no issues with my stay. Building is in a convienent location and close to campus', 5);
+
+INSERT INTO Review
+VALUES (NULL, 4, 1, 2, 'The pipe is leaking under the sink, but no one from the building management team coming to resolve the issue.', 8);
+
+INSERT INTO Review
+VALUES (NULL, 4, 3, 3, 'The admin is not that helpful and the room is not very clean and tidy as well. Overall very average.', 7);
+
+INSERT INTO Review
+VALUES (NULL, 5, 4, 5, 'My room has a nice view of the city and is very clean when I move in. The bus stop is also very convenient.', 1);
+
+INSERT INTO Review
+VALUES (NULL, 5, 3, 4, 'The room is decently clean and having the ensuite laundry is nice, but the location is a bit too far', 4);
+
+INSERT INTO Review
+VALUES (NULL, 6, 5, 5, 'The building admin is very helpful and the room is extremely clean and tidy. Would recommend to anyone staying in Waterloo.', 6);
+
+INSERT INTO Review
+VALUES (NULL, 6, 3, 2, 'There is no major issues but the room is not the cleanest. Also the admin can be more responsive to requests.', 3);
+
+
