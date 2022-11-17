@@ -8,6 +8,7 @@ import {
   Typography,
   Box,
 } from "@mui/material";
+import { Link } from "react-router-dom";
 import InfoIcon from "@mui/icons-material/Info";
 
 const UnitCard = ({ unit, addressDict }) => {
@@ -22,7 +23,10 @@ const UnitCard = ({ unit, addressDict }) => {
       <CardMedia
         component="img"
         height="200"
-        image= {unit.image_path || "https://user-images.githubusercontent.com/194400/49531010-48dad180-f8b1-11e8-8d89-1e61320e1d82.png"}
+        image={
+          unit.image_path ||
+          "https://user-images.githubusercontent.com/194400/49531010-48dad180-f8b1-11e8-8d89-1e61320e1d82.png"
+        }
       />
 
       <Box p={2}>
@@ -51,7 +55,12 @@ const UnitCard = ({ unit, addressDict }) => {
         </Typography>
       </CardContent>
       <CardActions>
-        <Button size="small" color="primary" onClick={() => {}}>
+        <Button
+          size="small"
+          color="primary"
+          component={Link}
+          to={`/unit/${unit.unit_id}`}
+        >
           <InfoIcon sx={{ mr: 1 }} />
           Details
         </Button>
