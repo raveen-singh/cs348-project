@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import Button from "@mui/material/Button";
@@ -6,7 +6,6 @@ import Box from "@mui/material/Box";
 import { Link as RouterLink } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import toast, { Toaster } from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
 
 import Modal from "@mui/material/Modal";
 import UnitForm from "../UnitForm";
@@ -15,8 +14,8 @@ import { Typography } from "@mui/material";
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
+  const [addresses, setAddresses] = useState([]);
   const { user, dispatch } = useAuth();
-  const navigate = useNavigate();
 
   const logout = async () => {
     const { data } = await axios.post("/api/logout", {
@@ -25,13 +24,27 @@ const Navbar = () => {
     if (data.success) {
       localStorage.removeItem("user");
       dispatch({ type: "LOGOUT" });
-      navigate("/");
       toast.success("Logged out successfully.");
     }
   };
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+
+  const getAddresses = async () => {
+    try {
+      const result = await axios.get("/api/building/get_addresses");
+      const options = result.data;
+      options["Other"] = 0;
+      setAddresses(options);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getAddresses();
+  }, []);
 
   return (
     <AppBar position="sticky">
@@ -53,6 +66,9 @@ const Navbar = () => {
             to="/buildings"
           >
             View Buildings
+          </Button>
+          <Button variant="filled" component={RouterLink} to="/units">
+            View All Units
           </Button>
           {user && (
             <Button variant="filled" onClick={handleOpen}>
@@ -89,7 +105,7 @@ const Navbar = () => {
           aria-labelledby="modal-modal-title"
           aria-describedby="modal-modal-description"
         >
-          <UnitForm handleClose={handleClose} />
+          <UnitForm handleClose={handleClose} addressDict={addresses} />
         </Modal>
       </Toolbar>
     </AppBar>
