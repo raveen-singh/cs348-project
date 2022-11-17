@@ -3,6 +3,19 @@
 INSERT INTO UnitListerAccount
 VALUES (NULL, 'johndoe45', 'password123', 'John Doe', '8443212200', 'admin@iconstudents.ca','https://www.iconstudents.com/');
 
+INSERT INTO UnitListerAccount
+VALUES (NULL, 'maryjane99', 'mj123!', 'Mary Jane', '5198843670', 'maryjane@wcri.coop','https://www.wcri.coop/');
+
+INSERT INTO UnitListerAccount
+VALUES (NULL, 'alex_smith_27', 'as1997!', 'Alex Smith', '5197477276', 'alexs@woch.ca','https://www.rentwoch.com/');
+
+INSERT INTO UnitListerAccount
+VALUES (NULL, 'jlee', 'jl_1998_23', 'Jason Lee', '5193400172', 'jlee@accomod8u.com','https://www.accomod8u.com/');
+
+INSERT INTO UnitListerAccount
+VALUES (NULL, 'henryDavis123', 'henryPass_!2', 'Henry Davis', '5199548082', 'hdavis@kwproperty.com','https://www.kwproperty.com/');
+
+
 -- Buildings
 INSERT INTO Building
 VALUES (NULL,'330 Phillip St',0,'Ensuite','Apartment',0.7);
