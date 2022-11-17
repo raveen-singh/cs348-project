@@ -96,4 +96,9 @@ source cleanup_tables.sql
 source create_tables.sql
 source populate_tables.sql
 ```
+
+**Production Data**
+
+To run the app with production data, instead of the command `source populate_tables.sql`, run `source production_data.sql` instead.
+
 If there are no errors, navigate to `http://localhost:3000` (assuming the frontend/backend are running). If you see cs348db connected below the first message, you have set up the database correctly. 
