@@ -6,7 +6,6 @@ import Box from "@mui/material/Box";
 import { Link as RouterLink } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import toast, { Toaster } from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
 
 import Modal from "@mui/material/Modal";
 import UnitForm from "../UnitForm";
@@ -15,9 +14,7 @@ import { Typography } from "@mui/material";
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
-  const [unitId, setUnitId] = useState(null);
   const [addresses, setAddresses] = useState([]);
-  const [units, setUnits] = useState([]);
   const { user, dispatch } = useAuth();
 
   const logout = async () => {
@@ -32,36 +29,23 @@ const Navbar = () => {
   };
 
   const handleOpen = () => setOpen(true);
-  const handleClose = () => {
-    setOpen(false);
-    setUnitId(null);
-  }
-  
-  const getUnits = async () => {
+  const handleClose = () => setOpen(false);
+
+  const getAddresses = async () => {
     try {
-      const result = await axios.get('/api/unit/get');
-      setUnits(result.data.data);
+      const result = await axios.get("/api/building/get_addresses");
+      const options = result.data;
+      options["Other"] = 0;
+      setAddresses(options);
     } catch (error) {
       console.log(error);
     }
   };
 
-  const getAddresses = async () => {
-    try {
-      const result = await axios.get('/api/building/get_addresses');
-      const options = result.data;
-      options["Other"] = 0;
-      setAddresses(options);
-      
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  
   useEffect(() => {
     getAddresses();
     getUnits();
-  }, [])
+  }, []);
 
   return (
     <AppBar position="sticky">
@@ -122,7 +106,7 @@ const Navbar = () => {
           aria-labelledby="modal-modal-title"
           aria-describedby="modal-modal-description"
         >
-          <UnitForm handleClose={handleClose} addressDict={addresses}/>
+          <UnitForm handleClose={handleClose} addressDict={addresses} />
         </Modal>
       </Toolbar>
     </AppBar>
