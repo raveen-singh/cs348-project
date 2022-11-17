@@ -35,6 +35,15 @@ VALUES (NULL,'315 King St N',0,'Ensuite','Apartment',2.7);
 INSERT INTO Building
 VALUES (NULL,'339 King St N',1,'Ensuite','Apartment',2.8);
 
+INSERT INTO Building
+VALUES (NULL, '181 Lester', 0, 'Ensuite', 'Apartment', 1.0);
+
+INSERT INTO Building
+VALUES (NULL, '258C Sunview St', 0, 'Ensuite', 'Apartment', 1.7);
+
+INSERT INTO Building 
+VALUES (NULL, '203 Lester St', 1, 'Building', 'Apartment', 1.0);
+
 -- Available Units
 -- TODO: Please find and upload images to images folder that correspond to the building
 INSERT INTO AvailableUnit
@@ -117,4 +126,21 @@ VALUES (NULL, 6, 5, 5, 'The building admin is very helpful and the room is extre
 INSERT INTO Review
 VALUES (NULL, 6, 3, 2, 'There is no major issues but the room is not the cleanest. Also the admin can be more responsive to requests.', 3);
 
+INSERT INTO Review
+VALUES (NULL, 7, 4, 4, 'The door to the unit sometimes would get stuck. Admin was helpful though! Otherwise, was a great place to live.', 2);
+
+INSERT INTO Review
+VALUES (NULL, 7, 0, 0, 'I hate this place. Never rent from 181 again! @!#$% >:(', 4);
+
+INSERT INTO Review
+VALUES (NULL, 8, 5, 5, 'Loved living here!! The admin were super helpful, even when our laundry broke and started leaking onto our floors :(', 3);
+
+INSERT INTO Review
+VALUES (NULL, 9, 3, 0, 'Literally got bed bugs. Not subletting here again.', 8);
+
+INSERT INTO Review
+VALUES (NULL, 9, 2, 1, 'Only upside was living by Cocos. Otherwise would not recommend', 4);
+
+INSERT INTO Review
+VALUES (NULL, 9, 3, 3, 'The lighting was not that good. I guess I would live here again? Probably better options out there though.', 1);
 
