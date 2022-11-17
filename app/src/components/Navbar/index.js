@@ -19,7 +19,6 @@ const Navbar = () => {
   const [addresses, setAddresses] = useState([]);
   const [units, setUnits] = useState([]);
   const { user, dispatch } = useAuth();
-  const navigate = useNavigate();
 
   const logout = async () => {
     const { data } = await axios.post("/api/logout", {
@@ -28,7 +27,6 @@ const Navbar = () => {
     if (data.success) {
       localStorage.removeItem("user");
       dispatch({ type: "LOGOUT" });
-      navigate("/");
       toast.success("Logged out successfully.");
     }
   };
