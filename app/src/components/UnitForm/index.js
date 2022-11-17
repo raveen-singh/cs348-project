@@ -116,15 +116,12 @@ const UnitForm = ({ handleClose, addressDict }) => {
         postData[key] = newbuilding[key];
       });
     }
-    console.log(postData);
     try {
       const { data } = await axios.post("/api/unit/create", {
         ...postData,
       });
-      console.log(data);
       if (data.success) {
-        navigate(`/units/${data.unit_id}`);
-        navigate(0);
+        navigate(`/unit/${data.unit_id}`);
       }
     } catch (error) {
       console.log(error);

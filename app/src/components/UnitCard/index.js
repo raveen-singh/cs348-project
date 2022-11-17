@@ -17,7 +17,6 @@ const UnitCard = ({ unit, addressDict }) => {
   const unitAddress = addressArr.find(
     (building) => addressDict[building] === unit.building_id
   );
-  console.log(unit.image_path);
   return (
     <Card>
       <CardMedia
