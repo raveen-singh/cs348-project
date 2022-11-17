@@ -43,7 +43,7 @@ const Login = () => {
       } else {
         dispatch({ type: "LOGIN", payload: data.session.username });
         localStorage.setItem("user", data.session.username);
-        navigate(-1);
+        navigate("/units");
         toast.success("Logged in successfully.");
       }
     } catch (error) {
