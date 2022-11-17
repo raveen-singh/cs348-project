@@ -121,10 +121,9 @@ const UnitForm = ({ handleClose, addressDict }) => {
         ...postData,
       });
       if (data.success) {
-        navigate(`/units/${data.unit_id}`);
-        navigate(0);
         setPostData(defaultUnitValues);
         handleClose();
+        navigate(`/unit/${data.unit_id}`);
       } else {
         console.log(data.message);
         setMessage(data.message);
@@ -156,6 +155,7 @@ const UnitForm = ({ handleClose, addressDict }) => {
         }}
       >
         <Box
+          width="100%"
           component="form"
           autoComplete="off"
           noValidate
@@ -166,10 +166,18 @@ const UnitForm = ({ handleClose, addressDict }) => {
           }}
           onSubmit={handleSubmit}
         >
-          <Typography variant="h5">Unit Information</Typography>
-          <IconButton edge="end" aria-label="Edit" onClick={handleClose}>
-            <CloseIcon />
-          </IconButton>
+          <Box
+            width="100%"
+            display="flex"
+            alignItems="center"
+            justifyContent="space-between"
+            mt={-2}
+          >
+            <Typography variant="h5">Unit Information</Typography>
+            <IconButton edge="end" aria-label="Edit" onClick={handleClose}>
+              <CloseIcon />
+            </IconButton>
+          </Box>
           <TextField
             name="address"
             variant="outlined"
@@ -291,6 +299,7 @@ const UnitForm = ({ handleClose, addressDict }) => {
             name="room_num"
             variant="outlined"
             label="Room Number"
+            type="number"
             value={postData.room_num}
             onChange={handleChange}
           />
@@ -320,17 +329,16 @@ const UnitForm = ({ handleClose, addressDict }) => {
             />
           </Box>
           <Button
-            // disabled={
-            //   !postData.username ||
-            //   !postData.price ||
-            //   !postData.numBeds ||
-            //   !postData.numWashrooms ||
-            //   !postData.leaseDuration
-            // }
+            disabled={
+              !postData.rent_price ||
+              !postData.address | !postData.num_beds ||
+              !postData.num_washrooms ||
+              !postData.fileName
+            }
             sx={{ mt: 2 }}
             variant="contained"
             color="primary"
-            size="large"
+            size="medium"
             type="submit"
             fullWidth
             onClick={handleSubmit}
