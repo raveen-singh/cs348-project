@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from "react-router-dom";
 import useStyles from "./styles";
 import {
   TextField,
@@ -11,7 +11,7 @@ import {
   FormControlLabel,
   Checkbox,
   InputAdornment,
-  Box
+  Box,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import FileBase from "react-file-base64";
@@ -116,15 +116,12 @@ const UnitForm = ({ handleClose, addressDict }) => {
         postData[key] = newbuilding[key];
       });
     }
-    console.log(postData);
     try {
       const { data } = await axios.post("/api/unit/create", {
         ...postData,
       });
-      console.log(data);
       if (data.success) {
-        navigate(`/units/${data.unit_id}`);
-        navigate(0);
+        navigate(`/unit/${data.unit_id}`);
       }
     } catch (error) {
       console.log(error);
@@ -316,13 +313,13 @@ const UnitForm = ({ handleClose, addressDict }) => {
           />
         </Box>
         <Button
-          // disabled={
-          //   !postData.username ||
-          //   !postData.price ||
-          //   !postData.numBeds ||
-          //   !postData.numWashrooms ||
-          //   !postData.leaseDuration
-          // }
+          disabled={
+            !postData.address ||
+            !postData.rent_price ||
+            !postData.num_beds ||
+            !postData.num_washrooms ||
+            !postData.fileName
+          }
           sx={{ mt: 2 }}
           variant="contained"
           color="primary"
