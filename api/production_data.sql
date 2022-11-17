@@ -56,22 +56,22 @@ VALUES (NULL, '238 Lester St', 1, 'Building', 'Apartment', 0.9);
 -- Available Units
 -- TODO: Please find and upload images to images folder that correspond to the building
 INSERT INTO AvailableUnit
-VALUES (NULL, 1, 1, 202, 8, 4, 2, 'path/to/image', 2, 1000);
+VALUES (NULL, 1, 1, 202, 8, 4, 2, '/images/unit_1.jpg', 2, 1000);
 
 INSERT INTO AvailableUnit
-VALUES (NULL, 1, 1, 101, 4, 3, 3, 'path/to/image', 3, 900);
+VALUES (NULL, 1, 1, 101, 4, 3, 3, '/images/unit_2.jpg', 3, 900);
 
 INSERT INTO AvailableUnit
-VALUES (NULL, 1, 1, 303, 12, 2, 4, 'path/to/image', 1, 800);
+VALUES (NULL, 1, 1, 303, 12, 2, 4, '/images/unit_3.jpg', 1, 800);
 
 INSERT INTO AvailableUnit
-VALUES(NULL, 2, 2, 36, 4, 3, 5, 'path/to/image', 2, 750);
+VALUES(NULL, 2, 2, 36, 4, 3, 5, '/images/unit_4.jpg', 2, 750);
 
 INSERT INTO AvailableUnit
-VALUES(NULL, 2, 2, 37, 4, 5, 5, 'path/to/image', 3, 900);
+VALUES(NULL, 2, 2, 37, 4, 5, 5, '/images/unit_5.jpg', 3, 900);
 
 INSERT INTO AvailableUnit
-VALUES(NULL, 5, 3, 12, 8, 3, 1, 'path/to/image', 4, 1200);
+VALUES(NULL, 5, 3, 12, 8, 3, 1, '/images/unit_6.jpg', 4, 1200);
 
 INSERT INTO AvailableUnit
 VALUES(NULL, 5, 3, 14, 8, 3, 1, 'path/to/image', 4, 1100);
