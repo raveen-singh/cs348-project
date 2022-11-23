@@ -59,7 +59,6 @@ const BuildingList = ({ buildings }) => {
             <TableBody>
               {buildings.map(({ building_id, ...building }) => (
                 <TableRow key={building_id}>
-                  {console.log(building.type_of_unit)}
                   <TableCell align="center">
                     {building.type_of_unit === "Apartment" ? (
                       <ApartmentIcon />
