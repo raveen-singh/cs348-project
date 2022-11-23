@@ -33,7 +33,7 @@ const ReviewCard = ({ review }) => {
           />
         </Box>
       </Stack>
-      <Typography>"{review.comment}"</Typography>
+      {review.comment && <Typography>"{review.comment}"</Typography>}
       <Typography>— Happy Hippo</Typography>
       <Box
         display="flex"
