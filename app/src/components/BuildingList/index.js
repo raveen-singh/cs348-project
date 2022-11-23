@@ -11,7 +11,8 @@ import {
   Grid,
 } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
-import ManageSearchIcon from "@mui/icons-material/ManageSearch";
+import ApartmentIcon from "@mui/icons-material/Apartment";
+import HomeIcon from "@mui/icons-material/Home";
 import React from "react";
 
 const BuildingList = ({ buildings }) => {
@@ -58,13 +59,13 @@ const BuildingList = ({ buildings }) => {
             <TableBody>
               {buildings.map(({ building_id, ...building }) => (
                 <TableRow key={building_id}>
+                  {console.log(building.type_of_unit)}
                   <TableCell align="center">
-                    <Link
-                      component={RouterLink}
-                      to={`/buildings/${building_id}`}
-                    >
-                      <ManageSearchIcon />
-                    </Link>
+                    {building.type_of_unit === "Apartment" ? (
+                      <ApartmentIcon />
+                    ) : (
+                      <HomeIcon />
+                    )}
                   </TableCell>
                   <TableCell
                     component={RouterLink}
