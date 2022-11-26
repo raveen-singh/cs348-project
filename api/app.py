@@ -250,6 +250,25 @@ def get_review():
 
     return {"success": True, "reviews": reviews}
 
+@app.route('/api/review/update', methods = ["PUT"])
+def update_review():
+    conn = mysql.connection
+    cur = conn.cursor()
+
+    json_data = request.get_json()
+    review_id = json_data["review_id"]
+    review_helpfulness = json_data["review_helpfulness"]
+    
+
+    try:
+        cur.execute("UPDATE Review SET review_helpfulness=%s WHERE review_id=%s", 
+        [review_helpfulness, review_id])
+        cur.close()
+        conn.commit()
+        return {"success": True}
+    except Exception as e:
+        return {"success": False, "message": f"Error updating comment: {e}"}, STATUS_BAD_REQUEST
+
 
 @app.route('/api/login', methods = ["POST"])
 def login():
