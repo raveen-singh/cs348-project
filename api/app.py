@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, request, session
 from flask_mysqldb import MySQL
+from flask_bcrypt import Bcrypt
 import os
 import cv2
 import base64
@@ -19,6 +20,7 @@ STATUS_BAD_REQUEST = 400
 STATUS_ALREADY_EXISTS = 403
 
 mysql = MySQL(app)
+bcrypt = Bcrypt(app)
 
 # make directory to store images
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -63,7 +65,10 @@ def create_lister():
     phone_num = json_data["phone_num"]
     email = json_data["email"]
     website = json_data["website"]
-    
+
+    # hash password before insert
+    password = bcrypt.generate_password_hash(password)
+
     # This check might be redundant now since we added UNIQUE to username,
     # so the trycatch block would return a duplicate user error
     cur.execute("SELECT * FROM UnitListerAccount WHERE username = %s", [username])
@@ -259,12 +264,15 @@ def login():
 
     cur = mysql.connection.cursor()
 
-    cur.execute("SELECT * FROM UnitListerAccount WHERE username = %s AND password = %s", (username, password))
+    cur.execute("SELECT * FROM UnitListerAccount WHERE username = %s", [username])
 
     account = cur.fetchone()
     cur.close()
 
-    if account:
+    # check retrieved hash password against user input
+    validate_password = bcrypt.check_password_hash(account["password"], password)
+
+    if account and validate_password:
         session["loggedin"] = True
         session["id"] = account["account_id"]
         session["username"] = account["username"]
