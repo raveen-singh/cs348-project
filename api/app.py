@@ -119,7 +119,22 @@ def get_units():
     else: # return all units
         cur.execute(f"SELECT * FROM AvailableUnit;")
         rv = cur.fetchall()
-
+    
+    if not rv:
+        return {"success": False}, STATUS_BAD_REQUEST
+    # append image data to returned tuple
+    if type(rv) == tuple:
+        rv = list(rv)
+    else:
+        rv = [rv]
+   
+    for r in rv:
+        file_name = basedir + r['image_path']
+        img = cv2.imread(file_name)
+        jpg_img = cv2.imencode('.jpg',img)
+        b64_string = base64.b64encode(jpg_img[1]).decode('utf-8')
+        r["image_data"] = b64_string
+    rv = tuple(rv)
     cur.close()
     return {"data": rv} # rv is a dictionary if provided id, otherwise a list of dictionaries
 
