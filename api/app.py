@@ -123,6 +123,17 @@ def get_units():
     cur.close()
     return {"data": rv} # rv is a dictionary if provided id, otherwise a list of dictionaries
 
+@app.route('/api/unit/{$id}', methods = ["GET"])
+def get_my_units():
+    id = request.args.get("id")
+    cur = mysql.connection.cursor()
+
+    cur.execute("SELECT * FROM AvailableUnit WHERE account_id = %s", [id])
+    rv = cur.fetchall()
+
+    cur.close()
+    return {"data": rv}
+
 @app.route('/api/unit/delete', methods = ["DELETE"])
 def delete_unit():
     # expecting to be called /api/unit/get?id={id} 
