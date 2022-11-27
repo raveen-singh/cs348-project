@@ -255,14 +255,11 @@ def update_review():
     conn = mysql.connection
     cur = conn.cursor()
 
-    json_data = request.get_json()
-    review_id = json_data["review_id"]
-    review_helpfulness = json_data["review_helpfulness"]
-    
+    review_id = request.args.get("id")    
 
     try:
-        cur.execute("UPDATE Review SET review_helpfulness=%s WHERE review_id=%s", 
-        [review_helpfulness, review_id])
+        cur.execute("UPDATE Review SET review_helpfulness = review_helpfulness + 1  WHERE review_id=%s", 
+        [review_id])
         cur.close()
         conn.commit()
         return {"success": True}
