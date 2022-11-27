@@ -17,7 +17,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import FileBase from "react-file-base64";
 import axios from "axios";
 
-const UnitForm = ({ handleClose, addressDict }) => {
+const UnitForm = ({ handleOpen, handleClose, addressDict, unitId, setUnitId, editPost, setEditPost }) => {
   const currentAddresses = Object.keys(addressDict);
   const navigate = useNavigate();
 
@@ -54,7 +54,7 @@ const UnitForm = ({ handleClose, addressDict }) => {
     distance_from_waterloo: "0.0",
   };
 
-  const [postData, setPostData] = useState(defaultUnitValues);
+  const [postData, setPostData] = useState(editPost.address === "" ? defaultUnitValues : editPost);
   const [newbuilding, setNewBuilding] = useState(defaultBuildingValues);
   const [checked, setChecked] = useState(false);
   const [message, setMessage] = useState("");
@@ -117,27 +117,45 @@ const UnitForm = ({ handleClose, addressDict }) => {
       });
     }
     try {
-      const { data } = await axios.post("/api/unit/create", {
-        ...postData,
-      });
-      if (data.success) {
-        setPostData(defaultUnitValues);
-        handleClose();
-        navigate(`/unit/${data.unit_id}`);
-      } else {
-        setMessage(data.message);
+      if (unitId) {
+        const data = 1;//update Endpoint
+        if (data) {
+          console.log(postData);
+          setUnitId(null);
+          setEditPost(defaultUnitValues);
+          setPostData(defaultUnitValues);
+          handleClose();
+          navigate(`/unit/${unitId}`);
+        } else {
+          setMessage(data.message);
+        }
+      }
+      else {
+        const { data } = await axios.post("/api/unit/create", {
+          ...postData,
+        });
+        if (data.success) {
+          setPostData(defaultUnitValues);
+          handleClose();
+          navigate(`/unit/${data.unit_id}`);
+        } else {
+          setMessage(data.message);
+        }
       }
     } catch (error) {
       setMessage(error.message);
     }
+    
   };
 
   const makeToast = () => message && toast.error(message);
 
+
+
   useEffect(() => {
     makeToast();
-  }, [message]);
-
+  }, [])
+  
   return (
     <>
       <Toaster />

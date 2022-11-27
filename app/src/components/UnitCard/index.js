@@ -8,14 +8,33 @@ import {
   Typography,
   Box,
 } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 import InfoIcon from "@mui/icons-material/Info";
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 
-const UnitCard = ({ unit, addressDict }) => {
+const UnitCard = ({ unit, addressDict, setUnitId }) => {
+  const navigate = useNavigate();
   const addressArr = Object.keys(addressDict);
   const unitAddress = addressArr.find(
     (building) => addressDict[building] === unit.building_id
   );
+
+  const handleEdit = async (e) => {
+    e.preventDefault();
+    setUnitId(unit.unit_id);
+  }
+  const handleDelete = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await axios.delete(`/api/unit/delete?id=${unit.unit_id}`);
+      navigate(0);
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
+
   return (
     <Card>
       <CardMedia
@@ -61,6 +80,24 @@ const UnitCard = ({ unit, addressDict }) => {
         >
           <InfoIcon sx={{ mr: 1 }} />
           Details
+        </Button>
+        <Button
+          size="small"
+          color="primary"
+          component={Link}
+          onClick={handleEdit}
+        >
+          <EditIcon sx={{ mr: 1 }} />
+          Edit
+        </Button>
+        <Button
+          size="small"
+          color="primary"
+          component={Link}
+          onClick={handleDelete}
+        >
+          <DeleteIcon sx={{ mr: 1 }} />
+          Delete
         </Button>
       </CardActions>
     </Card>
