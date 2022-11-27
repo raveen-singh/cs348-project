@@ -52,7 +52,6 @@ def get_buildings():
     cur.close()
     return {"data": rv} # rv is a dictionary if provided id, otherwise a list of dictionaries. dictionary includes averaged reviews.
 
-
 @app.route('/api/lister/create', methods = ["POST"])
 def create_lister():
     conn = mysql.connection
@@ -127,6 +126,12 @@ def get_units():
 
     cur.close()
     return {"data": rv} # rv is a dictionary if provided id, otherwise a list of dictionaries
+
+
+@app.route('/api/unit/update', methods = ["POST"])
+def update_unit():
+    print("updating unit")
+    return {"success": True, "message": "good"}
 
 @app.route('/api/unit/delete', methods = ["DELETE"])
 def delete_unit():
