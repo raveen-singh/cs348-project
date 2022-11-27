@@ -5,6 +5,8 @@ import cv2
 import base64
 import numpy as np
 import uuid
+import re
+from urllib.parse import urlparse
 
 app = Flask(__name__)
 app.secret_key = 'a secret key'
@@ -50,6 +52,15 @@ def get_buildings():
     cur.close()
     return {"data": rv} # rv is a dictionary if provided id, otherwise a list of dictionaries. dictionary includes averaged reviews.
 
+def sanitize_user_input(raw):
+    return raw.replace(";", "").replace("%", "").replace("--", "") # remove common sql characters
+
+def is_url(url):
+  try:
+    result = urlparse(url)
+    return all([result.scheme, result.netloc])
+  except ValueError:
+    return False
 
 @app.route('/api/lister/create', methods = ["POST"])
 def create_lister():
@@ -63,7 +74,28 @@ def create_lister():
     phone_num = json_data["phone_num"]
     email = json_data["email"]
     website = json_data["website"]
+
+    # user input validation to prevent sql injections
+    if not username.isalnum():
+        return {"success": False, "message": "Not a valid username! Must be alphanumeric."}, STATUS_BAD_REQUEST
+
+    if not password.isalnum():
+        return {"success": False, "message": "Not a valid password! Must be alphanumeric."}, STATUS_BAD_REQUEST
+
+    if not name.replace(" ", "").isalpha():
+        print(name)
+        return {"success": False, "message": "Not a valid name! Must only contain letters in the alphabet."}, STATUS_BAD_REQUEST
+
+    if not phone_num.isnumeric() or len(phone_num) != 10:
+        print("Not a valid phone number! Please input a 10-digit phone number.")
+        return {"success": False, "message": "Not a valid phone number! Please input a 10-digit phone number."}, STATUS_BAD_REQUEST
     
+    if email != sanitize_user_input(email) or not re.match("[^@]+@[^@]+\.[^@]+", email):
+        return {"success": False, "message": "Not a valid email!"}, STATUS_BAD_REQUEST
+
+    if website and (website != sanitize_user_input(website) or not is_url(website)):
+        return {"success": False, "message": "Not a valid website!"}, STATUS_BAD_REQUEST
+
     # This check might be redundant now since we added UNIQUE to username,
     # so the trycatch block would return a duplicate user error
     cur.execute("SELECT * FROM UnitListerAccount WHERE username = %s", [username])
@@ -226,7 +258,7 @@ def post_review():
     building_id = json_data["building_id"]
     cleanliness = json_data["cleanliness"]
     comment = json_data["comment"]
-    review_helpfulness = json_data["reviewHelpfulness"]
+    review_helpfulness = 0
 
     try:
         cur.execute("INSERT INTO Review VALUES (NULL, %s, %s, %s, %s, %s)", 
