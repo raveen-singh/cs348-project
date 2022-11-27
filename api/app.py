@@ -126,14 +126,19 @@ def get_units():
 @app.route('/api/unit/delete', methods = ["DELETE"])
 def delete_unit():
     # expecting to be called /api/unit/delete?id={id} 
+    if "loggedin" not in session:
+        return {"success": False, "message": "Not logged in!"}, STATUS_BAD_REQUEST
+    
+
     id = request.args.get("id")
     conn = mysql.connection
     cur = conn.cursor()
     
     success = True
     message = ""
+    account_id = session["id"]
 
-    cur.execute("SELECT * FROM AvailableUnit WHERE unit_id = %s", [id])
+    cur.execute("SELECT * FROM AvailableUnit WHERE unit_id = %s AND account_id = %s;", [id, account_id]) # checks that the unit exists, and belongs to the logged in user
     rv = cur.fetchone()
     if not rv:
         success = False
