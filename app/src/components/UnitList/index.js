@@ -84,6 +84,7 @@ const UnitList = () => {
     setEditPost(defaultFetchedUnitValues);
   };
 
+
   return (
     <div>
       <Modal
@@ -92,7 +93,7 @@ const UnitList = () => {
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <UnitForm handleOpen={handleOpen} handleClose={handleClose} addressDict={addresses} unitId={unitId} setUnitId={setUnitId} editPost={editPost} setEditPost={setEditPost} />
+        <UnitForm handleClose={handleClose} addressDict={addresses} unitId={unitId} setUnitId={setUnitId} editPost={editPost} setEditPost={setEditPost} />
       </Modal>
       <Box sx={{ width: "90%", margin: "100px 5%" }}>
         <Grid container rowSpacing={3} columnSpacing={{ xs: 1, sm: 2, md: 4 }}>
