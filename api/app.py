@@ -125,7 +125,7 @@ def get_units():
 
 @app.route('/api/unit/delete', methods = ["DELETE"])
 def delete_unit():
-    # expecting to be called /api/unit/get?id={id} 
+    # expecting to be called /api/unit/delete?id={id} 
     id = request.args.get("id")
     conn = mysql.connection
     cur = conn.cursor()
