@@ -17,7 +17,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import FileBase from "react-file-base64";
 import axios from "axios";
 
-const UnitForm = ({ handleOpen, handleClose, addressDict, unitId, setUnitId, editPost, setEditPost }) => {
+const UnitForm = ({ handleClose, addressDict, unitId, setUnitId, editPost, setEditPost }) => {
   const currentAddresses = Object.keys(addressDict);
   const navigate = useNavigate();
 
@@ -54,7 +54,7 @@ const UnitForm = ({ handleOpen, handleClose, addressDict, unitId, setUnitId, edi
     distance_from_waterloo: "0.0",
   };
 
-  const [postData, setPostData] = useState(editPost.address === "" ? defaultUnitValues : editPost);
+  const [postData, setPostData] = useState(editPost ? editPost : defaultUnitValues);
   const [newbuilding, setNewBuilding] = useState(defaultBuildingValues);
   const [checked, setChecked] = useState(false);
   const [message, setMessage] = useState("");
@@ -118,9 +118,16 @@ const UnitForm = ({ handleOpen, handleClose, addressDict, unitId, setUnitId, edi
     }
     try {
       if (unitId) {
-        const data = 1;//update Endpoint
+        const { data } = await axios.post('/api/unit/update', {
+          ...postData,
+          "unit_id": unitId
+        });
         if (data) {
-          console.log(postData);
+          console.log({
+            ...postData,
+            "unit_id": unitId
+          });
+          console.log(data.message);
           setUnitId(null);
           setEditPost(defaultUnitValues);
           setPostData(defaultUnitValues);
@@ -338,12 +345,16 @@ const UnitForm = ({ handleOpen, handleClose, addressDict, unitId, setUnitId, edi
           </TextField>
           <Box sx={{ mt: 1 }}>
             <FileBase
+              id="files"
               type="file"
               multiple={false}
               onDone={({ name, base64 }) =>
                 setPostData({ ...postData, fileName: name, image_path: base64 })
               }
             />
+            {!postData.fileName &&
+              <label for="files">(required)</label>
+            }
           </Box>
           <Button
             disabled={
@@ -360,7 +371,7 @@ const UnitForm = ({ handleOpen, handleClose, addressDict, unitId, setUnitId, edi
             fullWidth
             onClick={handleSubmit}
           >
-            Submit
+            {unitId ? "Update" : "Submit"}
           </Button>
         </Box>
       </Paper>
