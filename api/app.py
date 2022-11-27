@@ -251,7 +251,7 @@ def get_review():
 
     return {"success": True, "reviews": reviews}
 
-@app.route('/api/reviews/get_random_name', methods = ["GET"])
+@app.route('/api/reviews/get_random_names', methods = ["GET"])
 def get_random_name():
     json_data = request.get_json()
     num = json_data["number_of_names"]
