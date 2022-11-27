@@ -5,6 +5,7 @@ import cv2
 import base64
 import numpy as np
 import uuid
+import random
 
 app = Flask(__name__)
 app.secret_key = 'a secret key'
@@ -249,6 +250,29 @@ def get_review():
     cur.close()
 
     return {"success": True, "reviews": reviews}
+
+@app.route('/api/reviews/get_random_name', methods = ["GET"])
+def get_random_name():
+    json_data = request.get_json()
+    num = json_data["number_of_names"]
+
+    adjectives = ["adventurous", "ambitious", "amusing", "bright", "charming", "clever", "courageous", "creative", "determined", "dynamic", "enthusiastic", "exuberant", "friendly",
+    "funny", "gentle", "honest", "kind", "loyal", "nice", "sincere", "thoughtful", "bedazzled", "blissful", "blushing", "bold", "breezy", "caring", "charismatic", "cheerful", "delightful",
+    "dreamy", "energetic", "enthusiastic", "fashionable", "graceful", "groovy", "humble", "hopeful", "impressive", "insightful", "phenomenal", "quirky", "suave", "playful", "sweet", 
+    "empathetic", "fun"]
+
+    animals = ["leopard", "dog", "rabbit", "dolphin", "eagle", "beaver", "hamster", "tiger", "cheetah", "turtle", "giraffe", "deer", "cat", "bear", "fox", "antelope", "chameleon", "elephant",
+    "alligator", "armadillo", "camel", "hippo", "chihuahua", "chinchilla", "zebra", "dodo", "jellyfish", "possum", "swan", "peacock", "lemur", "lynx", "sheep", "rhino", "llama", "koala", 
+    "kangaroo", "iguana", "gecko", "shark", "dove", "flamingo", "butterfly", "chickadee", "mouse", "goldfish", "sparrow"]
+
+    if num > len(adjectives) or num > len(animals):
+        multiply = int((num / max(len(adjectives), len(animals))) + 1)
+        adjectives  = adjectives * multiply
+        animals = animals * multiply
+
+    random_names = [adjective + " " + animal for (adjective, animal) in list(zip(random.sample(adjectives, num), random.sample(animals, num)))]
+
+    return random_names
 
 
 @app.route('/api/login', methods = ["POST"])
