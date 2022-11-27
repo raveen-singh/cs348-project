@@ -216,7 +216,7 @@ def list_unit():
     except Exception as e:
         return {"success": False, "message": f"Error creating listing: {e}"}, STATUS_BAD_REQUEST
 
-@app.route('/api/review/create', methods = ["POST"])
+@app.route('/api/reviews/create', methods = ["POST"])
 def post_review():
     conn = mysql.connection
     cur = conn.cursor()
@@ -250,7 +250,7 @@ def get_review():
 
     return {"success": True, "reviews": reviews}
 
-@app.route('/api/review/update', methods = ["PUT"])
+@app.route('/api/reviews/update', methods = ["PUT"])
 def update_review():
     conn = mysql.connection
     cur = conn.cursor()
