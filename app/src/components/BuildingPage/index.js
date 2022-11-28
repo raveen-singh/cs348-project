@@ -15,7 +15,6 @@ const BuildingPage = () => {
   const [reviews, setReviews] = useState([]);
   const { id } = useParams();
   const { user } = useAuth();
-  const [names, setNames] = useState([]);
 
   useEffect(() => {
     const getBuilding = async () => {
@@ -28,22 +27,10 @@ const BuildingPage = () => {
   useEffect(() => {
     const getReviews = async () => {
       const { data } = await axios.get(`/api/reviews/get?id=${id}`);
-      return data.reviews;
+      setReviews(data.reviews);
     };
     getReviews();
-
-    const getNames = async () => {
-      let reviews = await getReviews();
-      setReviews(reviews);
-
-      const { data } = await axios.get(`/api/reviews/get_random_names?number=${reviews.length}`);
-      setNames(data);
-    };
-
-    getNames();
-
   }, []);
-
 
   if (!building) {
     return <CircularProgress />;
@@ -60,7 +47,7 @@ const BuildingPage = () => {
           </Stack>
         </Grid>
         <Grid item sm={12} md={6}>
-          <ReviewList reviews={reviews} address={building.address} names={names} />
+          <ReviewList reviews={reviews} address={building.address} />
         </Grid>
       </Grid>
     </Container>
