@@ -54,6 +54,7 @@ const UnitForm = ({ handleClose, addressDict, unitId, setUnitId, editPost, setEd
     distance_from_waterloo: "0.0",
   };
 
+  console.log(editPost);
   const [postData, setPostData] = useState(editPost ? editPost : defaultUnitValues);
   const [newbuilding, setNewBuilding] = useState(defaultBuildingValues);
   const [checked, setChecked] = useState(false);
@@ -209,6 +210,7 @@ const UnitForm = ({ handleClose, addressDict, unitId, setUnitId, editPost, setEd
             fullWidth
             select
             required
+            disabled={unitId}
             value={postData.address}
             onChange={handleAddress}
           >
@@ -325,7 +327,7 @@ const UnitForm = ({ handleClose, addressDict, unitId, setUnitId, editPost, setEd
             label="Room Number"
             type="number"
             value={postData.room_num}
-            onChange={handleChange}
+            onChange={handleNum}
           />
           <TextField
             name="lease_term"
@@ -352,7 +354,7 @@ const UnitForm = ({ handleClose, addressDict, unitId, setUnitId, editPost, setEd
                 setPostData({ ...postData, fileName: name, image_path: base64 })
               }
             />
-            {!postData.fileName &&
+            {!postData.fileName && !unitId &&
               <label for="files">(required)</label>
             }
           </Box>
@@ -361,7 +363,7 @@ const UnitForm = ({ handleClose, addressDict, unitId, setUnitId, editPost, setEd
               !postData.rent_price ||
               !postData.address | !postData.num_beds ||
               !postData.num_washrooms ||
-              !postData.fileName
+              (!postData.fileName && !unitId)
             }
             sx={{ mt: 2 }}
             variant="contained"
