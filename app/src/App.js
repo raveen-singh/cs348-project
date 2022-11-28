@@ -14,15 +14,38 @@ import BuildingPage from "./components/BuildingPage";
 
 const App = () => {
   const [buildings, setBuildings] = useState([]);
+  const [units, setUnits] = useState([]);
+  const [addresses, setAddresses] = useState([]);
 
-  // this useEffect runs whenever a new building is added, and updates the
-  // buildings to pass to the BuildingList component
+  const getUnits = async () => {
+    try {
+      const { data } = await axios.get("/api/unit/get");
+      setUnits(data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getAddresses = async () => {
+    try {
+      const { data } = await axios.get("/api/building/get_addresses");
+      const options = data;
+      options["Other"] = null;
+      setAddresses(options);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getBuildings = async () => {
+    const { data } = await axios.get("/api/building/get");
+    setBuildings(data.data);
+  };
+
   useEffect(() => {
-    const getBuildings = async () => {
-      const { data } = await axios.get("/api/building/get");
-      setBuildings(data.data);
-    };
     getBuildings();
+    getUnits();
+    getAddresses();
   }, []);
 
   return (
@@ -32,7 +55,10 @@ const App = () => {
         <Route path="/" element={<Home />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/units" element={<UnitList />} />
+        <Route
+          path="/units"
+          element={<UnitList units={units} addresses={addresses} />}
+        />
         <Route exact path="/unit/:id" element={<UnitPage />} />
         <Route
           path="/buildings"
