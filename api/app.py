@@ -85,11 +85,9 @@ def create_lister():
         return {"success": False, "message": "Not a valid password! Must be alphanumeric."}, STATUS_BAD_REQUEST
 
     if not name.replace(" ", "").isalpha():
-        print(name)
         return {"success": False, "message": "Not a valid name! Must only contain letters in the alphabet."}, STATUS_BAD_REQUEST
 
     if not phone_num.isnumeric() or len(phone_num) != 10:
-        print("Not a valid phone number! Please input a 10-digit phone number.")
         return {"success": False, "message": "Not a valid phone number! Please input a 10-digit phone number."}, STATUS_BAD_REQUEST
     
     if email != sanitize_user_input(email) or not re.match("[^@]+@[^@]+\.[^@]+", email):
@@ -97,7 +95,7 @@ def create_lister():
 
     if website and (website != sanitize_user_input(website) or not is_url(website)):
         return {"success": False, "message": "Not a valid website!"}, STATUS_BAD_REQUEST
-        
+
     # hash password before insert
     password = bcrypt.generate_password_hash(password)
 
