@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, request, session
 from flask_mysqldb import MySQL
+from flask_bcrypt import Bcrypt
 import os
 import cv2
 import base64
@@ -21,6 +22,7 @@ STATUS_BAD_REQUEST = 400
 STATUS_ALREADY_EXISTS = 403
 
 mysql = MySQL(app)
+bcrypt = Bcrypt(app)
 
 # make directory to store images
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -95,6 +97,9 @@ def create_lister():
 
     if website and (website != sanitize_user_input(website) or not is_url(website)):
         return {"success": False, "message": "Not a valid website!"}, STATUS_BAD_REQUEST
+        
+    # hash password before insert
+    password = bcrypt.generate_password_hash(password)
 
     # This check might be redundant now since we added UNIQUE to username,
     # so the trycatch block would return a duplicate user error
@@ -151,7 +156,22 @@ def get_units():
     else: # return all units
         cur.execute(f"SELECT * FROM AvailableUnit;")
         rv = cur.fetchall()
-
+    
+    if not rv:
+        return {"success": False}, STATUS_BAD_REQUEST
+    # append image data to returned tuple
+    if type(rv) == tuple:
+        rv = list(rv)
+    else:
+        rv = [rv]
+   
+    for r in rv:
+        file_name = basedir + r['image_path']
+        img = cv2.imread(file_name)
+        jpg_img = cv2.imencode('.jpg',img)
+        b64_string = base64.b64encode(jpg_img[1]).decode('utf-8')
+        r["image_data"] = b64_string
+    rv = tuple(rv)
     cur.close()
     return {"data": rv} # rv is a dictionary if provided id, otherwise a list of dictionaries
 
@@ -224,8 +244,9 @@ def list_unit():
             return {"success": False, "message": result["message"]}, STATUS_BAD_REQUEST
  
     data = image.split(',')
-    relative_image_path = '/images/' + f'{str(uuid.uuid4())[:8]}{image_name}'
-    filename = images_path + f'{str(uuid.uuid4())[:8]}{image_name}'
+    unique_id = str(uuid.uuid4())[:8]
+    relative_image_path = '/images/' + f'{unique_id}{image_name}'
+    filename = images_path + f'{unique_id}{image_name}'
 
     try:
         save_image(filename, data[1])
@@ -248,7 +269,7 @@ def list_unit():
     except Exception as e:
         return {"success": False, "message": f"Error creating listing: {e}"}, STATUS_BAD_REQUEST
 
-@app.route('/api/review/create', methods = ["POST"])
+@app.route('/api/reviews/create', methods = ["POST"])
 def post_review():
     conn = mysql.connection
     cur = conn.cursor()
@@ -282,6 +303,22 @@ def get_review():
 
     return {"success": True, "reviews": reviews}
 
+@app.route('/api/reviews/update', methods = ["PUT"])
+def update_review():
+    conn = mysql.connection
+    cur = conn.cursor()
+
+    review_id = request.args.get("id")    
+
+    try:
+        cur.execute("UPDATE Review SET review_helpfulness = review_helpfulness + 1  WHERE review_id=%s", 
+        [review_id])
+        cur.close()
+        conn.commit()
+        return {"success": True}
+    except Exception as e:
+        return {"success": False, "message": f"Error updating comment: {e}"}, STATUS_BAD_REQUEST
+
 
 @app.route('/api/login', methods = ["POST"])
 def login():
@@ -291,12 +328,15 @@ def login():
 
     cur = mysql.connection.cursor()
 
-    cur.execute("SELECT * FROM UnitListerAccount WHERE username = %s AND password = %s", (username, password))
+    cur.execute("SELECT * FROM UnitListerAccount WHERE username = %s", [username])
 
     account = cur.fetchone()
     cur.close()
 
-    if account:
+    # check retrieved hash password against user input
+    validate_password = bcrypt.check_password_hash(account["password"], password)
+
+    if account and validate_password:
         session["loggedin"] = True
         session["id"] = account["account_id"]
         session["username"] = account["username"]
