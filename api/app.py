@@ -282,7 +282,7 @@ def update_review():
         if like == 'yes':
             cur.execute("UPDATE Review SET review_helpfulness = review_helpfulness + 1  WHERE review_id=%s", 
             [review_id])
-        else:
+        elif like == 'no':
             cur.execute("UPDATE Review SET review_helpfulness = review_helpfulness - 1  WHERE review_id=%s", 
             [review_id])
 
