@@ -4,7 +4,7 @@
 
 If using powershell:
 ```
-cd app; npm install; npm start; cd ../api; venv/Scripts/activate; ./mysql.exe -uroot -p (run setup files); flask run;
+cd app; npm install; npm start; cd ../api; venv/Scripts/activate; pip install -r requirements.txt; ./mysql.exe -uroot -p (run setup files); flask run;
 ```
 
 ## Instructions to set up the project for the first time
