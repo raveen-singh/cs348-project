@@ -290,9 +290,9 @@ def update_review():
 
         cur.execute("SELECT review_helpfulness FROM Review WHERE review_id=%s", 
         [review_id])
-        review_helpfulness = cur.fetchone()
+        review = cur.fetchone()
         cur.close()
-        return {"success": True, "review_helpfulness": review_helpfulness["review_helpfulness"]}
+        return {"success": True, "review_helpfulness": review["review_helpfulness"]}
     except Exception as e:
         return {"success": False, "message": f"Error updating comment: {e}"}, STATUS_BAD_REQUEST
 
