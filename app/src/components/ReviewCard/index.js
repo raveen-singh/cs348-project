@@ -55,7 +55,7 @@ const ReviewCard = ({ review, name }) => {
           />
         </Box>
       </Stack>
-      <Typography>"{review.comment}"</Typography>
+      {review.comment && <Typography>"{review.comment}"</Typography>}
       <Typography>— {name}</Typography>
       <Box
         display="flex"
