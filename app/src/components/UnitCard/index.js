@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Card,
   CardActions,
@@ -7,17 +7,29 @@ import {
   Button,
   Typography,
   Box,
+  Dialog,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  DialogTitle,
 } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import InfoIcon from "@mui/icons-material/Info";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
 
 const UnitCard = ({ unit, addressDict }) => {
+  const [open, setOpen] = useState(false);
   const addressArr = Object.keys(addressDict);
   const unitAddress = addressArr.find(
     (building) => addressDict[building] === unit.building_id
   );
 
   const imgsrc = "data:image/png;base64," + unit.image_data;
+  const location = useLocation();
+
+  const handleClose = () => setOpen(false);
+  const handleOpen = () => setOpen(true);
 
   return (
     <Card>
@@ -55,7 +67,7 @@ const UnitCard = ({ unit, addressDict }) => {
           Lease Duration: {unit.lease_term} months
         </Typography>
       </CardContent>
-      <CardActions>
+      <CardActions sx={{ pb: 2 }}>
         <Button
           size="small"
           color="primary"
@@ -65,6 +77,42 @@ const UnitCard = ({ unit, addressDict }) => {
           <InfoIcon sx={{ mr: 1 }} />
           Details
         </Button>
+        {location.pathname === "/profile" && (
+          <>
+            <Button
+              size="small"
+              color="error"
+              variant="contained"
+              sx={{ mx: 1.5 }}
+              startIcon={<DeleteIcon />}
+              onClick={handleOpen}
+            >
+              Delete
+            </Button>
+            <Dialog open={open} onClose={handleClose}>
+              <DialogTitle id="alert-dialog-title">Delete Unit</DialogTitle>
+              <DialogContent>
+                <DialogContentText>
+                  Are you sure? You can't undo this action later.
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleClose}>Cancel</Button>
+                <Button color="error" variant="contained">
+                  Delete
+                </Button>
+              </DialogActions>
+            </Dialog>
+            <Button
+              size="small"
+              color="primary"
+              variant="contained"
+              startIcon={<EditIcon />}
+            >
+              Edit
+            </Button>
+          </>
+        )}
       </CardActions>
     </Card>
   );

@@ -73,7 +73,10 @@ const App = () => {
           element={<BuildingList buildings={buildings} />}
         />
         <Route path="/buildings/:id" element={<BuildingPage />} />
-        <Route path="/profile" element={<Profile addresses={addresses} />} />
+        <Route
+          path="/profile"
+          element={<Profile units={userUnits} addresses={addresses} />}
+        />
       </Routes>
     </Router>
   );
