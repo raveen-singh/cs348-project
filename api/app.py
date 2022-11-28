@@ -221,7 +221,7 @@ def list_unit():
     except Exception as e:
         return {"success": False, "message": f"Error creating listing: {e}"}, STATUS_BAD_REQUEST
 
-@app.route('/api/review/create', methods = ["POST"])
+@app.route('/api/reviews/create', methods = ["POST"])
 def post_review():
     conn = mysql.connection
     cur = conn.cursor()
@@ -254,6 +254,22 @@ def get_review():
     cur.close()
 
     return {"success": True, "reviews": reviews}
+
+@app.route('/api/reviews/update', methods = ["PUT"])
+def update_review():
+    conn = mysql.connection
+    cur = conn.cursor()
+
+    review_id = request.args.get("id")    
+
+    try:
+        cur.execute("UPDATE Review SET review_helpfulness = review_helpfulness + 1  WHERE review_id=%s", 
+        [review_id])
+        cur.close()
+        conn.commit()
+        return {"success": True}
+    except Exception as e:
+        return {"success": False, "message": f"Error updating comment: {e}"}, STATUS_BAD_REQUEST
 
 
 @app.route('/api/login', methods = ["POST"])

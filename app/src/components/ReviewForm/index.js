@@ -25,7 +25,7 @@ const ReviewForm = ({ user, building_id }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const res = await axios.post("/api/review/create", {
+    const res = await axios.post("/api/reviews/create", {
       cleanliness,
       adminHelpfulness,
       comment,
