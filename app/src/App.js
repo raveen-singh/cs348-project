@@ -11,6 +11,7 @@ import UnitList from "./components/UnitList";
 import UnitPage from "./components/UnitPage";
 import BuildingList from "./components/BuildingList";
 import BuildingPage from "./components/BuildingPage";
+import Profile from "./components/Profile";
 
 const App = () => {
   const [buildings, setBuildings] = useState([]);
@@ -39,6 +40,7 @@ const App = () => {
           element={<BuildingList buildings={buildings} />}
         />
         <Route path="/buildings/:id" element={<BuildingPage />} />
+        <Route path="/profile" element={<Profile />} />
       </Routes>
     </Router>
   );

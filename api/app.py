@@ -123,7 +123,7 @@ def get_units():
     cur.close()
     return {"data": rv} # rv is a dictionary if provided id, otherwise a list of dictionaries
 
-@app.route('/api/unit/{$id}', methods = ["GET"])
+@app.route('/api/units/get', methods = ["GET"])
 def get_my_units():
     id = request.args.get("id")
     cur = mysql.connection.cursor()
