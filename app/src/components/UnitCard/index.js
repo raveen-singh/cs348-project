@@ -50,10 +50,10 @@ const UnitCard = ({ unit, addressDict }) => {
           Number of Washrooms: {unit.num_washrooms}
         </Typography>
         <Typography variant="body2" color="textSecondary">
-          Room Number: {unit.room_num}
+          Room Number: {unit.room_num || "N/A"}
         </Typography>
         <Typography variant="body2" color="textSecondary">
-          Floor Number: {unit.floor_num}
+          Floor Number: {unit.floor_num || "N/A"}
         </Typography>
       </Box>
       <Typography px={2} variant="h5">
