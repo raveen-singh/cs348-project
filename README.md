@@ -94,6 +94,23 @@ If you see `mysql>` on the next line, you have successfully connected. While con
 ```
 source cleanup_tables.sql
 source create_tables.sql
-source populate_tables.sql
 ```
+
+Run the following line in mysql to load the sample dataset:
+`source populate_tables.sql`
+
+Run the following line in mysql to load the production dataset:
+`source production_data.sql`
+
 If there are no errors, navigate to `http://localhost:3000` (assuming the frontend/backend are running). If you see cs348db connected below the first message, you have set up the database correctly. 
+
+### Implemented features
+---
+The backend is all under `api/app.py`.
+
+The frontend is all located under the `app` folder
+1. Registration - `app/src/components/Register`
+2. Posting units - `app/src/components/UnitForm`
+3. Reviews - `app/src/components/ReviewCard`, `app/src/components/ReviewForm`
+4. Viewing units with sort and filter - `app/src/components/BuildingList`
+5. Viewing reviews with sort and filter - `app/src/components/ReviewList`
