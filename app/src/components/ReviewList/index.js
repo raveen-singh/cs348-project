@@ -4,7 +4,7 @@ import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import ReviewCard from "../ReviewCard";
 
-const ReviewList = ({ reviews, address, names }) => {
+const ReviewList = ({ reviews, address }) => {
   return (
     <Box>
       <Typography variant="h5" mb={2}>
@@ -12,8 +12,8 @@ const ReviewList = ({ reviews, address, names }) => {
       </Typography>
       {reviews.length > 0 ? (
         <Stack spacing={3}>
-          {reviews.map((review, index) => (
-            <ReviewCard key={review.review_id} review={review} name={names[index]} />
+          {reviews.map((review) => (
+            <ReviewCard key={review.review_id} review={review} />
           ))}
         </Stack>
       ) : (
