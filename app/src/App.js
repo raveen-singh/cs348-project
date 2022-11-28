@@ -12,18 +12,26 @@ import UnitPage from "./components/UnitPage";
 import BuildingList from "./components/BuildingList";
 import BuildingPage from "./components/BuildingPage";
 import Profile from "./components/Profile";
+import useAuth from "./hooks/useAuth";
 
 const App = () => {
   const [buildings, setBuildings] = useState([]);
+  const [userUnits, setUserUnits] = useState([]);
+  const { userId } = useAuth();
 
-  // this useEffect runs whenever a new building is added, and updates the
-  // buildings to pass to the BuildingList component
+  const getUserUnits = async () => {
+    const { data } = await axios.get(`/api/units/get?id=${userId}`);
+    setUserUnits(data.data);
+  };
+
+  const getBuildings = async () => {
+    const { data } = await axios.get("/api/building/get");
+    setBuildings(data.data);
+  };
+
   useEffect(() => {
-    const getBuildings = async () => {
-      const { data } = await axios.get("/api/building/get");
-      setBuildings(data.data);
-    };
     getBuildings();
+    userId && getUserUnits();
   }, []);
 
   return (
@@ -40,7 +48,7 @@ const App = () => {
           element={<BuildingList buildings={buildings} />}
         />
         <Route path="/buildings/:id" element={<BuildingPage />} />
-        <Route path="/profile" element={<Profile />} />
+        <Route path="/profile" element={<Profile units={userUnits} />} />
       </Routes>
     </Router>
   );
