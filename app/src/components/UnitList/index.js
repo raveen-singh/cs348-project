@@ -39,13 +39,14 @@ const UnitList = () => {
 
   const getunitData = async () => {
     const { data }  = await axios.get(`/api/unit/get?id=${unitId}`);
-    Object.keys(data.data).forEach((key) => {
+    console.log(data.data[0]);
+    Object.keys(data.data[0]).forEach((key) => {
       if (editPost.hasOwnProperty(key)) {
-       editPost[key] = data.data[key]
+       editPost[key] = data.data[0][key]
       }
     });
     for (const [key, value] of Object.entries(addresses)) {
-      if (value === data.data.building_id) {
+      if (value === data.data[0].building_id) {
         editPost["address"] = key;
       }
     }

@@ -34,6 +34,7 @@ const UnitCard = ({ unit, addressDict, setUnitId }) => {
       console.log(error.message);
     }
   }
+  const imgsrc = "data:image/png;base64," + unit.image_data;
 
   return (
     <Card>
@@ -41,7 +42,7 @@ const UnitCard = ({ unit, addressDict, setUnitId }) => {
         component="img"
         height="200"
         image={
-          unit.image_path ||
+          imgsrc ||
           "https://user-images.githubusercontent.com/194400/49531010-48dad180-f8b1-11e8-8d89-1e61320e1d82.png"
         }
       />
