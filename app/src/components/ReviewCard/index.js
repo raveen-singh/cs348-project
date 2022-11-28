@@ -7,7 +7,7 @@ import IconButton from "@mui/material/IconButton";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import useAuth from "../../hooks/useAuth";
 
-const ReviewCard = ({ review }) => {
+const ReviewCard = ({ review, name }) => {
   const [liked, setLiked] = useState(false);
   const { user } = useAuth();
   return (
@@ -34,7 +34,7 @@ const ReviewCard = ({ review }) => {
         </Box>
       </Stack>
       <Typography>"{review.comment}"</Typography>
-      <Typography>— Happy Hippo</Typography>
+      <Typography>— {name}</Typography>
       <Box
         display="flex"
         alignItems="center"

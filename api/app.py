@@ -253,8 +253,7 @@ def get_review():
 
 @app.route('/api/reviews/get_random_names', methods = ["GET"])
 def get_random_name():
-    json_data = request.get_json()
-    num = json_data["number_of_names"]
+    num = int(request.args.get("number"))
 
     adjectives = ["adventurous", "ambitious", "amusing", "bright", "charming", "clever", "courageous", "creative", "determined", "dynamic", "enthusiastic", "exuberant", "friendly",
     "funny", "gentle", "honest", "kind", "loyal", "nice", "sincere", "thoughtful", "bedazzled", "blissful", "blushing", "bold", "breezy", "caring", "charismatic", "cheerful", "delightful",
