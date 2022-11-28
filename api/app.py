@@ -122,18 +122,11 @@ def get_units():
     cur.close()
     return {"data": rv} # rv is a dictionary if provided id, otherwise a list of dictionaries
 
-
-@app.route('/api/unit/update', methods = ["POST"])
-def update_unit():
-    print("updating unit")
-    return {"success": True, "message": "good"}
-
 @app.route('/api/unit/delete', methods = ["DELETE"])
 def delete_unit():
     # expecting to be called /api/unit/delete?id={id} 
     if "loggedin" not in session:
         return {"success": False, "message": "Not logged in!"}, STATUS_BAD_REQUEST
-    
 
     id = request.args.get("id")
     conn = mysql.connection
@@ -149,6 +142,11 @@ def delete_unit():
         success = False
         message = f"unit_id {id} doesn't exist so it cannot be deleted!"
     else:
+        filename = "." + rv["image_path"]
+
+        if os.path.isfile(filename):
+            os.remove(filename)
+        
         try:
             cur.execute("DELETE FROM AvailableUnit WHERE unit_id = %s;", [id])
         except Exception as e:
@@ -157,12 +155,26 @@ def delete_unit():
     
     cur.close()
     conn.commit()
+
     if not success:
         return {"status": success, "message": message}, STATUS_BAD_REQUEST
     else:
         return {"status": success}
 
+@app.route('/api/unit/update', methods = ["PUT"])
+def update_unit():
+    if "loggedin" not in session:
+        return {"success": False, "message": "Not logged in!"}, STATUS_BAD_REQUEST
 
+
+    # check that unit belongs to the logged in user
+
+    json_data = request.get_json()
+    json_data.pop("image_path")
+    print(json_data)
+
+    print("updating unit")
+    return {"success": True, "message": "good"}
 
 @app.route('/api/unit/create', methods = ["POST"])
 def list_unit():
@@ -175,6 +187,8 @@ def list_unit():
 
     json_data = request.get_json()
 
+    update = json_data["update"]
+    print(f"update: {update}")
     building_id = json_data["building_id"]
     room = json_data["room_num"] if json_data["room_num"] != "" else None
     lease_term = json_data["lease_term"]
