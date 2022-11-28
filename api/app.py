@@ -277,13 +277,22 @@ def update_review():
     cur = conn.cursor()
 
     review_id = request.args.get("id")    
-
+    like = request.args.get("like") 
     try:
-        cur.execute("UPDATE Review SET review_helpfulness = review_helpfulness + 1  WHERE review_id=%s", 
-        [review_id])
-        cur.close()
+        if like == 'yes':
+            cur.execute("UPDATE Review SET review_helpfulness = review_helpfulness + 1  WHERE review_id=%s", 
+            [review_id])
+        else:
+            cur.execute("UPDATE Review SET review_helpfulness = review_helpfulness - 1  WHERE review_id=%s", 
+            [review_id])
+
         conn.commit()
-        return {"success": True}
+
+        cur.execute("SELECT review_helpfulness FROM Review WHERE review_id=%s", 
+        [review_id])
+        review_helpfulness = cur.fetchone()
+        cur.close()
+        return {"success": True, "review_helpfulness": review_helpfulness["review_helpfulness"]}
     except Exception as e:
         return {"success": False, "message": f"Error updating comment: {e}"}, STATUS_BAD_REQUEST
 
