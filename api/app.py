@@ -207,8 +207,9 @@ def list_unit():
             return {"success": False, "message": result["message"]}, STATUS_BAD_REQUEST
  
     data = image.split(',')
-    relative_image_path = '/images/' + f'{str(uuid.uuid4())[:8]}{image_name}'
-    filename = images_path + f'{str(uuid.uuid4())[:8]}{image_name}'
+    unique_id = str(uuid.uuid4())[:8]
+    relative_image_path = '/images/' + f'{unique_id}{image_name}'
+    filename = images_path + f'{unique_id}{image_name}'
 
     try:
         save_image(filename, data[1])
