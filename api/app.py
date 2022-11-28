@@ -123,7 +123,22 @@ def get_units():
     else: # return all units
         cur.execute(f"SELECT * FROM AvailableUnit;")
         rv = cur.fetchall()
-
+    
+    if not rv:
+        return {"success": False}, STATUS_BAD_REQUEST
+    # append image data to returned tuple
+    if type(rv) == tuple:
+        rv = list(rv)
+    else:
+        rv = [rv]
+   
+    for r in rv:
+        file_name = basedir + r['image_path']
+        img = cv2.imread(file_name)
+        jpg_img = cv2.imencode('.jpg',img)
+        b64_string = base64.b64encode(jpg_img[1]).decode('utf-8')
+        r["image_data"] = b64_string
+    rv = tuple(rv)
     cur.close()
     return {"data": rv} # rv is a dictionary if provided id, otherwise a list of dictionaries
 
@@ -207,8 +222,9 @@ def list_unit():
             return {"success": False, "message": result["message"]}, STATUS_BAD_REQUEST
  
     data = image.split(',')
-    relative_image_path = '/images/' + f'{str(uuid.uuid4())[:8]}{image_name}'
-    filename = images_path + f'{str(uuid.uuid4())[:8]}{image_name}'
+    unique_id = str(uuid.uuid4())[:8]
+    relative_image_path = '/images/' + f'{unique_id}{image_name}'
+    filename = images_path + f'{unique_id}{image_name}'
 
     try:
         save_image(filename, data[1])
