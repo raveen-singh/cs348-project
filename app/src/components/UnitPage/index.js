@@ -1,17 +1,33 @@
-import { Container } from "@mui/material";
 import CircularProgress from "@mui/material/CircularProgress";
+import Box from "@mui/material/Box";
+import Paper from "@mui/material/Paper";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
+import Link from "@mui/material/Link";
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+} from "@mui/material";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link as RouterLink } from "react-router-dom";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
 
 const UnitPage = () => {
   const [unit, setUnit] = useState(null);
+  const [open, setOpen] = useState(false);
   const { id } = useParams();
 
   useEffect(() => {
     const getUnit = async () => {
       const { data } = await axios.get(`/api/unit/get?id=${id}`);
-      setUnit(data.data);
+      setUnit(data.data[0]);
+      console.log(data.data[0]);
     };
     getUnit();
   }, []);
@@ -20,8 +36,83 @@ const UnitPage = () => {
     return <CircularProgress />;
   }
 
+  const imgsrc = "data:image/png;base64," + unit.image_data;
+
   //
-  return <Container sx={{ mt: 3 }}>Unit ID: {unit.unit_id}</Container>;
+  return (
+    <Paper sx={{ mx: "auto", my: 8, width: "70%" }}>
+      <Box display="flex" flexDirection={{ sm: "column", md: "row" }}>
+        <Stack width={{ sm: "100%", md: "50%" }}>
+          <Paper
+            sx={{ width: 500, height: 350 }}
+            component="img"
+            src={imgsrc}
+          />
+        </Stack>
+        <Stack mt={3} px={5} sx={{ width: { sm: "100%", md: "50%" } }}>
+          <Typography variant="h4" fontWeight={500} mb={2}>
+            Unit Details
+          </Typography>
+          <Box display="flex" justifyContent="space-between">
+            <Stack spacing={1}>
+              <Typography>{unit.num_beds} Bedrooms</Typography>
+              <Typography>{unit.num_washrooms} Washrooms</Typography>
+              {unit.room_num && (
+                <Typography>Room Number: {unit.room_num}</Typography>
+              )}
+            </Stack>
+            <Stack spacing={1}>
+              {unit.floor_num && (
+                <Typography>Floor Number: {unit.floor_num}</Typography>
+              )}
+              <Typography>Lease: {unit.lease_term} months</Typography>
+              <Typography>Rent Price: ${unit.rent_price}</Typography>
+            </Stack>
+          </Box>
+          <Box display="flex" alignItems="center" mt={3}>
+            <Button
+              sx={{ mr: 2 }}
+              variant="contained"
+              color="primary"
+              startIcon={<EditIcon />}
+            >
+              Edit
+            </Button>
+            <Button
+              variant="contained"
+              color="error"
+              startIcon={<DeleteIcon />}
+              sx={{ mr: 2 }}
+              onClick={() => setOpen(true)}
+            >
+              Delete
+            </Button>
+            <Dialog open={open} onClose={() => setOpen(false)}>
+              <DialogTitle>Delete Unit</DialogTitle>
+              <DialogContent>
+                <DialogContentText mb={1}>
+                  Are you sure? You can't undo this action afterwards.
+                </DialogContentText>
+                <DialogActions>
+                  <Button onClick={() => setOpen(false)}>Cancel</Button>
+                  <Button variant="contained" color="error">
+                    Delete
+                  </Button>
+                </DialogActions>
+              </DialogContent>
+            </Dialog>
+            <Link
+              component={RouterLink}
+              to={`/buildings/${unit.building_id}`}
+              variant="body1"
+            >
+              View Building
+            </Link>
+          </Box>
+        </Stack>
+      </Box>
+    </Paper>
+  );
 };
 
 export default UnitPage;
