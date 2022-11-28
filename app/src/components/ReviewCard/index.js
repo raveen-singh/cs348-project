@@ -8,7 +8,7 @@ import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import useAuth from "../../hooks/useAuth";
 import axios from "axios";
 
-const ReviewCard = ({ review }) => {
+const ReviewCard = ({ review, name }) => {
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(review.review_helpfulness);
   const { user } = useAuth();
@@ -55,8 +55,8 @@ const ReviewCard = ({ review }) => {
           />
         </Box>
       </Stack>
-      {review.comment && <Typography>"{review.comment}"</Typography>}
-      <Typography>— Happy Hippo</Typography>
+      <Typography>"{review.comment}"</Typography>
+      <Typography>— {name}</Typography>
       <Box
         display="flex"
         alignItems="center"
