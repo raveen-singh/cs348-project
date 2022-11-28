@@ -12,23 +12,10 @@ import UnitPage from "./components/UnitPage";
 import BuildingList from "./components/BuildingList";
 import BuildingPage from "./components/BuildingPage";
 import Profile from "./components/Profile";
-import useAuth from "./hooks/useAuth";
 
 const App = () => {
   const [buildings, setBuildings] = useState([]);
-  const [units, setUnits] = useState([]);
   const [addresses, setAddresses] = useState([]);
-  const [userUnits, setUserUnits] = useState([]);
-  const { userId } = useAuth();
-
-  const getUnits = async () => {
-    try {
-      const { data } = await axios.get("/api/unit/get");
-      setUnits(data.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   const getAddresses = async () => {
     try {
@@ -46,17 +33,9 @@ const App = () => {
     setBuildings(data.data);
   };
 
-  const getUserUnits = async () => {
-    const { data } = await axios.get(`/api/units/get?id=${userId}`);
-    setUserUnits(data.data);
-    console.log(data);
-  };
-
   useEffect(() => {
     getBuildings();
-    getUnits();
     getAddresses();
-    userId && getUserUnits();
   }, []);
 
   return (
@@ -73,10 +52,7 @@ const App = () => {
           element={<BuildingList buildings={buildings} />}
         />
         <Route path="/buildings/:id" element={<BuildingPage />} />
-        <Route
-          path="/profile"
-          element={<Profile units={userUnits} addresses={addresses} />}
-        />
+        <Route path="/profile" element={<Profile addresses={addresses} />} />
       </Routes>
     </Router>
   );
