@@ -181,34 +181,14 @@ def delete_unit():
     else:
         return {"status": success}
 
-@app.route('/api/unit/update', methods = ["PUT"])
-def update_unit():
-    if "loggedin" not in session:
-        return {"success": False, "message": "Not logged in!"}, STATUS_BAD_REQUEST
-
-
-    # check that unit belongs to the logged in user
-
-    json_data = request.get_json()
-    json_data.pop("image_path")
-    print(json_data)
-
-    print("updating unit")
-    return {"success": True, "message": "good"}
-
-@app.route('/api/unit/create', methods = ["POST"])
-def list_unit():
-    # check if user is logged in
+def create_or_update_unit(json_data, update = False):
+# check if user is logged in
     if "loggedin" not in session:
         return {"success": False, "message": "Not logged in!"}, STATUS_BAD_REQUEST
 
     conn = mysql.connection
     cur = conn.cursor()
 
-    json_data = request.get_json()
-
-    update = json_data["update"]
-    print(f"update: {update}")
     building_id = json_data["building_id"]
     room = json_data["room_num"] if json_data["room_num"] != "" else None
     lease_term = json_data["lease_term"]
@@ -260,6 +240,55 @@ def list_unit():
         return {"success": True, "unit_id": unit_id}
     except Exception as e:
         return {"success": False, "message": f"Error creating listing: {e}"}, STATUS_BAD_REQUEST
+
+@app.route('/api/unit/update', methods = ["PUT"])
+def update_unit():
+    if "loggedin" not in session:
+        return {"success": False, "message": "Not logged in!"}, STATUS_BAD_REQUEST
+
+    json_data = request.get_json()
+    # json_data.pop("image_path")
+    json_data.pop("address")
+    json_data.pop("new_address")
+    json_data.pop("pet_friendly")
+    json_data.pop("distance_from_waterloo")
+    print(json_data)
+
+    unit_id = json_data["unit_id"]
+    room_num = json_data["room_num"]
+    rent_price = json_data["rent_price"]
+    num_beds = json_data["num_beds"]
+    num_washrooms = json_data["num_washrooms"]
+    lease_term = json_data["lease_term"]
+    floor_num = json_data["floor_num"]
+    image_path = json_data["image_path"]
+    laundry_availability = json_data["laundry_availability"]
+    type_of_unit = json_data["type_of_unit"]
+
+
+    # check that unit belongs to the logged in user
+    conn = mysql.connection
+    cur = conn.cursor()
+    account_id = session["id"]
+
+    cur.execute("SELECT * FROM AvailableUnit WHERE unit_id = %s AND account_id = %s;", [unit_id, account_id]) # checks that the unit exists, and belongs to the logged in user
+    rv = cur.fetchone()
+    if not rv:
+        return {"success": False, "message": "You are not permissioned to delete this unit!"}, STATUS_BAD_REQUEST
+
+
+    # check whether or not image_path is the image path stored in the db. if it isn't, update it by deleting the image and then updating the record
+
+
+    print("updating unit")
+    return {"success": True, "message": "good"}
+
+@app.route('/api/unit/create', methods = ["POST"])
+def list_unit():
+    json_data = request.get_json()
+    print("HELLO", json_data)
+    return create_or_update_unit(json_data, update=False)
+    
 
 @app.route('/api/reviews/create', methods = ["POST"])
 def post_review():
@@ -325,16 +354,19 @@ def login():
     account = cur.fetchone()
     cur.close()
 
-    # check retrieved hash password against user input
-    validate_password = bcrypt.check_password_hash(account["password"], password)
+    if account:
+        # check retrieved hash password against user input
+        validate_password = bcrypt.check_password_hash(account["password"], password)
 
-    if account and validate_password:
-        session["loggedin"] = True
-        session["id"] = account["account_id"]
-        session["username"] = account["username"]
-        return {"success": True, "session": session}
+        if validate_password:
+            session["loggedin"] = True
+            session["id"] = account["account_id"]
+            session["username"] = account["username"]
+            return {"success": True, "session": session}
+        else:
+            return {"success": False, "message": "Invalid credentials!"} # not sure if i should throw STATUS_BAD_REQUEST, but when i do, the frontend is unable to read the message because an exception is thrown
     else:
-        return {"success": False, "message": "Invalid credentials"}
+        return {"success": False, "message": "This username doesn't exist!"} # same as above!
 
 
 @app.route('/api/logout', methods = ["POST"])

@@ -119,7 +119,7 @@ const UnitForm = ({ handleClose, addressDict, unitId, setUnitId, editPost, setEd
     }
     try {
       if (unitId) {
-        const { data } = await axios.post('/api/unit/update', {
+        const { data } = await axios.put('/api/unit/update', {
           ...postData,
           "unit_id": unitId
         });
