@@ -28,24 +28,28 @@ const Register = () => {
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    const { data } = await axios.post("/api/lister/create", {
-      ...formValues,
-    });
-    setFormValues({
-      username: "",
-      password: "",
-      name: "",
-      phone_num: "",
-      email: "",
-      website: "",
-    });
+    try {
+      e.preventDefault();
+      const { data } = await axios.post("/api/lister/create", {
+        ...formValues,
+      });
+      setFormValues({
+        username: "",
+        password: "",
+        name: "",
+        phone_num: "",
+        email: "",
+        website: "",
+      });
 
-    if (data.success) {
-      navigate("/login");
-      toast.success("Sign up successful, please login to continue.");
-    } else {
-      setMessage(data.message);
+      if (data.success) {
+        navigate("/login");
+        toast.success("Sign up successful, please login to continue.");
+      } else {
+        setMessage(data.message);
+      }
+    } catch (error) {
+      setMessage(error.response.data.message);
     }
   };
 
