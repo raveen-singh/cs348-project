@@ -321,7 +321,7 @@ def get_random_name():
         adjectives  = adjectives * multiply
         animals = animals * multiply
 
-    random_names = [adjective + " " + animal for (adjective, animal) in list(zip(random.sample(adjectives, num), random.sample(animals, num)))]
+    random_names = [adjective.capitalize() + " " + animal.capitalize() for (adjective, animal) in list(zip(random.sample(adjectives, num), random.sample(animals, num)))]
 
     return random_names
 
