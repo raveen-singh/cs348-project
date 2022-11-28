@@ -9,6 +9,7 @@ import {
   Divider,
 } from "@mui/material";
 import Logout from "@mui/icons-material/Logout";
+import PersonIcon from "@mui/icons-material/Person";
 import { useNavigate } from "react-router-dom";
 
 const AccountMenu = ({ username, logout }) => {
@@ -22,10 +23,23 @@ const AccountMenu = ({ username, logout }) => {
   const letter = username[0].toUpperCase();
 
   return (
-    <Box>
-      <Tooltip title="Account Settings" onClick={handleClick} size="small">
-        <Avatar sx={{ width: 32, height: 32 }}>{letter}</Avatar>
-      </Tooltip>
+    <>
+      <Box
+        sx={{
+          "&:hover": {
+            cursor: "pointer",
+          },
+        }}
+      >
+        <Tooltip
+          title="Account Settings"
+          onClick={handleClick}
+          size="small"
+          arrow
+        >
+          <Avatar sx={{ width: 32, height: 32 }}>{letter}</Avatar>
+        </Tooltip>
+      </Box>
       <Menu
         anchorEl={anchorEl}
         open={open}
@@ -51,7 +65,6 @@ const AccountMenu = ({ username, logout }) => {
               right: 14,
               width: 10,
               height: 10,
-              bgcolor: "background.paper",
               transform: "translateY(-50%) rotate(45deg)",
               zIndex: 0,
             },
@@ -61,17 +74,20 @@ const AccountMenu = ({ username, logout }) => {
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
         <MenuItem onClick={() => navigate("/profile")}>
-          <Avatar /> My Units
+          <ListItemIcon>
+            <PersonIcon fontSize="medium" />
+          </ListItemIcon>
+          My Units
         </MenuItem>
         <Divider />
         <MenuItem onClick={logout}>
           <ListItemIcon>
-            <Logout fontSize="small" />
+            <Logout fontSize="medium" />
           </ListItemIcon>
           Logout
         </MenuItem>
       </Menu>
-    </Box>
+    </>
   );
 };
 
