@@ -13,18 +13,33 @@ import {
   DialogActions,
   DialogTitle,
 } from "@mui/material";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import axios from "axios";
 import InfoIcon from "@mui/icons-material/Info";
-import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 
-const UnitCard = ({ unit, addressDict }) => {
+const UnitCard = ({ unit, addressDict, setUnitId }) => {
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const addressArr = Object.keys(addressDict);
   const unitAddress = addressArr.find(
     (building) => addressDict[building] === unit.building_id
   );
 
+  const handleEdit = async (e) => {
+    e.preventDefault();
+    setUnitId(unit.unit_id);
+  };
+  const handleDelete = async (e) => {
+    e.preventDefault();
+    try {
+      await axios.delete(`/api/unit/delete?id=${unit.unit_id}`);
+      navigate(0);
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
   const imgsrc = "data:image/png;base64," + unit.image_data;
   const location = useLocation();
 
@@ -98,7 +113,11 @@ const UnitCard = ({ unit, addressDict }) => {
               </DialogContent>
               <DialogActions>
                 <Button onClick={handleClose}>Cancel</Button>
-                <Button color="error" variant="contained">
+                <Button
+                  color="error"
+                  variant="contained"
+                  onClick={handleDelete}
+                >
                   Delete
                 </Button>
               </DialogActions>
@@ -108,6 +127,7 @@ const UnitCard = ({ unit, addressDict }) => {
               color="primary"
               variant="contained"
               startIcon={<EditIcon />}
+              onClick={handleEdit}
             >
               Edit
             </Button>

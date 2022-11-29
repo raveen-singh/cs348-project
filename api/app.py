@@ -30,13 +30,6 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 images_path = os.path.join(basedir, 'images/')
 os.makedirs(images_path, exist_ok=True)
 
-def save_image(image_name, image_data):
-    jpg_original = base64.b64decode(image_data)
-    jpg_as_np = np.frombuffer(jpg_original, dtype=np.uint8)
-    img = cv2.imdecode(jpg_as_np, flags=1)
-    # we write to os filepath in development (this might have to change in prod)
-    cv2.imwrite(image_name, img)
-
 
 @app.route('/api/building/get', methods = ["GET"]) # add ability to filter by current user's property
 def get_buildings():
@@ -59,11 +52,11 @@ def sanitize_user_input(raw):
     return raw.replace(";", "").replace("%", "").replace("--", "") # remove common sql characters
 
 def is_url(url):
-  try:
-    result = urlparse(url)
-    return all([result.scheme, result.netloc])
-  except ValueError:
-    return False
+    try:
+        result = urlparse(url)
+        return all([result.scheme, result.netloc])
+    except ValueError:
+        return False
 
 @app.route('/api/lister/create', methods = ["POST"])
 def create_lister():
@@ -174,6 +167,15 @@ def get_units():
     cur.close()
     return {"data": rv} # rv is a dictionary if provided id, otherwise a list of dictionaries
 
+def delete_image(image_path): 
+    # expects image_path to be of the form "/images/{image_name}.jpg"
+    # note: do not call this function unless you know the unit has been successfully deleted/modified. 
+    #       if you delete the image first, but the unit fails to delete/modify, view all units will not be able to render :()
+    filename = "." + image_path
+
+    if os.path.isfile(filename):
+        os.remove(filename)
+
 @app.route('/api/units/get', methods = ["GET"])
 def get_my_units():
     id = request.args.get("id")
@@ -200,34 +202,103 @@ def get_my_units():
 
 @app.route('/api/unit/delete', methods = ["DELETE"])
 def delete_unit():
-    # expecting to be called /api/unit/get?id={id} 
+    # expecting to be called /api/unit/delete?id={id} 
+    if "loggedin" not in session:
+        return {"success": False, "message": "Not logged in!"}, STATUS_BAD_REQUEST
+
     id = request.args.get("id")
     conn = mysql.connection
     cur = conn.cursor()
     
     success = True
     message = ""
+    account_id = session["id"]
 
-    cur.execute("SELECT * FROM AvailableUnit WHERE unit_id = %s", [id])
+    cur.execute("SELECT * FROM AvailableUnit WHERE unit_id = %s AND account_id = %s;", [id, account_id]) # checks that the unit exists, and belongs to the logged in user
     rv = cur.fetchone()
     if not rv:
         success = False
         message = f"unit_id {id} doesn't exist so it cannot be deleted!"
-    else:
+    else:        
         try:
             cur.execute("DELETE FROM AvailableUnit WHERE unit_id = %s;", [id])
         except Exception as e:
             success = False
             message = f"Error with deleting unit id {id}: {e}"
+        
+        delete_image(rv["image_path"])
     
     cur.close()
     conn.commit()
+
     if not success:
         return {"status": success, "message": message}, STATUS_BAD_REQUEST
     else:
         return {"status": success}
 
+def save_image(image, image_name, unique_id):
+    data = image.split(',')
+    filename = images_path + f'{unique_id}{image_name}'
+    image_data = data[1]
 
+    jpg_original = base64.b64decode(image_data)
+    jpg_as_np = np.frombuffer(jpg_original, dtype=np.uint8)
+    img = cv2.imdecode(jpg_as_np, flags=1)
+    # we write to os filepath in development (this might have to change in prod)
+    cv2.imwrite(filename, img) # image_name
+
+@app.route('/api/unit/update', methods = ["PUT"])
+def update_unit():
+    if "loggedin" not in session:
+        return {"success": False, "message": "Not logged in!"}, STATUS_BAD_REQUEST
+
+    json_data = request.get_json()
+
+    unit_id = json_data["unit_id"]
+    room_num = json_data["room_num"]
+    rent_price = json_data["rent_price"]
+    num_beds = json_data["num_beds"]
+    num_washrooms = json_data["num_washrooms"]
+    lease_term = json_data["lease_term"]
+    floor_num = json_data["floor_num"]
+    image_path = json_data["image_path"]
+
+    # check that unit belongs to the logged in user
+    conn = mysql.connection
+    cur = conn.cursor()
+    account_id = session["id"]
+    cur.execute("SELECT * FROM AvailableUnit WHERE unit_id = %s AND account_id = %s;", [unit_id, account_id]) # checks that the unit exists, and belongs to the logged in user
+    rv = cur.fetchone()
+    if not rv:
+        return {"success": False, "message": "You are not permissioned to update this unit!"}, STATUS_BAD_REQUEST
+    
+    try:
+        if rv["image_path"] == image_path: # don't need to change the image
+            cur.execute("""UPDATE AvailableUnit 
+                    SET room_num = %s, lease_term = %s, num_beds = %s, floor_num = %s, num_washrooms = %s, rent_price = %s
+                    WHERE unit_id = %s;""", [room_num, lease_term, num_beds, floor_num, num_washrooms, rent_price, unit_id])
+                
+        else: # need to change the image
+            relative_image_path = ""
+            try: 
+                image_name = f"unit{unit_id}.png"
+                unique_id = str(uuid.uuid4())[:8]
+                relative_image_path = '/images/' + f'{unique_id}{image_name}'
+                save_image(image_path, image_name, unique_id)
+            except Exception as e:
+                return {"success": False, "message": f"Error saving updated image: {e}"}
+
+            cur.execute("""UPDATE AvailableUnit 
+                    SET room_num = %s, lease_term = %s, num_beds = %s, floor_num = %s, image_path = %s, num_washrooms = %s, rent_price = %s
+                    WHERE unit_id = %s;""", [room_num, lease_term, num_beds, floor_num, relative_image_path, num_washrooms, rent_price, unit_id])
+        conn.commit()
+    except Exception as e:
+        return {"success": False, "message": f"Error updating listing: {e}"}
+
+    if rv["image_path"] != image_path: # a new image was successfully uploaded and linked to the unit, time to delete the old image
+        delete_image(rv["image_path"])
+
+    return {"success": True}
 
 @app.route('/api/unit/create', methods = ["POST"])
 def list_unit():
@@ -265,15 +336,13 @@ def list_unit():
             building_id = result["building_id"]
         else:
             return {"success": False, "message": result["message"]}, STATUS_BAD_REQUEST
- 
-    data = image.split(',')
+    
     unique_id = str(uuid.uuid4())[:8]
     relative_image_path = '/images/' + f'{unique_id}{image_name}'
-    filename = images_path + f'{unique_id}{image_name}'
-
     try:
-        save_image(filename, data[1])
+        save_image(image, image_name, unique_id)
     except Exception as e:
+        delete_image(relative_image_path)
         return {"success": False, "message": f"could not save image: {e}"}, STATUS_BAD_REQUEST
 
     try:
@@ -290,7 +359,9 @@ def list_unit():
         cur.close()
         return {"success": True, "unit_id": unit_id}
     except Exception as e:
+        delete_image(relative_image_path)
         return {"success": False, "message": f"Error creating listing: {e}"}, STATUS_BAD_REQUEST
+    
 
 @app.route('/api/reviews/create', methods = ["POST"])
 def post_review():
@@ -389,16 +460,19 @@ def login():
     account = cur.fetchone()
     cur.close()
 
-    # check retrieved hash password against user input
-    validate_password = bcrypt.check_password_hash(account["password"], password)
+    if account:
+        # check retrieved hash password against user input
+        validate_password = bcrypt.check_password_hash(account["password"], password)
 
-    if account and validate_password:
-        session["loggedin"] = True
-        session["id"] = account["account_id"]
-        session["username"] = account["username"]
-        return {"success": True, "session": session}
+        if validate_password:
+            session["loggedin"] = True
+            session["id"] = account["account_id"]
+            session["username"] = account["username"]
+            return {"success": True, "session": session}
+        else:
+            return {"success": False, "message": "Invalid credentials!"} # not sure if i should throw STATUS_BAD_REQUEST, but when i do, the frontend is unable to read the message because an exception is thrown
     else:
-        return {"success": False, "message": "Invalid credentials"}
+        return {"success": False, "message": "This username doesn't exist!"} # same as above!
 
 
 @app.route('/api/logout', methods = ["POST"])
