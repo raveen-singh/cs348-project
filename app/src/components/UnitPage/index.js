@@ -43,7 +43,7 @@ const UnitPage = () => {
         </Stack>
         <Stack mt={3} px={5} sx={{ width: { sm: "100%", md: "50%" } }}>
           <Typography variant="h4" fontWeight={500} mb={2}>
-            Unit Details
+            Rent: ${unit.rent_price}/Month
           </Typography>
           <Typography variant="h6" mb={2}>
             Address: {unit.address}
@@ -104,7 +104,6 @@ const UnitPage = () => {
                 <Typography>Floor Number: {unit.floor_num}</Typography>
               )}
               <Typography>Lease: {unit.lease_term} months</Typography>
-              <Typography>Rent Price: ${unit.rent_price}</Typography>
             </Stack>
           </Box>
           <Link
