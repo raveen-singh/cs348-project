@@ -161,8 +161,7 @@ def get_units():
         
         if filter_by:
             string_valued_fields = set(["Pet Friendly", "Laundry Availability", "Type of Unit"])
-            range_based_filters = set(["Bedrooms", "Washrooms", "Rent Price", "Distance"])
-            value_based_filters = set(["Lease Duration", "Pet Friendly", "Laundry Availability", "Type of Unit"])
+            value_based_filters = set(["Lease Duration", "Pet Friendly", "Laundry Availability", "Type of Unit", "Washrooms", "Bedrooms"])
             sql_fields_dict = {"Bedrooms": "u.num_beds", "Washrooms": "u.num_washrooms", "Rent Price": "u.rent_price", "Distance": "b.distance_from_waterloo",
                                 "Lease Duration": "u.lease_term", "Pet Friendly": "b.pet_friendly", "Laundry Availability": "b.laundry_availability", "Type of Unit": "b.type_of_unit"}
             sql_filter_field = sql_fields_dict[filter_by]
