@@ -184,7 +184,7 @@ def get_units():
         cur.execute(sql_query)
         rv = cur.fetchall()
     
-    if not rv and not (order_by_sql or filter_by_sql):
+    if not rv:
         return {"success": False}, STATUS_BAD_REQUEST
     # append image data to returned tuple
     if type(rv) == tuple:
