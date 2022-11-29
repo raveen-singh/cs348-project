@@ -149,14 +149,62 @@ def get_units():
     id = request.args.get("id")
     cur = mysql.connection.cursor()
 
-    json_data = request.get_json()
-    print(json_data)
+    json_data = ""
+    order_by_sql = ""
+    filter_by_sql = ""
+    if request.method == "PUT":
+        json_data = request.get_json()
+        print(json_data)
+
+        sort_by = json_data["sort"]["field"]
+        sort_by_direction = json_data["sort"]["direction"]
+        filter_by = json_data["filter"]["field"]
+        filter_by_option = json_data["filter"]["option"]
+        filter_by_lower = json_data["filter"]["lowerBound"]
+        filter_by_upper = json_data["filter"]["upperBound"]
+
+        if sort_by:
+            sort_by_dict = {"distance": "b.distance_from_waterloo", "price": "u.rent_price"} # distance_from_waterloo is from building
+            order_by_sql = "ORDER BY {} {}".format(sort_by_dict[sort_by], sort_by_direction)
+            print(order_by_sql)
+        
+        if filter_by:
+            string_valued_fields = set(["Pet Friendly", "Laundry Availability", "Type of Unit"])
+            range_based_filters = set(["Bedrooms", "Washrooms", "Rent Price", "Distance"])
+            value_based_filters = set(["Lease Duration", "Pet Friendly", "Laundry Availability", "Type of Unit"])
+            sql_fields_dict = {"Bedrooms": "u.num_beds", "Washrooms": "u.num_washrooms", "Rent Price": "u.rent_price", "Distance": "b.distance_from_waterloo",
+                                "Lease Duration": "u.lease_term", "Pet Friendly": "b.pet_friendly", "Laundry Availability": "b.laundry_availability", "Type of Unit": "b.type_of_unit"}
+            sql_filter_field = sql_fields_dict[filter_by]
+            if filter_by in value_based_filters: # value-based filtering
+                if filter_by in string_valued_fields:
+                    filter_by_option = f"'{filter_by_option}'"
+                filter_by_sql = "{} = {}".format(sql_filter_field, filter_by_option)
+            else: # range-based filtering
+                filter_by_sql = f"{sql_filter_field} >= {filter_by_lower} and {sql_filter_field} <= {filter_by_upper}"
+            print(filter_by_sql)
+            # range = bedroom, washroom, rent price, distance
+            # option = lease duration, pet friendly, laundry availability, type of unit, 
+            
+
+        # print(f"sorting by {sort_by}, filter by {filter_by}")
 
     if id: # return one unit
-        cur.execute("SELECT * FROM AvailableUnit WHERE unit_id = %s;", [id])
+        sql_query = "SELECT * FROM AvailableUnit u JOIN BUILDING b ON u.building_id = b.building_id WHERE unit_id = %s"
+        if filter_by_sql:
+            sql_query += f" and {filter_by_sql}"
+        if order_by_sql:
+            sql_query += f" {order_by_sql}"
+        print(sql_query)
+        cur.execute(sql_query, [id])
         rv = cur.fetchone()
     else: # return all units
-        cur.execute(f"SELECT * FROM AvailableUnit;")
+        sql_query = "SELECT * FROM AvailableUnit u JOIN BUILDING b ON u.building_id = b.building_id"
+        if filter_by_sql:
+            sql_query += f" where {filter_by_sql}"
+        if order_by_sql:
+            sql_query += f" {order_by_sql}"
+        print(sql_query)
+        cur.execute(sql_query)
         rv = cur.fetchall()
     
     if not rv:
