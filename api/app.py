@@ -149,7 +149,8 @@ def get_units():
     id = request.args.get("id")
     cur = mysql.connection.cursor()
 
-    # json_data = request.get_json()
+    json_data = request.get_json()
+    print(json_data)
 
     if id: # return one unit
         cur.execute("SELECT * FROM AvailableUnit WHERE unit_id = %s;", [id])

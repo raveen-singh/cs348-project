@@ -138,7 +138,7 @@ const UnitList = () => {
     setAnchorEl(null);
   };
 
-  const handleSort = (e) => {
+  const handleSort = async (e) => {
     setSort(e.target.value);
     if (e.target.value === "Rent Price ASC") {
       condition["sort"]["field"] = "price";
@@ -155,6 +155,11 @@ const UnitList = () => {
     else if (e.target.value === "Distance DESC") {
       condition["sort"]["field"] = "distance";
       condition["sort"]["direction"] = "DESC";
+    }
+    try {
+      const res = await axios.put('/api/unit/get', condition);
+    } catch (error) {
+      console.log(error.message)
     }
   }
 
@@ -188,7 +193,7 @@ const UnitList = () => {
     });
   }
 
-  const handleApply = (e) => {
+  const handleApply = async (e) => {
     e.preventDefault();
     setCondition({
       ...condition,
@@ -198,6 +203,11 @@ const UnitList = () => {
         ["upperBound"]: parseFloat(condition["filter"]["upperBound"]),
       }
     });
+    try {
+      const res = await axios.put('/api/unit/get', condition);
+    } catch (error) {
+      console.log(error.message)
+    }
     handlePopClose(e);
   }
 
