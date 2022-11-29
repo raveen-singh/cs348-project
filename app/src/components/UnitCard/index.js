@@ -16,8 +16,8 @@ import {
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import InfoIcon from "@mui/icons-material/Info";
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 const UnitCard = ({ unit, addressDict, setUnitId }) => {
   const navigate = useNavigate();
@@ -30,7 +30,7 @@ const UnitCard = ({ unit, addressDict, setUnitId }) => {
   const handleEdit = async (e) => {
     e.preventDefault();
     setUnitId(unit.unit_id);
-  }
+  };
   const handleDelete = async (e) => {
     e.preventDefault();
     try {
@@ -39,7 +39,7 @@ const UnitCard = ({ unit, addressDict, setUnitId }) => {
     } catch (error) {
       console.log(error.message);
     }
-  }
+  };
   const imgsrc = "data:image/png;base64," + unit.image_data;
   const location = useLocation();
 
@@ -92,24 +92,6 @@ const UnitCard = ({ unit, addressDict, setUnitId }) => {
           <InfoIcon sx={{ mr: 1 }} />
           Details
         </Button>
-        <Button
-          size="small"
-          color="primary"
-          component={Link}
-          onClick={handleEdit}
-        >
-          <EditIcon sx={{ mr: 1 }} />
-          Edit
-        </Button>
-        <Button
-          size="small"
-          color="primary"
-          component={Link}
-          onClick={handleDelete}
-        >
-          <DeleteIcon sx={{ mr: 1 }} />
-          Delete
-        </Button>
         {location.pathname === "/profile" && (
           <>
             <Button
@@ -131,7 +113,11 @@ const UnitCard = ({ unit, addressDict, setUnitId }) => {
               </DialogContent>
               <DialogActions>
                 <Button onClick={handleClose}>Cancel</Button>
-                <Button color="error" variant="contained">
+                <Button
+                  color="error"
+                  variant="contained"
+                  onClick={handleDelete}
+                >
                   Delete
                 </Button>
               </DialogActions>
@@ -141,6 +127,7 @@ const UnitCard = ({ unit, addressDict, setUnitId }) => {
               color="primary"
               variant="contained"
               startIcon={<EditIcon />}
+              onClick={handleEdit}
             >
               Edit
             </Button>
