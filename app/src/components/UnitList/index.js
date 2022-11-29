@@ -1,25 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Modal, CircularProgress, Grid, Box } from "@mui/material";
+import { CircularProgress, Grid, Box } from "@mui/material";
 import axios from "axios";
-
-import UnitForm from "../UnitForm";
 import UnitCard from "../UnitCard";
-
-const defaultFetchedUnitValues = {
-  address: "",
-  room_num: "",
-  rent_price: 500,
-  num_beds: 5,
-  num_washrooms: 5,
-  lease_term: 4,
-  floor_num: "",
-  image_path: "",
-  new_address: "",
-  pet_friendly: 0,
-  laundry_availability: "Building",
-  type_of_unit: "Apartment",
-  distance_from_waterloo: "0.0",
-};
 
 const UnitList = () => {
   const [addresses, setAddresses] = useState({});

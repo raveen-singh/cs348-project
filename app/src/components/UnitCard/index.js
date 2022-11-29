@@ -34,7 +34,7 @@ const UnitCard = ({ unit, addressDict, setUnitId }) => {
   const handleDelete = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.delete(`/api/unit/delete?id=${unit.unit_id}`);
+      await axios.delete(`/api/unit/delete?id=${unit.unit_id}`);
       navigate(0);
     } catch (error) {
       console.log(error.message);
