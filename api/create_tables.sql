@@ -52,6 +52,9 @@ CREATE TABLE IF NOT EXISTS Review(
     FOREIGN KEY (building_id) REFERENCES Building(building_id) ON DELETE CASCADE
 );
 
+CREATE INDEX NumWashroomsIndex on AvailableUnit(num_washrooms);
+CREATE INDEX NumBedsIndex on AvailableUnit(num_beds);
+
 DESCRIBE UnitListerAccount;
 
 DESCRIBE Building;

@@ -5,24 +5,32 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Link,
   Paper,
-  Box,
   Grid,
 } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
-import ManageSearchIcon from "@mui/icons-material/ManageSearch";
+import ApartmentIcon from "@mui/icons-material/Apartment";
+import HomeIcon from "@mui/icons-material/Home";
 import React from "react";
 
 const BuildingList = ({ buildings }) => {
   return (
     <Grid
       container
-      sx={{ mt: 5, flexDirection: { sm: "column-reverse", md: "row" } }}
+      direction="column"
+      alignItems="center"
+      justifyContent="center"
+      py={8}
     >
       <Grid item sm={12} md={8}>
         <TableContainer sx={{ px: { sm: 0, md: 4 } }}>
-          <Table sx={{ minWidth: 650 }} component={Paper}>
+          <Table
+            sx={{
+              minWidth: 650,
+              border: "1px solid #edede9",
+            }}
+            component={Paper}
+          >
             <TableHead>
               <TableRow>
                 <TableCell></TableCell>
@@ -59,12 +67,11 @@ const BuildingList = ({ buildings }) => {
               {buildings.map(({ building_id, ...building }) => (
                 <TableRow key={building_id}>
                   <TableCell align="center">
-                    <Link
-                      component={RouterLink}
-                      to={`/buildings/${building_id}`}
-                    >
-                      <ManageSearchIcon />
-                    </Link>
+                    {building.type_of_unit === "Apartment" ? (
+                      <ApartmentIcon />
+                    ) : (
+                      <HomeIcon />
+                    )}
                   </TableCell>
                   <TableCell
                     component={RouterLink}
@@ -89,10 +96,6 @@ const BuildingList = ({ buildings }) => {
             </TableBody>
           </Table>
         </TableContainer>
-      </Grid>
-      {/* In the future, filter and sort box will go here */}
-      <Grid item sm={12} md={4}>
-        <Box>Filter and Sort in the future</Box>
       </Grid>
     </Grid>
   );
