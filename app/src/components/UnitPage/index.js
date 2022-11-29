@@ -41,6 +41,9 @@ const UnitPage = () => {
           <Typography variant="h4" fontWeight={500} mb={2}>
             Unit Details
           </Typography>
+          <Typography variant="h6" mb={2}>
+            Address: {unit.address}
+          </Typography>
           <Box display="flex" justifyContent="space-between">
             <Stack spacing={1}>
               <Typography>{unit.num_beds} Bedrooms</Typography>
