@@ -143,11 +143,13 @@ def get_building_addresses():
     cur.close()
     return addresses
 
-@app.route('/api/unit/get', methods = ["GET"])
+@app.route('/api/unit/get', methods = ["GET", "PUT"])
 def get_units():
     # expecting to be called /api/unit/get?id={id} (optional id) or just /api/unit/get
     id = request.args.get("id")
     cur = mysql.connection.cursor()
+
+    # json_data = request.get_json()
 
     if id: # return one unit
         cur.execute("SELECT * FROM AvailableUnit WHERE unit_id = %s;", [id])
