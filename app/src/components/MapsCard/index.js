@@ -13,16 +13,16 @@ export default function BaseMap({ building }) {
     googleMapsApiKey: "AIzaSyBEp1Ikww7LTAnj8Gzew1jY555INnUbArQ",
   });
 
-  const getLocation = async (address) => {
-    const { data } = await axios.get(
-      `https://maps.googleapis.com/maps/api/geocode/json?address=${address}&key=${key}`
-    );
-    console.log(data);
-    // setLatitude(data.results[0].geometry.location.lat ?? 0);
-    // setLongitude(data.results[0].geometry.location.lng ?? 0);
-  };
-
-  useEffect(() => getLocation(building.address), []);
+  useEffect(() => {
+    (async () => {
+      const { data } = await axios.get(
+        `https://maps.googleapis.com/maps/api/geocode/json?address=${address}&key=${key}`
+      );
+      console.log(data);
+      setLatitude(data.results[0].geometry.location.lat ?? 0);
+      setLongitude(data.results[0].geometry.location.lng ?? 0);
+    })();
+  });
 
   if (!isLoaded) return <div>Loading...</div>;
   return <Map building={building} lat={latitude} lng={longitude} />;
