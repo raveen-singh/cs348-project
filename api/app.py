@@ -173,7 +173,7 @@ def get_units():
                 filter_by_sql = f"WHERE {sql_filter_field} >= {filter_by_lower} and {sql_filter_field} <= {filter_by_upper}"
 
     if id: # return one unit
-        cur.execute("SELECT * FROM AvailableUnit u JOIN BUILDING b ON u.building_id = b.building_id WHERE unit_id = %s", [id])
+        cur.execute("SELECT * FROM AvailableUnit u JOIN BUILDING b ON u.building_id = b.building_id WHERE unit_id = %s;", [id])
         rv = cur.fetchone()
     else: # return all units
         sql_query = "SELECT * FROM AvailableUnit u JOIN BUILDING b ON u.building_id = b.building_id"
