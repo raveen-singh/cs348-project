@@ -6,6 +6,9 @@ import cv2
 import base64
 import numpy as np
 import uuid
+import random
+import re
+from urllib.parse import urlparse
 
 app = Flask(__name__)
 app.secret_key = 'a secret key'
@@ -52,6 +55,16 @@ def get_buildings():
     cur.close()
     return {"data": rv} # rv is a dictionary if provided id, otherwise a list of dictionaries. dictionary includes averaged reviews.
 
+def sanitize_user_input(raw):
+    return raw.replace(";", "").replace("%", "").replace("--", "") # remove common sql characters
+
+def is_url(url):
+  try:
+    result = urlparse(url)
+    return all([result.scheme, result.netloc])
+  except ValueError:
+    return False
+
 @app.route('/api/lister/create', methods = ["POST"])
 def create_lister():
     conn = mysql.connection
@@ -64,6 +77,25 @@ def create_lister():
     phone_num = json_data["phone_num"]
     email = json_data["email"]
     website = json_data["website"]
+
+    # user input validation to prevent sql injections
+    if not username.isalnum():
+        return {"success": False, "message": "Not a valid username! Must be alphanumeric."}, STATUS_BAD_REQUEST
+
+    if not password.isalnum():
+        return {"success": False, "message": "Not a valid password! Must be alphanumeric."}, STATUS_BAD_REQUEST
+
+    if not name.replace(" ", "").isalpha():
+        return {"success": False, "message": "Not a valid name! Must only contain letters in the alphabet."}, STATUS_BAD_REQUEST
+
+    if not phone_num.isnumeric() or len(phone_num) != 10:
+        return {"success": False, "message": "Not a valid phone number! Please input a 10-digit phone number."}, STATUS_BAD_REQUEST
+    
+    if email != sanitize_user_input(email) or not re.match("[^@]+@[^@]+\.[^@]+", email):
+        return {"success": False, "message": "Not a valid email!"}, STATUS_BAD_REQUEST
+
+    if website and (website != sanitize_user_input(website) or not is_url(website)):
+        return {"success": False, "message": "Not a valid website!"}, STATUS_BAD_REQUEST
 
     # hash password before insert
     password = bcrypt.generate_password_hash(password)
@@ -257,7 +289,7 @@ def post_review():
     building_id = json_data["building_id"]
     cleanliness = json_data["cleanliness"]
     comment = json_data["comment"]
-    review_helpfulness = json_data["reviewHelpfulness"]
+    review_helpfulness = 0
 
     try:
         cur.execute("INSERT INTO Review VALUES (NULL, %s, %s, %s, %s, %s)", 
@@ -281,21 +313,54 @@ def get_review():
 
     return {"success": True, "reviews": reviews}
 
+
+@app.route('/api/reviews/get_random_names', methods = ["GET"])
+def get_random_name():
+    num = int(request.args.get("number"))
+
+    adjectives = ["adventurous", "ambitious", "amusing", "bright", "charming", "clever", "courageous", "creative", "determined", "dynamic", "enthusiastic", "exuberant", "friendly",
+    "funny", "gentle", "honest", "kind", "loyal", "nice", "sincere", "thoughtful", "bedazzled", "blissful", "blushing", "bold", "breezy", "caring", "charismatic", "cheerful", "delightful",
+    "dreamy", "energetic", "enthusiastic", "fashionable", "graceful", "groovy", "humble", "hopeful", "impressive", "insightful", "phenomenal", "quirky", "suave", "playful", "sweet", 
+    "empathetic", "fun"]
+
+    animals = ["leopard", "dog", "rabbit", "dolphin", "eagle", "beaver", "hamster", "tiger", "cheetah", "turtle", "giraffe", "deer", "cat", "bear", "fox", "antelope", "chameleon", "elephant",
+    "alligator", "armadillo", "camel", "hippo", "chihuahua", "chinchilla", "zebra", "dodo", "jellyfish", "possum", "swan", "peacock", "lemur", "lynx", "sheep", "rhino", "llama", "koala", 
+    "kangaroo", "iguana", "gecko", "shark", "dove", "flamingo", "butterfly", "chickadee", "mouse", "goldfish", "sparrow"]
+
+    if num > len(adjectives) or num > len(animals):
+        multiply = int((num / max(len(adjectives), len(animals))) + 1)
+        adjectives  = adjectives * multiply
+        animals = animals * multiply
+
+    random_names = [adjective.capitalize() + " " + animal.capitalize() for (adjective, animal) in list(zip(random.sample(adjectives, num), random.sample(animals, num)))]
+
+    return random_names
+
 @app.route('/api/reviews/update', methods = ["PUT"])
 def update_review():
     conn = mysql.connection
     cur = conn.cursor()
 
     review_id = request.args.get("id")    
-
+    like = request.args.get("like") 
     try:
-        cur.execute("UPDATE Review SET review_helpfulness = review_helpfulness + 1  WHERE review_id=%s", 
-        [review_id])
-        cur.close()
+        if like == 'yes':
+            cur.execute("UPDATE Review SET review_helpfulness = review_helpfulness + 1  WHERE review_id=%s", 
+            [review_id])
+        elif like == 'no':
+            cur.execute("UPDATE Review SET review_helpfulness = review_helpfulness - 1  WHERE review_id=%s", 
+            [review_id])
+
         conn.commit()
-        return {"success": True}
+
+        cur.execute("SELECT review_helpfulness FROM Review WHERE review_id=%s", 
+        [review_id])
+        review = cur.fetchone()
+        cur.close()
+        return {"success": True, "review_helpfulness": review["review_helpfulness"]}
     except Exception as e:
         return {"success": False, "message": f"Error updating comment: {e}"}, STATUS_BAD_REQUEST
+
 
 
 @app.route('/api/login', methods = ["POST"])
