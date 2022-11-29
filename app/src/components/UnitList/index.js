@@ -13,6 +13,7 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import UnitCard from "../UnitCard";
+import UnitForm from "../UnitForm";
 import { useNavigate } from "react-router-dom";
 
 const defaultFetchedUnitValues = {
@@ -58,6 +59,7 @@ const petOptions = [
   { value: 1, label: "Yes" }
 ];
 const UnitList = () => {
+  const [open, setOpen] = useState(false);
   const [addresses, setAddresses] = useState({});
   const [units, setUnits] = useState([]);
   const [unitId, setUnitId] = useState(null);
@@ -212,8 +214,6 @@ const UnitList = () => {
     }
     handlePopClose(e);
   }
-
-  console.log(units);
 
   return (
     <div>
