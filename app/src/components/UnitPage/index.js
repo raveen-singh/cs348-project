@@ -3,24 +3,13 @@ import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
 import Link from "@mui/material/Link";
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-  DialogActions,
-} from "@mui/material";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useParams, Link as RouterLink } from "react-router-dom";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
 
 const UnitPage = () => {
   const [unit, setUnit] = useState(null);
-  const [open, setOpen] = useState(false);
   const { id } = useParams();
 
   useEffect(() => {
@@ -38,7 +27,6 @@ const UnitPage = () => {
 
   const imgsrc = "data:image/png;base64," + unit.image_data;
 
-  //
   return (
     <Paper sx={{ mx: "auto", my: 8, width: "70%" }}>
       <Box display="flex" flexDirection={{ sm: "column", md: "row" }}>
