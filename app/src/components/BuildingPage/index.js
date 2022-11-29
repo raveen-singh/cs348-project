@@ -7,6 +7,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import BuildingCard from "../BuildingCard";
+import BaseMap from "../MapsCard";
 import ReviewForm from "../ReviewForm";
 import ReviewList from "../ReviewList";
 
@@ -43,6 +44,7 @@ const BuildingPage = () => {
         <Grid item sm={12} md={6}>
           <Stack spacing={3}>
             <BuildingCard building={building} />
+            <BaseMap building={building} />
             <ReviewForm user={user} building_id={id} />
           </Stack>
         </Grid>
