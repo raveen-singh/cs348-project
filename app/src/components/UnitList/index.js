@@ -68,13 +68,10 @@ const UnitList = () => {
   const [condition, setCondition] = useState(defaultSortFilterValues);
   const [sort, setSort] = useState(null);
   const [filter, setFilter] = useState(null);
+  const [option, setOption] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
-  let lb = 0;
-  let ub = 0;
-  let leaseValue = "";
-  let petValue = "";
-  let laundryValue = "";
-  let typeValue = "";
+  const [lb, setlb] = useState(null);
+  const [ub, setub] = useState(null);
 
   const getUnits = async () => {
     try {
@@ -163,6 +160,45 @@ const UnitList = () => {
 
   const handleFilter = (e) => {
     setFilter(e.target.value);
+    setCondition({
+      ...condition,
+      filter: {
+        ...condition.filter,
+        [e.target.name]: e.target.value
+      }
+    });
+  }
+
+  const handleFilterDetails = (e) => {
+    if (e.target.name === "lowerBound") {
+      setlb(e.target.value);
+    }
+    else if (e.target.name === "upperBound") {
+      setub(e.target.value);
+    }
+    else {
+      setOption(e.target.value);
+    }
+    setCondition({
+      ...condition,
+      filter: {
+        ...condition.filter,
+        [e.target.name]: e.target.value
+      }
+    });
+  }
+
+  const handleApply = (e) => {
+    e.preventDefault();
+    setCondition({
+      ...condition,
+      filter: {
+        ...condition.filter,
+        ["lowerBound"]: parseFloat(condition["filter"]["lowerBound"]),
+        ["upperBound"]: parseFloat(condition["filter"]["upperBound"]),
+      }
+    });
+    handlePopClose(e);
   }
 
   console.log(condition);
@@ -177,7 +213,7 @@ const UnitList = () => {
         <UnitForm handleClose={handleClose} addressDict={addresses} unitId={unitId} setUnitId={setUnitId} editPost={editPost} setEditPost={setEditPost} />
       </Modal>
       <TextField
-        sx={{ width: "10%", margin: "5px" }}
+        sx={{ width: "10%", margin: "10px" }}
         name="sortList"
         variant="outlined"
         label="Sort By"
@@ -192,7 +228,7 @@ const UnitList = () => {
         ))}
       </TextField>
       <Button 
-        sx={{ width: "10%", height: "55px", margin: "5px" }} 
+        sx={{ width: "10%", height: "55px", margin: "10px" }} 
         variant="contained" 
         onClick={handlePopOpen}
       >
@@ -207,9 +243,9 @@ const UnitList = () => {
           horizontal: 'left',
         }}
       >
-        <Paper sx={{ width: "400px", height: "400px"}}>
+        <Paper sx={{ width: "400px", height: "25%"}}>
           <TextField
-            sx={{ width: "90%", margin: '5px 5%'}}
+            sx={{ width: "90%", margin: '10px 5%'}}
             name="field"
             variant="outlined"
             label="Filter Options"
@@ -234,7 +270,7 @@ const UnitList = () => {
                 sx={{ width: "40%", margin: '5px 5%' }}
                 required
                 value={lb}
-                onChange={handleFilter}
+                onChange={handleFilterDetails}
               />
               <TextField
                 name="upperBound"
@@ -244,7 +280,7 @@ const UnitList = () => {
                 sx={{ width: "40%", margin: '5px 5%' }}
                 required
                 value={ub}
-                onChange={handleFilter}
+                onChange={handleFilterDetails}
               />
             </>
           )
@@ -256,8 +292,8 @@ const UnitList = () => {
               variant="outlined"
               label="Filter Values"
               select
-              value={leaseValue}
-              onChange={handleFilter}
+              value={option}
+              onChange={handleFilterDetails}
             >
               {leaseOptions.map((option) => (
                 <MenuItem key={option.value} value={option.value}>
@@ -273,8 +309,8 @@ const UnitList = () => {
               variant="outlined"
               label="Filter Values"
               select
-              value={petValue}
-              onChange={handleFilter}
+              value={option}
+              onChange={handleFilterDetails}
             >
               {petOptions.map((option) => (
                 <MenuItem key={option.value} value={option.value}>
@@ -290,8 +326,8 @@ const UnitList = () => {
               variant="outlined"
               label="Filter Values"
               select
-              value={laundryValue}
-              onChange={handleFilter}
+              value={option}
+              onChange={handleFilterDetails}
             >
               {laundryOptions.map((option) => (
                 <MenuItem key={option} value={option}>
@@ -307,8 +343,8 @@ const UnitList = () => {
               variant="outlined"
               label="Filter Values"
               select
-              value={typeValue}
-              onChange={handleFilter}
+              value={option}
+              onChange={handleFilterDetails}
             >
               {typeOptions.map((option) => (
                 <MenuItem key={option} value={option}>
@@ -317,6 +353,13 @@ const UnitList = () => {
               ))}
             </TextField>
           }
+          <Button 
+            sx={{ width: "90%", margin: '10px 5%' }} 
+            variant="contained" 
+            onClick={handleApply}
+          >
+            Apply Filters
+          </Button>
         </Paper>
       </Popover>
       <Box sx={{ width: "90%", margin: "25px 5%" }}>

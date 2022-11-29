@@ -54,7 +54,6 @@ const UnitForm = ({ handleClose, addressDict, unitId, setUnitId, editPost, setEd
     distance_from_waterloo: "0.0",
   };
 
-  console.log(editPost);
   const [postData, setPostData] = useState(editPost ? editPost : defaultUnitValues);
   const [newbuilding, setNewBuilding] = useState(defaultBuildingValues);
   const [checked, setChecked] = useState(false);
