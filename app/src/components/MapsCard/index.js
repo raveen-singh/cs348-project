@@ -19,7 +19,7 @@ export default function BaseMap(building) {
 
 function Map(building) {
 
-  const geocoder = google.maps.Geocoder;
+  //const geocoder = google.maps.Geocoder;
   const [latitude, setLatitude] = useState(null);
   const [longitude, setLongitude] = useState(null);
 
@@ -40,11 +40,7 @@ function Map(building) {
       <CardContent>
         <GoogleMap
           zoom={10}
-<<<<<<< HEAD
-          center={{ latitude, longitude }}
-=======
           center={{ lat: latitude, lng: longitude }}
->>>>>>> 096d048c2f7886dbf4018ae2f9d911f6e270001d
           mapContainerClassName={{ width: "100%", height: "100%" }}
         >
           <Marker position={center} />
