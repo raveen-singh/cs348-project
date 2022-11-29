@@ -143,7 +143,7 @@ def get_building_addresses():
     cur.close()
     return addresses
 
-@app.route('/api/unit/get', methods = ["GET", "PUT"])
+@app.route('/api/unit/get', methods = ["GET", "POST"])
 def get_units():
     # expecting to be called /api/unit/get?id={id} (optional id) or just /api/unit/get
     id = request.args.get("id")
@@ -152,7 +152,7 @@ def get_units():
     json_data = ""
     order_by_sql = ""
     filter_by_sql = ""
-    if request.method == "PUT":
+    if request.method == "POST": # POST, or query string
         json_data = request.get_json()
         print(json_data)
 
@@ -178,9 +178,9 @@ def get_units():
             if filter_by in value_based_filters: # value-based filtering
                 if filter_by in string_valued_fields:
                     filter_by_option = f"'{filter_by_option}'"
-                filter_by_sql = "{} = {}".format(sql_filter_field, filter_by_option)
+                filter_by_sql = "WHERE {} = {}".format(sql_filter_field, filter_by_option)
             else: # range-based filtering
-                filter_by_sql = f"{sql_filter_field} >= {filter_by_lower} and {sql_filter_field} <= {filter_by_upper}"
+                filter_by_sql = f"WHERE {sql_filter_field} >= {filter_by_lower} and {sql_filter_field} <= {filter_by_upper}"
             print(filter_by_sql)
             # range = bedroom, washroom, rent price, distance
             # option = lease duration, pet friendly, laundry availability, type of unit, 
@@ -189,18 +189,12 @@ def get_units():
         # print(f"sorting by {sort_by}, filter by {filter_by}")
 
     if id: # return one unit
-        sql_query = "SELECT * FROM AvailableUnit u JOIN BUILDING b ON u.building_id = b.building_id WHERE unit_id = %s"
-        if filter_by_sql:
-            sql_query += f" and {filter_by_sql}"
-        if order_by_sql:
-            sql_query += f" {order_by_sql}"
-        print(sql_query)
-        cur.execute(sql_query, [id])
+        cur.execute("SELECT * FROM AvailableUnit u JOIN BUILDING b ON u.building_id = b.building_id WHERE unit_id = %s" [id])
         rv = cur.fetchone()
     else: # return all units
         sql_query = "SELECT * FROM AvailableUnit u JOIN BUILDING b ON u.building_id = b.building_id"
         if filter_by_sql:
-            sql_query += f" where {filter_by_sql}"
+            sql_query += f" {filter_by_sql}"
         if order_by_sql:
             sql_query += f" {order_by_sql}"
         print(sql_query)
