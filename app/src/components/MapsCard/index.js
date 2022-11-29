@@ -19,8 +19,10 @@ export default function BaseMap({ building }) {
         `https://maps.googleapis.com/maps/api/geocode/json?address=${building.address}&key=AIzaSyD97JXp2t36bmAvNtSUibldGBs08Z4cHxE`
       );
       console.log(data);
-      setLatitude(data.results[0].geometry.location.lat ?? 0);
-      setLongitude(data.results[0].geometry.location.lng ?? 0);
+      setLatitude(data.results[0].geometry.location.lat);
+      console.log(latitude);
+      setLongitude(data.results[0].geometry.location.lng);
+      console.log(longitude);
     })();
   }, []);
 
