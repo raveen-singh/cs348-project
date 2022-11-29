@@ -6,7 +6,6 @@ import {
   TableHead,
   TableRow,
   Paper,
-  Box,
   Grid,
 } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
@@ -18,11 +17,20 @@ const BuildingList = ({ buildings }) => {
   return (
     <Grid
       container
-      sx={{ mt: 5, flexDirection: { sm: "column-reverse", md: "row" } }}
+      direction="column"
+      alignItems="center"
+      justifyContent="center"
+      py={8}
     >
       <Grid item sm={12} md={8}>
         <TableContainer sx={{ px: { sm: 0, md: 4 } }}>
-          <Table sx={{ minWidth: 650 }} component={Paper}>
+          <Table
+            sx={{
+              minWidth: 650,
+              border: "1px solid #edede9",
+            }}
+            component={Paper}
+          >
             <TableHead>
               <TableRow>
                 <TableCell></TableCell>
@@ -88,10 +96,6 @@ const BuildingList = ({ buildings }) => {
             </TableBody>
           </Table>
         </TableContainer>
-      </Grid>
-      {/* In the future, filter and sort box will go here */}
-      <Grid item sm={12} md={4}>
-        <Box>Filter and Sort in the future</Box>
       </Grid>
     </Grid>
   );
