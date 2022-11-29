@@ -17,7 +17,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import FileBase from "react-file-base64";
 import axios from "axios";
 
-const UnitForm = ({ handleClose, addressDict, unitId, setUnitId, editPost, setEditPost }) => {
+const UnitForm = ({ handleClose, addressDict }) => {
   const currentAddresses = Object.keys(addressDict);
   const navigate = useNavigate();
 
@@ -54,8 +54,7 @@ const UnitForm = ({ handleClose, addressDict, unitId, setUnitId, editPost, setEd
     distance_from_waterloo: "0.0",
   };
 
-  console.log(editPost);
-  const [postData, setPostData] = useState(editPost ? editPost : defaultUnitValues);
+  const [postData, setPostData] = useState(defaultUnitValues);
   const [newbuilding, setNewBuilding] = useState(defaultBuildingValues);
   const [checked, setChecked] = useState(false);
   const [message, setMessage] = useState("");
@@ -118,52 +117,27 @@ const UnitForm = ({ handleClose, addressDict, unitId, setUnitId, editPost, setEd
       });
     }
     try {
-      if (unitId) {
-        const { data } = await axios.put('/api/unit/update', {
-          ...postData,
-          "unit_id": unitId
-        });
-        if (data) {
-          console.log({
-            ...postData,
-            "unit_id": unitId
-          });
-          console.log(data.message);
-          setUnitId(null);
-          setEditPost(defaultUnitValues);
-          setPostData(defaultUnitValues);
-          handleClose();
-          navigate(`/unit/${unitId}`);
-        } else {
-          setMessage(data.message);
-        }
-      }
-      else {
-        const { data } = await axios.post("/api/unit/create", {
-          ...postData,
-        });
-        if (data.success) {
-          setPostData(defaultUnitValues);
-          handleClose();
-          navigate(`/unit/${data.unit_id}`);
-        } else {
-          setMessage(data.message);
-        }
+      const { data } = await axios.post("/api/unit/create", {
+        ...postData,
+      });
+      if (data.success) {
+        setPostData(defaultUnitValues);
+        handleClose();
+        navigate(`/unit/${data.unit_id}`);
+      } else {
+        setMessage(data.message);
       }
     } catch (error) {
       setMessage(error.message);
     }
-    
   };
 
   const makeToast = () => message && toast.error(message);
 
-
-
   useEffect(() => {
     makeToast();
-  }, [])
-  
+  }, [message]);
+
   return (
     <>
       <Toaster />
@@ -210,7 +184,6 @@ const UnitForm = ({ handleClose, addressDict, unitId, setUnitId, editPost, setEd
             fullWidth
             select
             required
-            disabled={unitId}
             value={postData.address}
             onChange={handleAddress}
           >
@@ -327,7 +300,7 @@ const UnitForm = ({ handleClose, addressDict, unitId, setUnitId, editPost, setEd
             label="Room Number"
             type="number"
             value={postData.room_num}
-            onChange={handleNum}
+            onChange={handleChange}
           />
           <TextField
             name="lease_term"
@@ -347,23 +320,19 @@ const UnitForm = ({ handleClose, addressDict, unitId, setUnitId, editPost, setEd
           </TextField>
           <Box sx={{ mt: 1 }}>
             <FileBase
-              id="files"
               type="file"
               multiple={false}
               onDone={({ name, base64 }) =>
                 setPostData({ ...postData, fileName: name, image_path: base64 })
               }
             />
-            {!postData.fileName && !unitId &&
-              <label for="files">(required)</label>
-            }
           </Box>
           <Button
             disabled={
               !postData.rent_price ||
               !postData.address | !postData.num_beds ||
               !postData.num_washrooms ||
-              (!postData.fileName && !unitId)
+              !postData.fileName
             }
             sx={{ mt: 2 }}
             variant="contained"
@@ -373,7 +342,7 @@ const UnitForm = ({ handleClose, addressDict, unitId, setUnitId, editPost, setEd
             fullWidth
             onClick={handleSubmit}
           >
-            {unitId ? "Update" : "Submit"}
+            Submit
           </Button>
         </Box>
       </Paper>

@@ -15,10 +15,10 @@ INSERT INTO AvailableUnit
 VALUES (NULL, 1, 1, 202, 8, 4, 2, '/images/my_bedroom1.jpg', 2, 1000);
 
 INSERT INTO AvailableUnit
-VALUES (NULL, 1, 1, 101, 4, 3, 3, '/images/my_bedroom2.jpg', 3, 900);
+VALUES (NULL, 1, 1, 101, 4, 3, 3, '/images/my_bedroom1.jpg', 3, 900);
 
 INSERT INTO AvailableUnit
-VALUES (NULL, 1, 1, 303, 12, 2, 4, '/images/my_bedroom3.jpg', 1, 800);
+VALUES (NULL, 1, 1, 303, 12, 2, 4, '/images/my_bedroom1.jpg', 1, 800);
 
 INSERT INTO Review
 VALUES (NULL, 1, 1, 3, 'Icon is so overhyped.', 2);

@@ -106,7 +106,7 @@ const Navbar = () => {
           aria-labelledby="modal-modal-title"
           aria-describedby="modal-modal-description"
         >
-          <UnitForm handleClose={handleClose} addressDict={addresses} unitId={null} editPost={null} />
+          <UnitForm handleClose={handleClose} addressDict={addresses} />
         </Modal>
       </Toolbar>
     </AppBar>
