@@ -6,6 +6,7 @@ import cv2
 import base64
 import numpy as np
 import uuid
+import random
 import re
 from urllib.parse import urlparse
 
@@ -29,13 +30,6 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 images_path = os.path.join(basedir, 'images/')
 os.makedirs(images_path, exist_ok=True)
 
-def save_image(image_name, image_data):
-    jpg_original = base64.b64decode(image_data)
-    jpg_as_np = np.frombuffer(jpg_original, dtype=np.uint8)
-    img = cv2.imdecode(jpg_as_np, flags=1)
-    # we write to os filepath in development (this might have to change in prod)
-    cv2.imwrite(image_name, img)
-
 
 @app.route('/api/building/get', methods = ["GET"]) # add ability to filter by current user's property
 def get_buildings():
@@ -58,11 +52,11 @@ def sanitize_user_input(raw):
     return raw.replace(";", "").replace("%", "").replace("--", "") # remove common sql characters
 
 def is_url(url):
-  try:
-    result = urlparse(url)
-    return all([result.scheme, result.netloc])
-  except ValueError:
-    return False
+    try:
+        result = urlparse(url)
+        return all([result.scheme, result.netloc])
+    except ValueError:
+        return False
 
 @app.route('/api/lister/create', methods = ["POST"])
 def create_lister():
@@ -142,17 +136,52 @@ def get_building_addresses():
     cur.close()
     return addresses
 
-@app.route('/api/unit/get', methods = ["GET"])
+@app.route('/api/unit/get', methods = ["GET", "POST"])
 def get_units():
     # expecting to be called /api/unit/get?id={id} (optional id) or just /api/unit/get
     id = request.args.get("id")
     cur = mysql.connection.cursor()
 
+    json_data = ""
+    order_by_sql = ""
+    filter_by_sql = ""
+    if request.method == "POST": # POST, or query string
+        json_data = request.get_json()
+
+        sort_by = json_data["sort"]["field"]
+        sort_by_direction = json_data["sort"]["direction"]
+        filter_by = json_data["filter"]["field"]
+        filter_by_option = json_data["filter"]["option"]
+        filter_by_lower = json_data["filter"]["lowerBound"]
+        filter_by_upper = json_data["filter"]["upperBound"]
+
+        if sort_by:
+            sort_by_dict = {"distance": "b.distance_from_waterloo", "price": "u.rent_price"} # distance_from_waterloo is from building
+            order_by_sql = "ORDER BY {} {}".format(sort_by_dict[sort_by], sort_by_direction)
+        
+        if filter_by:
+            string_valued_fields = set(["Pet Friendly", "Laundry Availability", "Type of Unit"])
+            value_based_filters = set(["Lease Duration", "Pet Friendly", "Laundry Availability", "Type of Unit", "Washrooms", "Bedrooms"])
+            sql_fields_dict = {"Bedrooms": "u.num_beds", "Washrooms": "u.num_washrooms", "Rent Price": "u.rent_price", "Distance": "b.distance_from_waterloo",
+                                "Lease Duration": "u.lease_term", "Pet Friendly": "b.pet_friendly", "Laundry Availability": "b.laundry_availability", "Type of Unit": "b.type_of_unit"}
+            sql_filter_field = sql_fields_dict[filter_by]
+            if filter_by in value_based_filters: # value-based filtering
+                if filter_by in string_valued_fields:
+                    filter_by_option = f"'{filter_by_option}'"
+                filter_by_sql = "WHERE {} = {}".format(sql_filter_field, filter_by_option)
+            else: # range-based filtering
+                filter_by_sql = f"WHERE {sql_filter_field} >= {filter_by_lower} and {sql_filter_field} <= {filter_by_upper}"
+
     if id: # return one unit
-        cur.execute("SELECT * FROM AvailableUnit WHERE unit_id = %s;", [id])
+        cur.execute("SELECT * FROM AvailableUnit u JOIN BUILDING b ON u.building_id = b.building_id WHERE unit_id = %s;", [id])
         rv = cur.fetchone()
     else: # return all units
-        cur.execute(f"SELECT * FROM AvailableUnit;")
+        sql_query = "SELECT * FROM AvailableUnit u JOIN BUILDING b ON u.building_id = b.building_id"
+        if filter_by_sql:
+            sql_query += f" {filter_by_sql}"
+        if order_by_sql:
+            sql_query += f" {order_by_sql}"
+        cur.execute(sql_query)
         rv = cur.fetchall()
     
     if not rv:
@@ -169,11 +198,21 @@ def get_units():
         jpg_img = cv2.imencode('.jpg',img)
         b64_string = base64.b64encode(jpg_img[1]).decode('utf-8')
         r["image_data"] = b64_string
+
     rv = tuple(rv)
     cur.close()
     return {"data": rv} # rv is a dictionary if provided id, otherwise a list of dictionaries
 
-@app.route('/api/unit/{$id}', methods = ["GET"])
+def delete_image(image_path): 
+    # expects image_path to be of the form "/images/{image_name}.jpg"
+    # note: do not call this function unless you know the unit has been successfully deleted/modified. 
+    #       if you delete the image first, but the unit fails to delete/modify, view all units will not be able to render :()
+    filename = "." + image_path
+
+    if os.path.isfile(filename):
+        os.remove(filename)
+
+@app.route('/api/units/get', methods = ["GET"])
 def get_my_units():
     id = request.args.get("id")
     cur = mysql.connection.cursor()
@@ -182,38 +221,120 @@ def get_my_units():
     rv = cur.fetchall()
 
     cur.close()
+       # append image data to returned tuple
+    if type(rv) == tuple:
+        rv = list(rv)
+    else:
+        rv = [rv]
+   
+    for r in rv:
+        file_name = basedir + r['image_path']
+        img = cv2.imread(file_name)
+        jpg_img = cv2.imencode('.jpg',img)
+        b64_string = base64.b64encode(jpg_img[1]).decode('utf-8')
+        r["image_data"] = b64_string
+    rv = tuple(rv)
     return {"data": rv}
 
 @app.route('/api/unit/delete', methods = ["DELETE"])
 def delete_unit():
-    # expecting to be called /api/unit/get?id={id} 
+    # expecting to be called /api/unit/delete?id={id} 
+    if "loggedin" not in session:
+        return {"success": False, "message": "Not logged in!"}, STATUS_BAD_REQUEST
+
     id = request.args.get("id")
     conn = mysql.connection
     cur = conn.cursor()
     
     success = True
     message = ""
+    account_id = session["id"]
 
-    cur.execute("SELECT * FROM AvailableUnit WHERE unit_id = %s", [id])
+    cur.execute("SELECT * FROM AvailableUnit WHERE unit_id = %s AND account_id = %s;", [id, account_id]) # checks that the unit exists, and belongs to the logged in user
     rv = cur.fetchone()
     if not rv:
         success = False
         message = f"unit_id {id} doesn't exist so it cannot be deleted!"
-    else:
+    else:        
         try:
             cur.execute("DELETE FROM AvailableUnit WHERE unit_id = %s;", [id])
         except Exception as e:
             success = False
             message = f"Error with deleting unit id {id}: {e}"
+        
+        delete_image(rv["image_path"])
     
     cur.close()
     conn.commit()
+
     if not success:
         return {"status": success, "message": message}, STATUS_BAD_REQUEST
     else:
         return {"status": success}
 
+def save_image(image, image_name, unique_id):
+    data = image.split(',')
+    filename = images_path + f'{unique_id}{image_name}'
+    image_data = data[1]
 
+    jpg_original = base64.b64decode(image_data)
+    jpg_as_np = np.frombuffer(jpg_original, dtype=np.uint8)
+    img = cv2.imdecode(jpg_as_np, flags=1)
+    # we write to os filepath in development (this might have to change in prod)
+    cv2.imwrite(filename, img) # image_name
+
+@app.route('/api/unit/update', methods = ["PUT"])
+def update_unit():
+    if "loggedin" not in session:
+        return {"success": False, "message": "Not logged in!"}, STATUS_BAD_REQUEST
+
+    json_data = request.get_json()
+
+    unit_id = json_data["unit_id"]
+    room_num = json_data["room_num"]
+    rent_price = json_data["rent_price"]
+    num_beds = json_data["num_beds"]
+    num_washrooms = json_data["num_washrooms"]
+    lease_term = json_data["lease_term"]
+    floor_num = json_data["floor_num"]
+    image_path = json_data["image_path"]
+
+    # check that unit belongs to the logged in user
+    conn = mysql.connection
+    cur = conn.cursor()
+    account_id = session["id"]
+    cur.execute("SELECT * FROM AvailableUnit WHERE unit_id = %s AND account_id = %s;", [unit_id, account_id]) # checks that the unit exists, and belongs to the logged in user
+    rv = cur.fetchone()
+    if not rv:
+        return {"success": False, "message": "You are not permissioned to update this unit!"}, STATUS_BAD_REQUEST
+    
+    try:
+        if rv["image_path"] == image_path: # don't need to change the image
+            cur.execute("""UPDATE AvailableUnit 
+                    SET room_num = %s, lease_term = %s, num_beds = %s, floor_num = %s, num_washrooms = %s, rent_price = %s
+                    WHERE unit_id = %s;""", [room_num, lease_term, num_beds, floor_num, num_washrooms, rent_price, unit_id])
+                
+        else: # need to change the image
+            relative_image_path = ""
+            try: 
+                image_name = f"unit{unit_id}.png"
+                unique_id = str(uuid.uuid4())[:8]
+                relative_image_path = '/images/' + f'{unique_id}{image_name}'
+                save_image(image_path, image_name, unique_id)
+            except Exception as e:
+                return {"success": False, "message": f"Error saving updated image: {e}"}
+
+            cur.execute("""UPDATE AvailableUnit 
+                    SET room_num = %s, lease_term = %s, num_beds = %s, floor_num = %s, image_path = %s, num_washrooms = %s, rent_price = %s
+                    WHERE unit_id = %s;""", [room_num, lease_term, num_beds, floor_num, relative_image_path, num_washrooms, rent_price, unit_id])
+        conn.commit()
+    except Exception as e:
+        return {"success": False, "message": f"Error updating listing: {e}"}
+
+    if rv["image_path"] != image_path: # a new image was successfully uploaded and linked to the unit, time to delete the old image
+        delete_image(rv["image_path"])
+
+    return {"success": True}
 
 @app.route('/api/unit/create', methods = ["POST"])
 def list_unit():
@@ -251,15 +372,13 @@ def list_unit():
             building_id = result["building_id"]
         else:
             return {"success": False, "message": result["message"]}, STATUS_BAD_REQUEST
- 
-    data = image.split(',')
+    
     unique_id = str(uuid.uuid4())[:8]
     relative_image_path = '/images/' + f'{unique_id}{image_name}'
-    filename = images_path + f'{unique_id}{image_name}'
-
     try:
-        save_image(filename, data[1])
+        save_image(image, image_name, unique_id)
     except Exception as e:
+        delete_image(relative_image_path)
         return {"success": False, "message": f"could not save image: {e}"}, STATUS_BAD_REQUEST
 
     try:
@@ -276,7 +395,9 @@ def list_unit():
         cur.close()
         return {"success": True, "unit_id": unit_id}
     except Exception as e:
+        delete_image(relative_image_path)
         return {"success": False, "message": f"Error creating listing: {e}"}, STATUS_BAD_REQUEST
+    
 
 @app.route('/api/reviews/create', methods = ["POST"])
 def post_review():
@@ -312,6 +433,29 @@ def get_review():
 
     return {"success": True, "reviews": reviews}
 
+
+@app.route('/api/reviews/get_random_names', methods = ["GET"])
+def get_random_name():
+    num = int(request.args.get("number"))
+
+    adjectives = ["adventurous", "ambitious", "amusing", "bright", "charming", "clever", "courageous", "creative", "determined", "dynamic", "enthusiastic", "exuberant", "friendly",
+    "funny", "gentle", "honest", "kind", "loyal", "nice", "sincere", "thoughtful", "bedazzled", "blissful", "blushing", "bold", "breezy", "caring", "charismatic", "cheerful", "delightful",
+    "dreamy", "energetic", "enthusiastic", "fashionable", "graceful", "groovy", "humble", "hopeful", "impressive", "insightful", "phenomenal", "quirky", "suave", "playful", "sweet", 
+    "empathetic", "fun"]
+
+    animals = ["leopard", "dog", "rabbit", "dolphin", "eagle", "beaver", "hamster", "tiger", "cheetah", "turtle", "giraffe", "deer", "cat", "bear", "fox", "antelope", "chameleon", "elephant",
+    "alligator", "armadillo", "camel", "hippo", "chihuahua", "chinchilla", "zebra", "dodo", "jellyfish", "possum", "swan", "peacock", "lemur", "lynx", "sheep", "rhino", "llama", "koala", 
+    "kangaroo", "iguana", "gecko", "shark", "dove", "flamingo", "butterfly", "chickadee", "mouse", "goldfish", "sparrow"]
+
+    if num > len(adjectives) or num > len(animals):
+        multiply = int((num / max(len(adjectives), len(animals))) + 1)
+        adjectives  = adjectives * multiply
+        animals = animals * multiply
+
+    random_names = [adjective.capitalize() + " " + animal.capitalize() for (adjective, animal) in list(zip(random.sample(adjectives, num), random.sample(animals, num)))]
+
+    return random_names
+
 @app.route('/api/reviews/update', methods = ["PUT"])
 def update_review():
     conn = mysql.connection
@@ -338,6 +482,7 @@ def update_review():
         return {"success": False, "message": f"Error updating comment: {e}"}, STATUS_BAD_REQUEST
 
 
+
 @app.route('/api/login', methods = ["POST"])
 def login():
     json_data = request.get_json()
@@ -351,16 +496,19 @@ def login():
     account = cur.fetchone()
     cur.close()
 
-    # check retrieved hash password against user input
-    validate_password = bcrypt.check_password_hash(account["password"], password)
+    if account:
+        # check retrieved hash password against user input
+        validate_password = bcrypt.check_password_hash(account["password"], password)
 
-    if account and validate_password:
-        session["loggedin"] = True
-        session["id"] = account["account_id"]
-        session["username"] = account["username"]
-        return {"success": True, "session": session}
+        if validate_password:
+            session["loggedin"] = True
+            session["id"] = account["account_id"]
+            session["username"] = account["username"]
+            return {"success": True, "session": session}
+        else:
+            return {"success": False, "message": "Invalid credentials!"} # not sure if i should throw STATUS_BAD_REQUEST, but when i do, the frontend is unable to read the message because an exception is thrown
     else:
-        return {"success": False, "message": "Invalid credentials"}
+        return {"success": False, "message": "This username doesn't exist!"} # same as above!
 
 
 @app.route('/api/logout', methods = ["POST"])
