@@ -160,9 +160,12 @@ const UnitForm = ({
     } catch (error) {
       setMessage(error.message);
     }
+    
   };
 
   const makeToast = () => message && toast.error(message);
+
+
 
   useEffect(() => {
     makeToast();

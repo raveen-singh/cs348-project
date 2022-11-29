@@ -136,17 +136,52 @@ def get_building_addresses():
     cur.close()
     return addresses
 
-@app.route('/api/unit/get', methods = ["GET"])
+@app.route('/api/unit/get', methods = ["GET", "POST"])
 def get_units():
     # expecting to be called /api/unit/get?id={id} (optional id) or just /api/unit/get
     id = request.args.get("id")
     cur = mysql.connection.cursor()
 
+    json_data = ""
+    order_by_sql = ""
+    filter_by_sql = ""
+    if request.method == "POST": # POST, or query string
+        json_data = request.get_json()
+
+        sort_by = json_data["sort"]["field"]
+        sort_by_direction = json_data["sort"]["direction"]
+        filter_by = json_data["filter"]["field"]
+        filter_by_option = json_data["filter"]["option"]
+        filter_by_lower = json_data["filter"]["lowerBound"]
+        filter_by_upper = json_data["filter"]["upperBound"]
+
+        if sort_by:
+            sort_by_dict = {"distance": "b.distance_from_waterloo", "price": "u.rent_price"} # distance_from_waterloo is from building
+            order_by_sql = "ORDER BY {} {}".format(sort_by_dict[sort_by], sort_by_direction)
+        
+        if filter_by:
+            string_valued_fields = set(["Pet Friendly", "Laundry Availability", "Type of Unit"])
+            value_based_filters = set(["Lease Duration", "Pet Friendly", "Laundry Availability", "Type of Unit", "Washrooms", "Bedrooms"])
+            sql_fields_dict = {"Bedrooms": "u.num_beds", "Washrooms": "u.num_washrooms", "Rent Price": "u.rent_price", "Distance": "b.distance_from_waterloo",
+                                "Lease Duration": "u.lease_term", "Pet Friendly": "b.pet_friendly", "Laundry Availability": "b.laundry_availability", "Type of Unit": "b.type_of_unit"}
+            sql_filter_field = sql_fields_dict[filter_by]
+            if filter_by in value_based_filters: # value-based filtering
+                if filter_by in string_valued_fields:
+                    filter_by_option = f"'{filter_by_option}'"
+                filter_by_sql = "WHERE {} = {}".format(sql_filter_field, filter_by_option)
+            else: # range-based filtering
+                filter_by_sql = f"WHERE {sql_filter_field} >= {filter_by_lower} and {sql_filter_field} <= {filter_by_upper}"
+
     if id: # return one unit
         cur.execute("SELECT * FROM AvailableUnit u JOIN BUILDING b ON u.building_id = b.building_id WHERE unit_id = %s;", [id])
         rv = cur.fetchone()
     else: # return all units
-        cur.execute(f"SELECT * FROM AvailableUnit;")
+        sql_query = "SELECT * FROM AvailableUnit u JOIN BUILDING b ON u.building_id = b.building_id"
+        if filter_by_sql:
+            sql_query += f" {filter_by_sql}"
+        if order_by_sql:
+            sql_query += f" {order_by_sql}"
+        cur.execute(sql_query)
         rv = cur.fetchall()
     
     if not rv:
@@ -163,6 +198,7 @@ def get_units():
         jpg_img = cv2.imencode('.jpg',img)
         b64_string = base64.b64encode(jpg_img[1]).decode('utf-8')
         r["image_data"] = b64_string
+
     rv = tuple(rv)
     cur.close()
     return {"data": rv} # rv is a dictionary if provided id, otherwise a list of dictionaries
