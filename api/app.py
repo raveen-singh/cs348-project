@@ -124,7 +124,7 @@ def create_building(building_info):
         cur.close()
         return {"status": True, "building_id": building_id}
     except Exception as e:
-        return {"status": False, "message": f"Error with inserting: {e}"}
+        return {"status": False, "message": f"Error with inserting: {e}"}, STATUS_BAD_REQUEST
 
 # to be used for address dropdown for building info auto-populate (join)
 @app.route('/api/building/get_addresses', methods = ["GET"])
