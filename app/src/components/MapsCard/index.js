@@ -22,7 +22,7 @@ export default function BaseMap({ building }) {
       setLatitude(data.results[0].geometry.location.lat ?? 0);
       setLongitude(data.results[0].geometry.location.lng ?? 0);
     })();
-  });
+  }, []);
 
   if (!isLoaded) return <div>Loading...</div>;
   return <Map lat={latitude} lng={longitude} />;
