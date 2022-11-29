@@ -72,6 +72,7 @@ const UnitList = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [lb, setlb] = useState(null);
   const [ub, setub] = useState(null);
+  const navigate = useNavigate();
 
   const getUnits = async () => {
     try {
@@ -161,6 +162,7 @@ const UnitList = () => {
     } catch (error) {
       console.log(error.message)
     }
+    navigate(0);
   }
 
   const handleFilter = (e) => {
@@ -209,6 +211,7 @@ const UnitList = () => {
       console.log(error.message)
     }
     handlePopClose(e);
+    navigate(0);
   }
 
   console.log(condition);
