@@ -147,7 +147,6 @@ def get_units():
     filter_by_sql = ""
     if request.method == "POST": # POST, or query string
         json_data = request.get_json()
-        print(json_data)
 
         sort_by = json_data["sort"]["field"]
         sort_by_direction = json_data["sort"]["direction"]
@@ -159,7 +158,6 @@ def get_units():
         if sort_by:
             sort_by_dict = {"distance": "b.distance_from_waterloo", "price": "u.rent_price"} # distance_from_waterloo is from building
             order_by_sql = "ORDER BY {} {}".format(sort_by_dict[sort_by], sort_by_direction)
-            print(order_by_sql)
         
         if filter_by:
             string_valued_fields = set(["Pet Friendly", "Laundry Availability", "Type of Unit"])
@@ -174,15 +172,9 @@ def get_units():
                 filter_by_sql = "WHERE {} = {}".format(sql_filter_field, filter_by_option)
             else: # range-based filtering
                 filter_by_sql = f"WHERE {sql_filter_field} >= {filter_by_lower} and {sql_filter_field} <= {filter_by_upper}"
-            print(filter_by_sql)
-            # range = bedroom, washroom, rent price, distance
-            # option = lease duration, pet friendly, laundry availability, type of unit, 
-            
-
-        # print(f"sorting by {sort_by}, filter by {filter_by}")
 
     if id: # return one unit
-        cur.execute("SELECT * FROM AvailableUnit u JOIN BUILDING b ON u.building_id = b.building_id WHERE unit_id = %s" [id])
+        cur.execute("SELECT * FROM AvailableUnit u JOIN BUILDING b ON u.building_id = b.building_id WHERE unit_id = %s", [id])
         rv = cur.fetchone()
     else: # return all units
         sql_query = "SELECT * FROM AvailableUnit u JOIN BUILDING b ON u.building_id = b.building_id"
@@ -190,11 +182,10 @@ def get_units():
             sql_query += f" {filter_by_sql}"
         if order_by_sql:
             sql_query += f" {order_by_sql}"
-        print(sql_query)
         cur.execute(sql_query)
         rv = cur.fetchall()
     
-    if not rv:
+    if not rv and not (order_by_sql or filter_by_sql):
         return {"success": False}, STATUS_BAD_REQUEST
     # append image data to returned tuple
     if type(rv) == tuple:
@@ -208,6 +199,7 @@ def get_units():
         jpg_img = cv2.imencode('.jpg',img)
         b64_string = base64.b64encode(jpg_img[1]).decode('utf-8')
         r["image_data"] = b64_string
+
     rv = tuple(rv)
     cur.close()
     return {"data": rv} # rv is a dictionary if provided id, otherwise a list of dictionaries
