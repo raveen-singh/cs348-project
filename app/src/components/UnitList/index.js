@@ -158,11 +158,12 @@ const UnitList = () => {
       condition["sort"]["direction"] = "DESC";
     }
     try {
-      const res = await axios.put('/api/unit/get', condition);
+      const { data } = await axios.post('/api/unit/get', condition);
+      const sortedUnits = [...data.data];
+      setUnits(sortedUnits);
     } catch (error) {
       console.log(error.message)
     }
-    navigate(0);
   }
 
   const handleFilter = (e) => {
@@ -206,15 +207,17 @@ const UnitList = () => {
       }
     });
     try {
-      const res = await axios.put('/api/unit/get', condition);
+      const { data } = await axios.post('/api/unit/get', condition);
+      const filteredUnits = [...data.data];
+      setUnits(filteredUnits);
     } catch (error) {
       console.log(error.message)
     }
     handlePopClose(e);
-    navigate(0);
   }
 
-  console.log(condition);
+  console.log(units);
+
   return (
     <div>
       <Modal
@@ -273,7 +276,7 @@ const UnitList = () => {
               </MenuItem>
             ))}
           </TextField>
-          { (filter === "Rent Price" || filter === "Distance" || filter === "Bedrooms" || filter === "Washrooms" ) && (
+          { (filter === "Rent Price" || filter === "Distance" ) && (
             <>
               <TextField
                 name="lowerBound"
@@ -297,6 +300,18 @@ const UnitList = () => {
               />
             </>
           )
+          }
+          { (filter === "Bedrooms" || filter === "Washrooms") && 
+            <TextField
+              sx={{ width: "90%", margin: '5px 5%'}}
+              name="option"
+              variant="outlined"
+              label="Filter Values"
+              type="number"
+              value={option}
+              onChange={handleFilterDetails}
+            />
+              
           }
           { filter === "Lease Duration" && 
             <TextField
