@@ -69,46 +69,14 @@ const UnitPage = () => {
               <Typography>Rent Price: ${unit.rent_price}</Typography>
             </Stack>
           </Box>
-          <Box display="flex" alignItems="center" mt={3}>
-            <Button
-              sx={{ mr: 2 }}
-              variant="contained"
-              color="primary"
-              startIcon={<EditIcon />}
-            >
-              Edit
-            </Button>
-            <Button
-              variant="contained"
-              color="error"
-              startIcon={<DeleteIcon />}
-              sx={{ mr: 2 }}
-              onClick={() => setOpen(true)}
-            >
-              Delete
-            </Button>
-            <Dialog open={open} onClose={() => setOpen(false)}>
-              <DialogTitle>Delete Unit</DialogTitle>
-              <DialogContent>
-                <DialogContentText mb={1}>
-                  Are you sure? You can't undo this action afterwards.
-                </DialogContentText>
-                <DialogActions>
-                  <Button onClick={() => setOpen(false)}>Cancel</Button>
-                  <Button variant="contained" color="error">
-                    Delete
-                  </Button>
-                </DialogActions>
-              </DialogContent>
-            </Dialog>
-            <Link
-              component={RouterLink}
-              to={`/buildings/${unit.building_id}`}
-              variant="body1"
-            >
-              View Building
-            </Link>
-          </Box>
+          <Link
+            component={RouterLink}
+            to={`/buildings/${unit.building_id}`}
+            variant="body1"
+            sx={{ mt: 3 }}
+          >
+            View Building
+          </Link>
         </Stack>
       </Box>
     </Paper>
