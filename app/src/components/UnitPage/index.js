@@ -5,6 +5,10 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Link from "@mui/material/Link";
 import axios from "axios";
+import CheckIcon from "@mui/icons-material/Check";
+import ClearIcon from "@mui/icons-material/Clear";
+import HomeIcon from "@mui/icons-material/Home";
+import ApartmentIcon from "@mui/icons-material/Apartment";
 import React, { useEffect, useState } from "react";
 import { useParams, Link as RouterLink } from "react-router-dom";
 
@@ -44,8 +48,25 @@ const UnitPage = () => {
           <Typography variant="h6" mb={2}>
             Address: {unit.address}
           </Typography>
-          <Box display="flex" justifyContent="space-between">
-            <Stack spacing={1}>
+
+          <Box display="flex">
+            <Stack spacing={1} mr={5}>
+              <Box display="flex">
+                {unit.type_of_unit.toLowerCase() === "house" ? (
+                  <>
+                    <HomeIcon sx={{ mr: 1 }} />
+                    <Typography>House</Typography>
+                  </>
+                ) : (
+                  <>
+                    <ApartmentIcon sx={{ mr: 1 }} />
+                    <Typography>Apartment</Typography>
+                  </>
+                )}
+              </Box>
+              <Typography>
+                {unit.distance_from_waterloo} km from campus
+              </Typography>
               <Typography>{unit.num_beds} Bedrooms</Typography>
               <Typography>{unit.num_washrooms} Washrooms</Typography>
               {unit.room_num && (
@@ -53,6 +74,32 @@ const UnitPage = () => {
               )}
             </Stack>
             <Stack spacing={1}>
+              <Box display="flex">
+                {unit.pet_friendly ? (
+                  <>
+                    <CheckIcon sx={{ color: "green", mr: 1 }} />
+                    <Typography>Pet-Friendly</Typography>
+                  </>
+                ) : (
+                  <>
+                    <ClearIcon sx={{ color: "red", mr: 1 }} />
+                    <Typography>No Pets</Typography>
+                  </>
+                )}
+              </Box>
+              <Box display="flex">
+                {unit.laundry_availability.toLowerCase() === "none" ? (
+                  <>
+                    <ClearIcon sx={{ color: "red", mr: 1 }} />
+                    <Typography>No Laundry</Typography>
+                  </>
+                ) : (
+                  <>
+                    <CheckIcon sx={{ color: "green", mr: 1 }} />
+                    <Typography>{unit.laundry_availability} Laundry</Typography>
+                  </>
+                )}
+              </Box>
               {unit.floor_num && (
                 <Typography>Floor Number: {unit.floor_num}</Typography>
               )}
