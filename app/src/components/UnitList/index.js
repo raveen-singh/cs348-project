@@ -1,12 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Modal, CircularProgress, Grid, Box } from "@mui/material";
+import { CircularProgress, Grid, Box } from "@mui/material";
 import axios from "axios";
-
-import UnitForm from "../UnitForm";
 import UnitCard from "../UnitCard";
 
 const UnitList = () => {
-  const [open, setOpen] = useState(false);
   const [addresses, setAddresses] = useState({});
   const [units, setUnits] = useState([]);
 
@@ -35,20 +32,8 @@ const UnitList = () => {
     getUnits();
   }, []);
 
-  const handleClose = () => {
-    setOpen(false);
-  };
-
   return (
     <div>
-      <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <UnitForm handleClose={handleClose} addressDict={addresses} />
-      </Modal>
       <Box sx={{ width: "90%", margin: "100px 5%" }}>
         <Grid container rowSpacing={3} columnSpacing={{ xs: 1, sm: 2, md: 4 }}>
           {!units.length ? (
