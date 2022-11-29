@@ -176,6 +176,29 @@ def delete_image(image_path):
     if os.path.isfile(filename):
         os.remove(filename)
 
+@app.route('/api/units/get', methods = ["GET"])
+def get_my_units():
+    id = request.args.get("id")
+    cur = mysql.connection.cursor()
+
+    cur.execute("SELECT * FROM AvailableUnit WHERE account_id = %s", [id])
+    rv = cur.fetchall()
+
+    cur.close()
+       # append image data to returned tuple
+    if type(rv) == tuple:
+        rv = list(rv)
+    else:
+        rv = [rv]
+   
+    for r in rv:
+        file_name = basedir + r['image_path']
+        img = cv2.imread(file_name)
+        jpg_img = cv2.imencode('.jpg',img)
+        b64_string = base64.b64encode(jpg_img[1]).decode('utf-8')
+        r["image_data"] = b64_string
+    rv = tuple(rv)
+    return {"data": rv}
 
 @app.route('/api/unit/delete', methods = ["DELETE"])
 def delete_unit():
