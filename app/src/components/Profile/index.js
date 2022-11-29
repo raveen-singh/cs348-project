@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Grid, Container, Typography, Box, Modal } from "@mui/material";
+import {
+  Grid,
+  Container,
+  Typography,
+  Box,
+  Modal,
+  CircularProgress,
+} from "@mui/material";
 import UnitCard from "../UnitCard";
 import UnitForm from "../UnitForm";
 import useAuth from "../../hooks/useAuth";
@@ -22,16 +29,29 @@ const Profile = ({ addresses }) => {
     distance_from_waterloo: "0.0",
   };
 
+  const Loading = () => {
+    return (
+      <Box>
+        {loading ? (
+          <CircularProgress />
+        ) : (
+          <Typography>You haven't created any units!</Typography>
+        )}
+      </Box>
+    );
+  };
+
   const [units, setUserUnits] = useState([]);
   const [unitId, setUnitId] = useState(null);
   const [editPost, setEditPost] = useState(defaultFetchedUnitValues);
+  const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
   const { id } = useAuth();
 
   const getUserUnits = async () => {
     const { data } = await axios.get(`/api/units/get?id=${id}`);
     setUserUnits(data.data);
-    console.log(data);
+    setLoading(false);
   };
 
   const getUnitData = async () => {
@@ -52,6 +72,8 @@ const Profile = ({ addresses }) => {
 
   useEffect(() => {
     getUserUnits();
+
+    setTimeout(() => setLoading(false), [2000]);
   }, []);
 
   useEffect(() => {
@@ -85,7 +107,7 @@ const Profile = ({ addresses }) => {
       </Modal>
       <Box mt={2}>
         {!units.length ? (
-          <Typography>You still haven't created any units!</Typography>
+          <Loading />
         ) : (
           <Grid
             container
