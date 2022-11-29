@@ -6,6 +6,7 @@ import Box from "@mui/material/Box";
 import { Link as RouterLink } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import toast, { Toaster } from "react-hot-toast";
+import AccountMenu from "../AccountMenu";
 
 import Modal from "@mui/material/Modal";
 import UnitForm from "../UnitForm";
@@ -80,9 +81,7 @@ const Navbar = () => {
         {user ? (
           <Box display="flex" alignItems="center">
             <Typography sx={{ mr: 3 }}>Logged in as {user}</Typography>
-            <Button variant="filled" onClick={logout}>
-              Logout
-            </Button>
+            <AccountMenu username={user} logout={logout} />
           </Box>
         ) : (
           <Box>

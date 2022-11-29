@@ -17,7 +17,14 @@ import CloseIcon from "@mui/icons-material/Close";
 import FileBase from "react-file-base64";
 import axios from "axios";
 
-const UnitForm = ({ handleClose, addressDict, unitId, setUnitId, editPost, setEditPost }) => {
+const UnitForm = ({
+  handleClose,
+  addressDict,
+  unitId,
+  setUnitId,
+  editPost,
+  setEditPost,
+}) => {
   const currentAddresses = Object.keys(addressDict);
   const navigate = useNavigate();
 
@@ -54,7 +61,9 @@ const UnitForm = ({ handleClose, addressDict, unitId, setUnitId, editPost, setEd
     distance_from_waterloo: "0.0",
   };
 
-  const [postData, setPostData] = useState(editPost ? editPost : defaultUnitValues);
+  const [postData, setPostData] = useState(
+    editPost ? editPost : defaultUnitValues
+  );
   const [newbuilding, setNewBuilding] = useState(defaultBuildingValues);
   const [checked, setChecked] = useState(false);
   const [message, setMessage] = useState("");
@@ -118,14 +127,14 @@ const UnitForm = ({ handleClose, addressDict, unitId, setUnitId, editPost, setEd
     }
     try {
       if (unitId) {
-        const { data } = await axios.post('/api/unit/update', {
+        const { data } = await axios.put("/api/unit/update", {
           ...postData,
-          "unit_id": unitId
+          unit_id: unitId,
         });
         if (data) {
           console.log({
             ...postData,
-            "unit_id": unitId
+            unit_id: unitId,
           });
           console.log(data.message);
           setUnitId(null);
@@ -136,8 +145,7 @@ const UnitForm = ({ handleClose, addressDict, unitId, setUnitId, editPost, setEd
         } else {
           setMessage(data.message);
         }
-      }
-      else {
+      } else {
         const { data } = await axios.post("/api/unit/create", {
           ...postData,
         });
@@ -161,8 +169,8 @@ const UnitForm = ({ handleClose, addressDict, unitId, setUnitId, editPost, setEd
 
   useEffect(() => {
     makeToast();
-  }, [])
-  
+  }, []);
+
   return (
     <>
       <Toaster />
@@ -353,9 +361,9 @@ const UnitForm = ({ handleClose, addressDict, unitId, setUnitId, editPost, setEd
                 setPostData({ ...postData, fileName: name, image_path: base64 })
               }
             />
-            {!postData.fileName && !unitId &&
+            {!postData.fileName && !unitId && (
               <label for="files">(required)</label>
-            }
+            )}
           </Box>
           <Button
             disabled={

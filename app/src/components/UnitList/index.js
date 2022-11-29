@@ -12,8 +12,6 @@ import {
   Typography
 } from "@mui/material";
 import axios from "axios";
-
-import UnitForm from "../UnitForm";
 import UnitCard from "../UnitCard";
 import { useNavigate } from "react-router-dom";
 
@@ -60,7 +58,6 @@ const petOptions = [
   { value: 1, label: "Yes" }
 ];
 const UnitList = () => {
-  const [open, setOpen] = useState(false);
   const [addresses, setAddresses] = useState({});
   const [units, setUnits] = useState([]);
   const [unitId, setUnitId] = useState(null);
