@@ -143,7 +143,7 @@ def get_units():
     cur = mysql.connection.cursor()
 
     if id: # return one unit
-        cur.execute(cur.execute("SELECT * FROM AvailableUnit u JOIN BUILDING b ON u.building_id = b.building_id WHERE unit_id = %s;", [id]), [id])
+        cur.execute("SELECT * FROM AvailableUnit u JOIN BUILDING b ON u.building_id = b.building_id WHERE unit_id = %s;", [id])
         rv = cur.fetchone()
     else: # return all units
         cur.execute(f"SELECT * FROM AvailableUnit;")
