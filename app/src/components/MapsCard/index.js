@@ -27,8 +27,9 @@ function Map(building) {
     const { data } = await axios.get(
       `https://maps.googleapis.com/maps/api/geocode/json?address=${address}&key=AIzaSyD97JXp2t36bmAvNtSUibldGBs08Z4cHxE`
     );
-    setLatitude(data.results[0].geometry.location.lat ?? 0);
-    setLongitude(data.results[0].geometry.location.lng ?? 0);
+    console.log(data);
+    // setLatitude(data.results[0].geometry.location.lat ?? 0);
+    // setLongitude(data.results[0].geometry.location.lng ?? 0);
   };
 
   useEffect(() => getLocation(building.address), []);
@@ -39,7 +40,11 @@ function Map(building) {
       <CardContent>
         <GoogleMap
           zoom={10}
+<<<<<<< HEAD
           center={{ latitude, longitude }}
+=======
+          center={{ lat: latitude, lng: longitude }}
+>>>>>>> 096d048c2f7886dbf4018ae2f9d911f6e270001d
           mapContainerClassName={{ width: "100%", height: "100%" }}
         >
           <Marker position={center} />
