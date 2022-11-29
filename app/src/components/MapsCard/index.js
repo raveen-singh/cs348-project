@@ -1,27 +1,18 @@
 import React, { useState } from "react";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
-import { useMemo } from "react";
 import { GoogleMap, useLoadScript, Marker } from "@react-google-maps/api";
 import axios from "axios";
+import { useMemo } from "react"
 import { useEffect } from "react";
 
-const google = window.google;
+export default function BaseMap({ building }) {
+  const [latitude, setLatitude] = useState(null);
+  const [longitude, setLongitude] = useState(null);
 
-export default function BaseMap(building) {
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: "AIzaSyBEp1Ikww7LTAnj8Gzew1jY555INnUbArQ",
   });
-
-  if (!isLoaded) return <div>Loading...</div>;
-  return Map(building);
-}
-
-function Map(building) {
-
-  //const geocoder = google.maps.Geocoder;
-  const [latitude, setLatitude] = useState(null);
-  const [longitude, setLongitude] = useState(null);
 
   const getLocation = async (address) => {
     const { data } = await axios.get(
@@ -34,13 +25,19 @@ function Map(building) {
 
   useEffect(() => getLocation(building.address), []);
 
-  const center = useMemo(() => ({ lat: latitude, lng: longitude }), []);
+  const center = useMemo(() => ({ lat: latitude, lng: longitude}, []));
+
+  if (!isLoaded) return <div>Loading...</div>;
+  return <Map building={building} lat={latitude} lng={longitude} center={center} />;
+}
+
+function Map({ lat, lng }, center) {
   return (
     <Card>
       <CardContent>
         <GoogleMap
           zoom={10}
-          center={{ lat: latitude, lng: longitude }}
+          center={{ lat, lng }}
           mapContainerClassName={{ width: "100%", height: "100%" }}
         >
           <Marker position={center} />
