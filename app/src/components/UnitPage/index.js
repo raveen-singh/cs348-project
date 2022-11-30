@@ -106,14 +106,28 @@ const UnitPage = () => {
               <Typography>Lease: {unit.lease_term} months</Typography>
             </Stack>
           </Box>
-          <Link
-            component={RouterLink}
-            to={`/buildings/${unit.building_id}`}
-            variant="body1"
-            sx={{ mt: 3 }}
+          <Box
+            display="flex"
+            alignItems="center"
+            justifyContent="space-between"
           >
-            View Building
-          </Link>
+            <Link
+              component={RouterLink}
+              to={`/buildings/${unit.building_id}`}
+              variant="body1"
+              sx={{ mt: 3 }}
+            >
+              View Building
+            </Link>
+            <Stack spacing={1}>
+              <Typography>Posted by {unit.name}</Typography>
+              {unit.website && (
+                <Link href={unit.website} target="__blank">
+                  Visit Website
+                </Link>
+              )}
+            </Stack>
+          </Box>
         </Stack>
       </Box>
     </Paper>
