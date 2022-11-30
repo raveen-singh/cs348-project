@@ -32,11 +32,11 @@ const UnitPage = () => {
   const imgsrc = "data:image/png;base64," + unit.image_data;
 
   return (
-    <Paper sx={{ mx: "auto", my: 8, width: "70%" }}>
+    <Paper sx={{ mx: "auto", my: 8, width: "80%", maxWidth: "1100px" }}>
       <Box display="flex" flexDirection={{ sm: "column", md: "row" }}>
         <Stack width={{ sm: "100%", md: "50%" }}>
           <Paper
-            sx={{ width: 500, height: 350 }}
+            sx={{ width: 550, height: 400 }}
             component="img"
             src={imgsrc}
           />
@@ -121,6 +121,7 @@ const UnitPage = () => {
             </Link>
             <Stack spacing={1}>
               <Typography>Posted by {unit.name}</Typography>
+              <Typography>Contact info: {unit.email}</Typography>
               {unit.website && (
                 <Link href={unit.website} target="__blank">
                   Visit Website
