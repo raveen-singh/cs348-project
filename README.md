@@ -114,3 +114,12 @@ The frontend is all located under the `app` folder
 3. Reviews - `app/src/components/ReviewCard`, `app/src/components/ReviewForm`
 4. Viewing units with sort and filter - `app/src/components/BuildingList`
 5. Viewing reviews with sort and filter - `app/src/components/ReviewList`
+6. Deleting a unit - `app/src/components/Profile`
+
+### Fancy Features
+---
+1. Navbar Menu Header - `app/src/components/Navbar`
+2. Indexes for Performance - `api/create_tables.sql`
+3. Password Hashing - `api/app.py`
+4. Google Maps API component - `app/src/components/MapsCard`
+5. Preventing SQL injection - `api/app.py`
