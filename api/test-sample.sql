@@ -29,7 +29,7 @@ LEFT JOIN building AS b
 ON au.building_id = b.building_id 
 LEFT JOIN UnitListerAccount AS u 
 ON au.account_id = u.account_id
-WHERE num_washrooms > 1 and num_beds > 2;
+WHERE num_washrooms = 1;
 -- sample query 3
 SELECT u.name AS lister, u.email, u.phone_num, b.address, b.distance_from_waterloo, au.num_beds, au.num_washrooms, au.lease_term, au.rent_price, b.laundry_availability, b.pet_friendly, b.type_of_unit
 FROM AvailableUnit AS au 
@@ -37,7 +37,7 @@ LEFT JOIN building AS b
 ON au.building_id = b.building_id 
 LEFT JOIN UnitListerAccount AS u 
 ON au.account_id = u.account_id
-WHERE lease_term >= 8
+WHERE lease_term = 8
 ORDER BY rent_price;
 
 -- feature 5: view building reviews (all reviews and average)
@@ -49,14 +49,13 @@ LEFT JOIN (
     FROM Review 
     GROUP BY building_id
 ) r
-ON b.building_id = r.building_id
+ON b.building_id = r.building_id;
 
 -- sample query 2 for viewing all reviews for a single building
-Query 2: 
 SELECT review_id, admin_helpfulness_rating, cleanliness_rating, review_helpfulness, comment
 FROM Review r
 LEFT JOIN building b ON r.building_id = b.building_id
-WHERE b.building_id = 1
+WHERE b.building_id = 1;
 
 -- feature 6: 
 DELETE FROM AvailableUnit WHERE unit_id = 1;
